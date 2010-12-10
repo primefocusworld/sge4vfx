@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>theQ</title>
+	<link href="css/reset.css" rel="stylesheet" type="text/css">
+	<link href="css/main.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.history.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</head>
+<body>
+<div id="header">
+	<h1>theQ</h1>
+	<div id="autorefresh"><input type="checkbox" name="autorefresh">Auto Refresh</div>
+	<div id="tabs">
+		<div id="jobtab" class="activetab">Jobs/Tasks</div>
+		<div id="workerstab" class="inactivetab">Workers</div>
+	</div>
+</div>
+<div id="main">
+	<div id="jobsTab">
+		<div id="parents">Root</div>
+		<div id="jobs">
+			<table id="jobsTable">
+				<tbody>
+				<tr class="title">
+					<th class="narrow">ID</th>
+					<th class="normalwidth">Title</th>
+					<th class="normalwidth">User</th>
+					<th class="normalwidth">Priority</th>
+					<th class="narrow">Ok</th>
+					<th class="narrow">Err</th>
+					<th class="wide">Running</th>
+					<th class="normalwidth">Pending</th>
+					<th class="narrow">Batch</th>
+					<th class="normalwidth">Start Time</th>
+				</tr>
+				</tbody>
+			</table>
+			<table id="tasksTable">
+				<tbody>
+				<tr class="title">
+					<th class="narrow">Task No</th>
+					<th class="normalwidth">User</th>
+					<th class="normalwidth">State</th>
+					<th class="normalwidth">Ok</th>
+					<th class="normalwidth">Err</th>
+					<th class="normalwidth">Total</th>
+					<th class="normalwidth">Progress</th>
+					<th class="normalwidth">Worker</th>
+					<th class="wide">Duration</th>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>

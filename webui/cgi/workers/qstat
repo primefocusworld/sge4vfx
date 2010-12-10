@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Source your SGE settings here
+source /WHEREVER_YOUR_SGE_ENV_IS/settings.sh
+qstat $@

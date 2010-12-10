@@ -1,0 +1,113 @@
+body { 
+	text-decoration:none; 
+	color:black;
+	font-family:Verdana; 
+	font-size:10pt; 
+	font-weight:normal; 
+	background-color:#b0b0b0;
+	background-repeat:repeat-x;
+	margin:0;
+}
+#header, #footer { margin-top: 5px; width:100%; }
+#main {
+	position:fixed;
+	bottom:5px;
+	top:72px;
+	border-width:1px;
+	border-style:solid;
+	border-color:Black;
+	background:#444444;
+	left:5px;
+	right:5px;
+}
+#autorefresh {
+	display:inline;
+	position:fixed;
+	right:5px;
+	margin-right:5px;
+}
+h1 {
+	display:inline;
+	font-family:Verdana;
+	margin-left:5px;
+	color:#444444;
+	font-size:xx-large;
+	font-weight:bolder;
+	text-decoration:none;
+}
+#tabs {
+	position: fixed;
+	top:45px;
+	height:21px;
+	display:table-row;
+	z-index:1000;
+	border-spacing:5px;
+}
+.activetab, .inactivetab {
+	display: table-cell;
+	padding-left:10px;
+	padding-right:10px;
+	background: #444444;
+	color: White;
+	height:21px;
+	vertical-align:middle;
+	border-top-style:solid;
+	border-top-color:Black;
+	border-top-width:1px;
+	border-left-style:solid;
+	border-left-color:Black;
+	border-left-width:1px;
+	border-right-style:solid;
+	border-right-color:Black;
+	border-right-width:1px;
+	cursor: pointer;
+}
+.inactivetab {
+	background:#333333;
+	border-bottom-style:solid;
+	border-bottom-color:Black;
+	border-bottom-width:1px;
+	z-index:-1;
+}
+#parents {
+	position:fixed;
+	left:10px;
+	top:82px;
+	background-color:#b0b0b0;
+	padding:3px 10px;
+	font-size:8pt; 
+	border-top:1px solid #000000;
+	border-left:1px solid #000000;
+	border-right:1px solid #888888;
+	border-bottom:1px solid #888888;
+}
+#parents a { color: black; }
+#jobs {
+	position:fixed;
+	left:10px; right:10px;
+	top:110px; bottom:10px;
+	overflow:auto;
+	border-top:1px solid #888888;
+	border-left:1px solid #888888;
+	border-right:1px solid #000000;
+	border-bottom:1px solid #000000;
+}
+#tasksTable { display:none }
+table { width:100%; border-collapse:collapse; text-align:right; font-size:smaller; line-height:1.8em; }
+table td { border-right:1px solid black; padding-right:4px; color:white; }
+table td a:link { color:#DDDDDD; }
+table tr { background:#222222; }
+table tr.title { background:#666666; color: #EEEEEE; }
+table th { text-align:center; border-right:1px solid black; }
+table tr.running { background:#223322; }
+table tr.runninge { background:#304030; }
+table tr.running:hover { background:#557755; cursor:pointer }
+table tr.pending { background:#222222; }
+table tr.pendinge { background:#303030; }
+table tr.pending:hover { background:#555555; cursor:pointer }
+table tr.unknowne { background:#303030; }
+table tr.unknowne:hover { background:#555555; cursor:pointer }
+
+#jobsTable .narrow { width:5%; }
+#jobsTable .normalwidth { width:12%; }
+#jobsTable .wide { width:20% }
