@@ -1,5 +1,9 @@
 === Simple array task web interface ===
 
+==== LICENSE ====
+
+As this (the contents of the webui folder) uses GPL components, the license remains and is included in the LICENSE file
+
 ==== INSTALL ====
 
 1) Set up an apache install somewhere and put these files either in the root or a subdirectory
