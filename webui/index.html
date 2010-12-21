@@ -1,61 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset=utf-8 />
-	<title>theQ</title>
-	<link href="css/reset.css" rel="stylesheet" type="text/css">
-	<link href="css/main.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-	<script type="text/javascript" src="js/jquery.history.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>theQ - Jobs</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/custom-theme/jquery-ui-1.8.7.custom.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
+	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.7.custom.min.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
 <div id="header">
 	<h1>theQ</h1>
-	<div id="autorefresh"><input type="checkbox" name="autorefresh">Auto Refresh</div>
-	<div id="tabs">
-		<div id="jobtab" class="activetab">Jobs/Tasks</div>
-		<div id="workerstab" class="inactivetab">Workers</div>
+	<div id="autorefresh">
+		<input type="checkbox" name="autorefresh">Auto Refresh<br />
+		<span id="lastrefresh">Last Refreshed: </span>
 	</div>
 </div>
-<div id="main">
-	<div id="jobsTab">
-		<div id="parents">Root</div>
-		<div id="jobs">
-			<table id="jobsTable">
-				<tbody>
-				<tr class="title">
-					<th class="narrow">ID</th>
-					<th class="normalwidth">Title</th>
-					<th class="normalwidth">User</th>
-					<th class="normalwidth">Priority</th>
-					<th class="narrow">Ok</th>
-					<th class="narrow">Err</th>
-					<th class="wide">Running</th>
-					<th class="normalwidth">Pending</th>
-					<th class="narrow">Batch</th>
-					<th class="normalwidth">Start Time</th>
-				</tr>
-				</tbody>
-			</table>
-			<table id="tasksTable">
-				<tbody>
-				<tr class="title">
-					<th class="narrow">Task No</th>
-					<th class="normalwidth">User</th>
-					<th class="normalwidth">State</th>
-					<th class="normalwidth">Ok</th>
-					<th class="normalwidth">Err</th>
-					<th class="normalwidth">Total</th>
-					<th class="normalwidth">Progress</th>
-					<th class="normalwidth">Worker</th>
-					<th class="wide">Duration</th>
-				</tr>
-				</tbody>
-			</table>
+<div id="tabs">
+	<ul>
+		<li><a href="#jobstab">Jobs</a></li>
+		<li><a href="#workerstab">Workers</a></li>
+	</ul>
+	<div id="jobstab">
+		<div id="toolbar" class="ui-widget-header ui-corner-all">
+			<button id="removeAllComplete">Remove Complete</button>
+			<button id="showLegend">Help</button>
 		</div>
+		<table id="jobsTable">
+			<thead>
+			<tr>
+				<th class="narrow2">Actions</th>
+				<th class="narrow1">ID</th>
+				<th class="normalwidth">Job Name</th>
+				<th class="narrow1">Username</th>
+				<th class="normalwidth">Project</th>
+				<th class="narrow1">Priority</th>
+				<th class="normalwidth">Submit Time</th>
+				<th class="normalwidth">Start Time</th>
+				<th class="normalwidth">End Time</th>
+				<th class="narrow2">Duration</th>
+				<th class="narrow1">Range</th>
+				<th class="narrow2">% Done</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table></div>
+	<div id="workerstab">
+		<p>Some other stuff</p>
 	</div>
+</div>
+<div id="multiusedialog"></div>
+<div id="helpdialog" title="Help">
+	<div class="greybg">Pending</div>
+	<div class="greenbg">Running</div>
+	<div class="bluebg">Completed</div>
+	<div class="redbg">Error</div>
 </div>
 </body>
 </html>
+

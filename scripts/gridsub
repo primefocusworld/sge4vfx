@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Wraps qsub so that a record is inserted into a postgres database using the
+# details below.  This will pass through all variables to qsub.
+
+PGHOST= #Put your database server here
+PGUSER= #Put your database user here (sge probably)
+PGDB= #Put your database name here (sgedb probably)
+
+# The Postgres jobs DB is the following column order:
+# SGEID, jobname, username, project, starttime, endtime, firsttask, lasttask,
+# chunk, status, submissionscript
+
+# Parse name option from cmd line params if provided
+N="unnamed"
+ARGV=( $@ )
+I=0
+for WORD in "$@" ; do
+	((I++))
+	case $WORD in
+		-N)	# Get the job name
+			if [[ ${2:0:1} != "-" ]]; then
+				N=${ARGV[$I]};
+			else
+				echo "Missing argument to -N"
+				exit 1;
+			fi ;;
+	esac
+done
+
+# Actually submit the job to SGE
+qsub $@ &> OUT.$$.tmp
+
+# If there was an error
+if [ "$?" -ne "0" ]; then
+	echo -e "There was an \e[0;31merror\e[0m with qsub - here it is..."
+	cat OUT.$$.tmp
+# If there wasn't an error - create and submit the psql command
+else
+	# Get the last param which should be path to the submission script
+	# Make sure it's absolute
+	SUBMIT_SCRIPT=${!#}
+	if [ "`echo ${SUBMIT_SCRIPT} | cut -c 1`" != "/" ]; then
+		SUBMIT_SCRIPT="${PWD}/${SUBMIT_SCRIPT}"
+	fi
+
+	# Get the SGE job id from the stdout of qsub
+	JOB_ID=`cat OUT.$$.tmp | awk '{print $3}'`
+	SGE_ID=`echo $JOB_ID | awk -F\. '{print $1}'`
+	TASKS=`echo $JOB_ID | awk -F\. '{print $2}'`
+	FIRST=`echo $TASKS | awk -F\- '{print $1}'`
+	LAST=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $1}'`
+	CHUNK=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $2}'`
+
+	# Now compose the psql command to insert the row
+	PSQL_CMD="INSERT INTO jobs (sgeid, jobname, username, project, "
+	PSQL_CMD="${PSQL_CMD}priority, submittime, starttime, endtime, "
+	PSQL_CMD="${PSQL_CMD}firsttask, lasttask, chunk, status, "
+	PSQL_CMD="${PSQL_CMD}submissionscript, donetasks) VALUES (${SGE_ID}, "
+	PSQL_CMD="${PSQL_CMD}'${N}', '${USER}', "
+
+	# $JOB (a little confusingly) has nothing to do with SGE
+	# The env variable $JOB determines what project/show you're on.
+	if [ ! -z $JOB ]; then
+		PSQL_CMD="${PSQL_CMD}'$JOB', "
+	else
+		PSQL_CMD="${PSQL_CMD}NULL, "
+	fi
+
+	PSQL_CMD="${PSQL_CMD}NULL, current_timestamp, NULL, NULL, ${FIRST}, "
+	PSQL_CMD="${PSQL_CMD}${LAST}, ${CHUNK}, 0, '${SUBMIT_SCRIPT}', 0);"
+
+	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
+	if [ "$?" -ne "0" ]; then
+		echo -e "There was an \e[0;31merror\e[0m adding to the database"
+		echo "Please tell your friendly local sysadmin"
+	fi
+fi
+
+rm OUT.$$.tmp

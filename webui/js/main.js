@@ -1,211 +1,223 @@
-// SGE bitmask states
-var JHELD = 0x10
-var JQUEUED = 0x40
-var JWAITING = 0x800
-var JRUNNING = 0x80
-var JSUSPENDED = 0x100
-var JSUSPENDED_ON_THRESHOLD = 0x10000
-var JERROR = 0x8000
+// AJAX call to simple helper script that sources the SGE env and runs
+// qstat -f -xml
 
 var refreshTimeout;
-var refreshInterval = 3000;
-var currentJob;
+var refreshInterval = 5000;
+var realTimeInverval;
+var sortJobsBy = "sgeid";
+var sortJobsDir = "DESC";
 
-// These are here for now for testing - for now it needs a username
-// TODO: Put a username box handled by cookies/kerberos
-testParam = "user=PUT_USERNAME_HERE";
-
-// AJAX call to simple helper script that sources the SGE env and runs qstat -f -xml
-function getQStat(params, callback) {
+// Allows you to call jobsTable cgi script
+function getJobs(params, callback) {
+	params = "sortby=" + sortJobsBy + "&sortdir=" + sortJobsDir + params
 	$.ajax({
-		type: "GET",
-		url: "./cgi/getqstat.cgi",
+		url: "cgi/jobs.cgi",
 		data: params,
-		dataType: "xml",
 		success: callback
 	});
 }
 
-function bitmaskToStates(bitmask) {
-	var taskStatus = new Array();
-	
-	if ( bitmask & JHELD ) taskStatus.push("Held");
-	if ( bitmask & JQUEUED ) taskStatus.push("Queued");
-	if ( bitmask & JWAITING ) taskStatus.push("Waiting");
-	if ( bitmask & JRUNNING ) taskStatus.push("Running");
-	if ( bitmask & JSUSPENDED ) taskStatus.push("Suspended");
-	if ( bitmask & JSUSPENDED_ON_THRESHOLD ) taskStatus.push("Suspended on threshold");
-	if ( bitmask & JERROR ) taskStatus.push("Error");
-
-	return taskStatus.join(",");
+// Very basic function to just populate the tbody of the jobsTable
+function createJobTable(data) {
+	$("#jobsTable tbody").html(data);
+	if (realTimeInverval == null) {
+		realTimeInverval = setInterval('updateDurations()', 1000);
+	}
 }
 
-// Parses the return from qstat and creates the job table
-function createJobTable(xml) {
-	// Firstly, make sure it's showing after emptying the table
-	$("#jobsTable tbody tr.jobtr").remove();
-	$("#tasksTable").hide(); $("#jobsTable").show();
-	$("#parents").html("Root");
+// Refresh the jobsTable
+function refreshPage() {
+	if ($("#jobsTable").is(":visible")) { getJobs("", createJobTable); }
+	lastUpdated();
+	refreshTimeout = setTimeout(function() {
+					refreshPage();
+				}, refreshInterval);
+}
 
-	// For every job in the XML
-	var uniqJobs = new Array();
-	$(xml).find("job_list").each(function() {
-		job = $(this);
-		jobNo = job.find("JB_job_number").text();
-		// If the job's not already in the uniqJobs array, add a line
-		if ( $.inArray(jobNo, uniqJobs) == -1 ) {
-			uniqJobs.push(jobNo);
-			jobName = job.find("JB_name").text();
+// Refresh the last updated bit top-right
+function lastUpdated() {
+	rightNow = new Date();
+	hours = rightNow.getHours();
+	minutes = rightNow.getMinutes();
+	seconds = rightNow.getSeconds();
+	timeString = hours + ":" + minutes + ":" + seconds;
+	$("#lastrefresh").html("Last refreshed: " + timeString);
+}
 
-			$("#jobsTable tbody").append("\t\t<tr class=\"jobtr\" id=\"" + jobNo + "\" onclick=\"$.history.load('job" + jobNo + "');\">\n"
-							+ "\t\t\t<td>" + jobNo + "</td>\n"
-							+ "\t\t\t<td>" + jobName + "</td>\n"
-							+ "\t\t\t<td>" + job.find("JB_owner").text() + "</td>\n"
-							+ "\t\t\t<td>" + job.find("JAT_prio").text() + "</td>\n"
-							+ "\t\t\t<td> </td>\n"
-							+ "\t\t\t<td> </td>\n"
-							+ "\t\t\t<td class=\"running\"></td>\n"
-							+ "\t\t\t<td class=\"pending\"></td>\n"
-							+ "\t\t\t<td class=\"chunksize\"></td>\n"
-							+ "\t\t\t<td class=\"startTime\"> </td>\n"
-						+ "\t\t</tr>\n");
-			switch (job.attr("state")) {
-				case "running":
-					$("#jobsTable tr#" + jobNo).addClass('running');
-					// If job is running, look for the start time
-					// then make it prettier and put it in the start time column
-					jobStartTime = job.find("JAT_start_time").text();
-					tempArray = jobStartTime.split("T");
-					jobStartTime = tempArray[1] + " | " + tempArray[0];
-					$("#jobsTable tr#" + jobNo + " .startTime").html(jobStartTime);
-					break;
-				case "pending":
-					$("#jobsTable tr#" + jobNo).addClass('pending');
-					break;
-				default:
-					break;
+function showInfoDialog(theTitle, theContent, theWidth) {
+	if ( theWidth === undefined ) { theWidth = 300; }
+	$("#multiusedialog")
+	.html(theContent)
+	.dialog({
+		width : theWidth,
+		title : theTitle,
+		buttons : {
+			"OK" : function() {
+				$(this).dialog("close");
 			}
 		}
-		if (job.attr("state") == "running") {
-			// Look at the task number and add it to running field
-			taskNo = job.find("tasks").text();
-			var sep = "";
-			if ($("#jobsTable tr#" + jobNo + " .running").html() != "") { sep = "," }
-			$("#jobsTable tr#" + jobNo + " .running").append(sep + taskNo);
-		}
-		if (job.attr("state") == "pending") {
-			// Look at the task number and add it to pending field
-			taskNo = job.find("tasks").text();
-			tempArray = taskNo.split(":");
-			$("#jobsTable tr#" + jobNo + " .pending").append(tempArray[0]);
-			$("#jobsTable tr#" + jobNo + " .chunksize").append(tempArray[1]);
-		}
 	});
-	$('#jobsTable tbody tr.running:odd').addClass('runninge');
-	$('#jobsTable tbody tr.pending:odd').addClass('pendinge');
+	$("#multiusedialog").dialog("open");
 }
 
-// Show all the jobs
-function returnToRoot() {
-	// Add a URL to the history and update the title
-	$.history.load("");
-	document.title = "theQ";
+function showJobInfo(data, jobNo) {
+	tempstring = "<ul>"
+	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>"
+	tempstring += "<li>StdOut Path: " + data.stdout + "</li>"
+	tempstring += "<li>StdErr Path: " + data.stderr + "</li>"
+	tempstring += "</ul>"
 
-	// Now go get the data and create the table
-	getQStat(testParam, createJobTable);
+	showInfoDialog("SGE Info for " + jobNo, tempstring, 500);
 }
 
-// Show the tasks that make up a job
-function showJob(jobNo) {
-	// Add a URL to the history and update the title
-	document.title = "Job " + jobNo;
-	currentJob = jobNo;
-
-	// Now go get the data and create the table
-	getQStat(testParam + "&jobNo=" + jobNo,
-		function(xml) { createTaskTable(xml, jobNo); }
-	);
-}
-
-// Shows the tasks in a job
-function createTaskTable(xml, jobNo) {
-	jobName = $(xml).find("JB_job_name").text();
-	$("#parents").html("<a href=\"\" onclick=\"returnToRoot(); return false;\">Root</a> &gt; " + jobName + " (" + jobNo + ")");
-	$("#jobsTable").hide(); $("#tasksTable").show();
-	$("#tasksTable tbody tr.tasktr").remove();
-
-	// For every task in the XML
-	minTask = parseInt($(xml).find("RN_min").text());
-	maxTask = parseInt($(xml).find("RN_max").text());
-	owner = $(xml).find("JB_owner").text();
-	runningTasks = $(xml).find("JB_ja_tasks");
-
-	for (var i = minTask; i <= maxTask; i++) {
-		$("#tasksTable tbody").append("\t\t<tr class=\"tasktr\" id=\"task" + i + "\">\n"
-						+ "\t\t\t<td>" + i + "</td>\n"
-						+ "\t\t\t<td>" + owner + "</td>\n"
-						+ "\t\t\t<td class=\"taskstate\"> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-						+ "\t\t\t<td> </td>\n"
-					+ "\t\t</tr>\n");
-	}
-
-	// Now go through the tasks qstat knows about and render some extra info
-	$(xml).find("ulong_sublist").each( function() {
-		task = $(this);
-		taskNo = task.find("JAT_task_number").text();
-		taskState = task.find("JAT_status").text();
-
-		taskStateTD = $("#task" + taskNo + " td.taskstate");
-		taskStateTD.html(bitmaskToStates(taskState));
-
-		if ( taskStateTD.text().indexOf("Running") > -1 ) { $("#task" + taskNo).addClass('running'); }
-		if ( taskStateTD.text().indexOf("Queued") > -1 ) { $("#task" + taskNo).addClass('pending'); }
-	});
-
-	$('#tasksTable tbody tr:odd').addClass('unknowne');
-	$('#tasksTable tbody tr.running, #tasksTable tbody tr.running').removeClass('unknowne');
-	$('#tasksTable tbody tr.running:odd').addClass('runninge');
-	$('#tasksTable tbody tr.pending:odd').addClass('pendinge');
-}
-
-function returnToRightPlace(url) {
-	// Parse the URL and compose the right page
-	// Jobs table (root)
-	if (url == "root") { returnToRoot(); }
-
-	// Tasks table for a given job
-	if (url.indexOf("job") > -1) {
-		var reg = /\d+/;
-		var regOut = reg.exec(url);
-		showJob(regOut[0]);
+// Pop up a dialog with info on a particular job
+function jobInfo(jobNo) {
+	if ($("#row" + jobNo).hasClass("completed")) {
+		showInfoDialog(jobNo + " Info", "No longer in SGE - TODO");
+	} else {
+		$.ajax({
+			url: "cgi/getJobInfo.cgi",
+			data: "sgeid=" + jobNo,
+			type: "POST",
+			dataType: "json",
+			success: function(data, jobNo) {
+				showJobInfo(data, jobNo);
+			}
+		});
 	}
 }
 
-function refreshPage() {
-	if ($("#jobsTable").is(":visible")) { returnToRoot(); }
-	else if ($("#tasksTable").is(":visible")) { showJob(currentJob); }
-	refreshTimeout = setTimeout(function() { refreshPage(); }, refreshInterval);
+// Remove a single job from both the DB and the SGE queue
+function deleteJob(jobNo) {
+	$("#multiusedialog")
+	.html("Are you sure?")
+	.dialog({
+		width : 300,
+		title : "Confirmation Required",
+		buttons : {
+			"Confirm" : function() {
+				$.ajax({
+					url: "cgi/deleteJob.cgi",
+					data: "sgeid=" + jobNo,
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						refreshPage();
+						$("#multiusedialog")
+							.dialog("close");
+					}
+				});
+			},
+			"Cancel" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$("#multiusedialog").dialog("open");
 }
 
-// Runs when the page is rendered
-$(document).ready(function() {
+// Remove all completed jobs.  Don't need to remove from queue because they
+// already have been since they're done
+function removeAllComplete() {
+	$("#multiusedialog")
+	.html("Are you sure?")
+	.dialog({
+		width : 300,
+		title : "Confirmation Required",
+		buttons : {
+			"Confirm" : function() {
+				$.ajax({
+					url: "cgi/deleteComplete.cgi",
+					type: "POST",
+					success: function(data) {
+						refreshPage();
+						$("#multiusedialog")
+							.dialog("close");
+					}
+				});
+			},
+			"Cancel" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$("#multiusedialog").dialog("open");
+}
+
+// Show help dialog
+function showHelpDialog() {
+	$("#helpdialog").dialog({
+		buttons : {
+			"OK" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+
+	$("#helpdialog").dialog("open");
+}
+
+function setupToolbar() {
+	$("#removeAllComplete").button({
+		icons: { primary: "ui-icon-closethick" }
+	}).click(function() { removeAllComplete(); });
+	$("#showLegend").button({
+		icons: { primary: "ui-icon-info" }
+	}).click(function() { showHelpDialog(); });
+}
+
+function updateDurations() {
+	var rightNow = new Date();
+	theYear = rightNow.getFullYear();
+
+	$(".rtupdate").each(function() {
+		rowID = $(this).parent().attr("id");
+		startTimeTD = $("#" + rowID + " td.starttime");
+		startTime = startTimeTD.html();
+		startTimeMonth = startTimeTD.attr("alt");
+
+		if (startTimeMonth != "") {
+			tempArray1 = startTime.split(" ");
+			tempArray2 = tempArray1[2].split(":");
+			var startDate = new Date(theYear, startTimeMonth-1, tempArray1[0],
+				tempArray2[0], tempArray2[1], tempArray2[2]);
+			var delta = rightNow - startDate;
+
+			delta = Math.floor(delta/1000);
+			var hours=Math.floor(delta/3600); 
+			var minutes=Math.floor(delta/60)-(hours*60); 
+			var seconds=delta-(hours*3600)-(minutes*60);
+
+			$(this).html(hours + "h " + minutes + "m " + seconds + "s");
+		}
+	});
+}	
+
+// jQuery setup thingy
+$(function() {
+	// Set up the tabs
+	$("#tabs").tabs();
+	// and the modal dialogs
+	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
+	$("#helpdialog").dialog({ autoOpen: false, modal: true });
+	setupToolbar();
+
+	// Setup all the autoRefresh bits
 	if ($.cookie("autoRefresh")) {
 		$("#autorefresh INPUT[name=autorefresh]").attr("checked", true);
-		refreshTimeout = setTimeout(function() { refreshPage() }, refreshInterval);
+		refreshTimeout = setTimeout(function() {
+						refreshPage()
+					}, refreshInterval);
 	}
-
 	$("#autorefresh input").click( function() {
 		var checkbox = $(this).find(":checkbox");
 		checkbox.attr('checked', !checkbox.attr('checked'));
 
 		if( $(this).is(":checked") ) {
 			$.cookie("autoRefresh", true, { expires: 30 });
-			refreshTimeout = setTimeout(function() { refreshPage(); }, refreshInterval);
+			refreshTimeout = setTimeout(function() {
+							refreshPage();
+						}, refreshInterval);
 		}
 		if( $(this).is(":not(:checked)") ) {
 			$.cookie("autoRefresh", null);
@@ -213,8 +225,8 @@ $(document).ready(function() {
 		}
 	});
 
-	// JQuery history plugin manages URL hashes
-	$.history.init(function(url) {
-		returnToRightPlace(url == "" ? "root" : url);
-	});
+	// Now populate the jobsTable
+	getJobs("", createJobTable);
+
+	lastUpdated();
 });

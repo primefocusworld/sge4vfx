@@ -1,0 +1,36 @@
+=== Scripts as part of SGE4VFX ===
+
+==== Install ====
+
+First, go through the scripts and change the variables at the top to reflect
+your database server details
+
+==== gridsub (bash) ====
+
+qsub submits jobs to sge, but because SGE doesn't care about the job once it's
+done, the gridsub command wraps it and allows us to use another mechanism to
+track the job.  I'm starting with a pretty basic Postgres DB.
+
+Note1.  By using this method, it's important to pass all options to SGE by param
+rather than putting them in the submission script so they can all be parsed.
+Also, the script is not too clever so the submission script must be the last
+parameter.
+
+Note2.  I'm using Postgres rather than MySQL because people who know better than
+me told me to.  I don't know enough about it to argue.
+
+Try it with an example submission like this:
+
+====== test.sh ======
+#!/bin/sh
+
+sleep ${SGE_TASK_ID}
+echo "Slept"
+=====================
+
+gridsub -t 1-100 -N test_name test.sh
+
+
+==== TODO ====
+
+Write a python version of the gridsub script

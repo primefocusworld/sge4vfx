@@ -2,4 +2,4 @@
 
 # Source your SGE settings here
 . # Put your SGE settings file here /blah/blah/common/settings.sh
-qstat $@
+qdel $@

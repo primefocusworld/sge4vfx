@@ -1,0 +1,20 @@
+=== DB Setup ===
+
+====  Postgres ====
+
+I've gone with a Postgres database using the postgres 8.4 RPMs for CentOS
+In this directory you'll find the structure dump.  I'm very very new to postgres
+and I'm pretty sure I'm making bad choices when it comes to priveleges and perms
+hence the TODO
+
+1) Create a passwordless user called 'sge'
+2) Apply the dump script
+
+You'll need the psql client on your workstations and renderboxes too
+
+This I really know almost nothing about so if someone can help here it'd be much
+appreciated.
+
+==== TODO ====
+
+Sort out permissions/priveleges/users/pg_hba stuff
