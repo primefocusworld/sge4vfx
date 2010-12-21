@@ -6,3 +6,7 @@ An attempt to make SGE more usable for VFX houses.
 
 Go through the steps in the db/README then webui/README and once you're done,
 use scripts/gridsub to submit stuff (as described in scripts/README)
+
+== ToDo ==
+
+Add tab pages then merge into master
