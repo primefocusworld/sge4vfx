@@ -3,7 +3,8 @@
 ==== Install ====
 
 First, go through the scripts and change the variables at the top to reflect
-your database server details
+your database server details, then put the prolog and epilog scripts in place
+and configure your queues to use them.
 
 ==== gridsub (bash) ====
 
@@ -30,6 +31,23 @@ echo "Slept"
 
 gridsub -t 1-100 -N test_name test.sh
 
+==== prolog ====
+
+You should set this as the prolog script for your various queues.  It updates
+the start times and both the task running and the job (if it hasn't already been
+set)
+
+I put this in ${SGE_ROOT}/${SGE_CELL}/scripts but as long as they're visible to
+renderboxes I guess they can go anywhere really
+
+==== epilog ====
+
+Set this as the epilog script for your various queues.  It updates the end times
+of the task as well as the number of tasks completed field in the job.  If the
+number of tasks finished equals the total number of tasks, then it also sets the
+end time of the job
+
+As with the prolog script, put it somewhere renderboxes can see it
 
 ==== TODO ====
 

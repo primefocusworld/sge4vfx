@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Prolog script that updates the task start times and therefore
+# (by trigger) the job start times
+
+PGHOST= #Put your database server here
+PGUSER= #Put your database user here (sge probably)
+PGDB= #Put your database name here (sgedb probably)
+
+SGE_ID=${JOB_ID}
+TASK_NO=${SGE_TASK_ID}
+
+# Now compose the psql command to update the endtime of the task
+# increment the donetasks in jobs, and then set status to completed
+# if the donetasks = (lasttask - firsttask + 1)
+PSQL_CMD="UPDATE tasks SET endtime = current_timestamp WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs set donetasks = donetasks + 1 WHERE sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs set endtime = current_timestamp, status = 3 WHERE donetasks = (lasttask - firsttask + 1) AND sgeid = ${SGE_ID};"
+
+# Run the task command
+psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
