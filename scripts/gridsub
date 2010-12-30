@@ -3,9 +3,9 @@
 # Wraps qsub so that a record is inserted into a postgres database using the
 # details below.  This will pass through all variables to qsub.
 
-PGHOST= #Put your database server here
-PGUSER= #Put your database user here (sge probably)
-PGDB= #Put your database name here (sgedb probably)
+PGHOST=queue1
+PGUSER=sge
+PGDB=sgedb
 
 # The Postgres jobs DB is the following column order:
 # SGEID, jobname, username, project, starttime, endtime, firsttask, lasttask,
@@ -23,18 +23,18 @@ for WORD in "$@" ; do
 				N=${ARGV[$I]};
 			else
 				echo "Missing argument to -N"
-				exit 1;
+				exit 1
 			fi ;;
 	esac
 done
 
 # Actually submit the job to SGE
-qsub $@ &> OUT.$$.tmp
+qsub $@ &> /tmp/OUT.$$.tmp
 
 # If there was an error
 if [ "$?" -ne "0" ]; then
 	echo -e "There was an \e[0;31merror\e[0m with qsub - here it is..."
-	cat OUT.$$.tmp
+	cat /tmp/OUT.$$.tmp
 # If there wasn't an error - create and submit the psql command
 else
 	# Get the last param which should be path to the submission script
@@ -45,7 +45,7 @@ else
 	fi
 
 	# Get the SGE job id from the stdout of qsub
-	JOB_ID=`cat OUT.$$.tmp | awk '{print $3}'`
+	JOB_ID=`cat /tmp/OUT.$$.tmp | awk '{print $3}'`
 	SGE_ID=`echo $JOB_ID | awk -F\. '{print $1}'`
 	TASKS=`echo $JOB_ID | awk -F\. '{print $2}'`
 	FIRST=`echo $TASKS | awk -F\- '{print $1}'`
@@ -70,11 +70,15 @@ else
 	PSQL_CMD="${PSQL_CMD}NULL, current_timestamp, NULL, NULL, ${FIRST}, "
 	PSQL_CMD="${PSQL_CMD}${LAST}, ${CHUNK}, 0, '${SUBMIT_SCRIPT}', 0);"
 
-	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
+	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null
 	if [ "$?" -ne "0" ]; then
 		echo -e "There was an \e[0;31merror\e[0m adding to the database"
 		echo "Please tell your friendly local sysadmin"
+		exit 1
 	fi
+
+	# Output the SGEID
+	echo $JOB_ID
 fi
 
-rm OUT.$$.tmp
+rm /tmp/OUT.$$.tmp
