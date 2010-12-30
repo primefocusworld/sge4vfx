@@ -3,9 +3,9 @@
 # Wraps qsub so that a record is inserted into a postgres database using the
 # details below.  This will pass through all variables to qsub.
 
-PGHOST=queue1
-PGUSER=sge
-PGDB=sgedb
+PGHOST=queue1     # Postgres database server
+PGUSER=sge        # Postgres user
+PGDB=sgedb        # Postgres database name
 
 # The Postgres jobs DB is the following column order:
 # SGEID, jobname, username, project, starttime, endtime, firsttask, lasttask,
