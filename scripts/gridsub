@@ -47,10 +47,19 @@ else
 	# Get the SGE job id from the stdout of qsub
 	JOB_ID=`cat /tmp/OUT.$$.tmp | awk '{print $3}'`
 	SGE_ID=`echo $JOB_ID | awk -F\. '{print $1}'`
-	TASKS=`echo $JOB_ID | awk -F\. '{print $2}'`
-	FIRST=`echo $TASKS | awk -F\- '{print $1}'`
-	LAST=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $1}'`
-	CHUNK=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $2}'`
+
+	# Check for array/non-array jobs
+	if [[ $JOB_ID == *:* ]]; then
+		TASKS=`echo $JOB_ID | awk -F\. '{print $2}'`
+		FIRST=`echo $TASKS | awk -F\- '{print $1}'`
+		LAST=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $1}'`
+		CHUNK=`echo $TASKS | awk -F\- '{print $2}' | awk -F\: '{print $2}'`
+	else
+		TASKS=1
+		FIRST=1
+		LAST=1
+		CHUNK=1
+	fi
 
 	# Now compose the psql command to insert the row
 	PSQL_CMD="INSERT INTO jobs (sgeid, jobname, username, project, "

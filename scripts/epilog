@@ -3,12 +3,18 @@
 # Prolog script that updates the task start times and therefore
 # (by trigger) the job start times
 
-PGHOST= #Put your database server here
-PGUSER= #Put your database user here (sge probably)
-PGDB= #Put your database name here (sgedb probably)
+PGHOST=queue1 #Put your database server here
+PGUSER=sge #Put your database user here (sge probably)
+PGDB=sgedb #Put your database name here (sgedb probably)
 
 SGE_ID=${JOB_ID}
-TASK_NO=${SGE_TASK_ID}
+if [ "${SGE_TASK_ID}" = "undefined" ]; then
+	TASK_NO=1
+else
+	TASK_NO=${SGE_TASK_ID}
+fi
+
+echo "SGE: ${SGE_TASK_ID} - TASK_NO: ${TASK_NO}" > /tmp/epilog
 
 # Now compose the psql command to update the endtime of the task
 # increment the donetasks in jobs, and then set status to completed

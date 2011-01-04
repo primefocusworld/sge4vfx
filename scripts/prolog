@@ -3,12 +3,16 @@
 # Prolog script that updates the task start times and therefore
 # (by trigger) the job start times
 
-PGHOST=queue1
-PGUSER=sge
-PGDB=sgedb
+PGHOST=queue1 #Put your database server here
+PGUSER=sge #Put your database user here (sge probably)
+PGDB=sgedb #Put your database name here (sgedb probably)
 
 SGE_ID=${JOB_ID}
-TASK_NO=${SGE_TASK_ID}
+if [ "${SGE_TASK_ID}" = "undefined" ]; then
+	TASK_NO=1
+else
+	TASK_NO=${SGE_TASK_ID}
+fi
 
 # Now compose the psql command to insert the row into the
 # tasks table and to update the starttime/status of the job
@@ -17,3 +21,5 @@ PSQL_CMD="${PSQL_CMD}UPDATE jobs SET starttime = current_timestamp, status = 1 W
 
 # Run the task command
 psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
+
+echo "Done" >> /tmp/prolog_out
