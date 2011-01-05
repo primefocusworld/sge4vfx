@@ -39,8 +39,8 @@ CREATE FUNCTION create_tasks() RETURNS trigger
         last INTEGER = NEW.lasttask;
     BEGIN
         WHILE counter <= last LOOP
-            INSERT INTO tasks (sgeid, taskno, starttime, endtime, retries)
-            VALUES (NEW.sgeid, counter, NULL, NULL, 0);
+            INSERT INTO tasks (sgeid, taskno, starttime, endtime, retries, returncode)
+            VALUES (NEW.sgeid, counter, NULL, NULL, 0, NULL);
             counter := counter + 1;
         END LOOP;
         RETURN NEW;
@@ -185,11 +185,19 @@ CREATE TABLE tasks (
     taskno integer NOT NULL,
     starttime timestamp without time zone,
     endtime timestamp without time zone,
-    retries smallint NOT NULL
+    retries smallint NOT NULL,
+    returncode smallint
 );
 
 
 ALTER TABLE public.tasks OWNER TO pgadmin;
+
+--
+-- Name: COLUMN tasks.returncode; Type: COMMENT; Schema: public; Owner: pgadmin
+--
+
+COMMENT ON COLUMN tasks.returncode IS 'Return code from task command';
+
 
 --
 -- Name: jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: sge; Tablespace: 
