@@ -7,6 +7,12 @@ remains and is included in the LICENSE file
 
 ==== Install ====
 
+===== SGE bits =====
+
+apache (or whatever user it's running as, must be a manager in SGE so it can
+delete jobs.  The machine the webserver's running on must be a submit host for
+the same reason.
+
 ===== Postgres =====
 
 You'll need to setup the database first.  Have a look at the README in the db

@@ -37,6 +37,8 @@ table tbody tr.error { background: #311; }
 table tbody tr.error.zebra { background: #433; }
 table tbody tr.completed { background: #004; }
 table tbody tr.completed.zebra { background: #006; }
+table tbody tr.other { background: #404; }
+table tbody tr.other.zebra { background: #606; }
 table tbody tr:hover { background: #444; }
 table tbody tr.zebra:hover { background: #444; }
 .iconbtn { margin: 0 1px; }
@@ -77,3 +79,4 @@ table tr:last-child td:last-child { border-bottom-right-radius:5px }
 .bluebg { background:#004; padding:5px; }
 .greenbg { background:#141; padding:5px; }
 .redbg  { background:#311; padding:5px; }
+.purplebg  { background:#313; padding:5px; }

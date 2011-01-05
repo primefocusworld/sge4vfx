@@ -6,29 +6,52 @@ var refreshInterval = 5000;
 var realTimeInverval;
 var sortJobsBy = "sgeid";
 var sortJobsDir = "DESC";
+var sortJobBy = "taskno";
+var sortJobDir = "ASC";
 
 // Allows you to call jobsTable cgi script
-function getJobs(params, callback) {
-	params = "sortby=" + sortJobsBy + "&sortdir=" + sortJobsDir + params
+function getJobs(params) {
+	var AJAXparams = "sortby=" + sortJobsBy + "&sortdir=" + sortJobsDir + params;
+
 	$.ajax({
 		url: "cgi/jobs.cgi",
-		data: params,
-		success: callback
+		data: AJAXparams,
+		success: function(data) {
+			$("#jobsTable tbody").html(data);
+			if (realTimeInverval == null) {
+				realTimeInverval = setInterval(
+					'updateDurations()', 1000);
+			}
+		}
 	});
 }
 
-// Very basic function to just populate the tbody of the jobsTable
-function createJobTable(data) {
-	$("#jobsTable tbody").html(data);
-	if (realTimeInverval == null) {
-		realTimeInverval = setInterval('updateDurations()', 1000);
-	}
+// Allows you to call jobTable cgi script
+function getJob(params, whichJob) {
+	var AJAXparams = "sortby=" + sortJobBy + "&sortdir=" + sortJobDir;
+	AJAXparams += "&jobno=" + whichJob + params;
+
+	$.ajax({
+		url: "cgi/oneJob.cgi",
+		data: AJAXparams,
+		success: function(data) {
+			$("#"+whichJob+"tab tbody").html(data);
+		}
+	});
 }
 
 // Refresh the jobsTable
 function refreshPage() {
-	if ($("#jobsTable").is(":visible")) { getJobs("", createJobTable); }
+	// Figure out which tab is visible and only refresh that one
+	if ($("#jobsTable").is(":visible")) { getJobs(""); }
+	else if ($(".jobTable").is(":visible")) {
+		var tempID = $(".jobTable:visible").attr("id");
+		var tempSplit = tempID.split("Table");
+		
+		getJob("", tempSplit[0]);
+	}
 	lastUpdated();
+	clearTimeout(refreshTimeout);
 	refreshTimeout = setTimeout(function() {
 					refreshPage();
 				}, refreshInterval);
@@ -89,6 +112,9 @@ function jobInfo(jobNo) {
 
 // Remove a single job from both the DB and the SGE queue
 function deleteJob(jobNo) {
+	// Stop the opening of the job tab
+	event.stopPropagation();
+
 	$("#multiusedialog")
 	.html("Are you sure?")
 	.dialog({
@@ -99,7 +125,48 @@ function deleteJob(jobNo) {
 				$.ajax({
 					url: "cgi/deleteJob.cgi",
 					data: "sgeid=" + jobNo,
-					type: "POST",
+					type: "GET",
+					dataType: "json",
+					success: function(data) {
+						refreshPage();
+						$("#multiusedialog")
+							.dialog("close");
+
+						var tabName = "#" + data.sgeid + "tab";
+						if ($(tabName).length > 0) {
+							$("#tabs").tabs("remove", tabName);
+						}
+					}
+				});
+			},
+			"Cancel" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$("#multiusedialog").dialog("open");
+}
+
+// Remove a single job from both the DB and the SGE queue
+function stopTask(jobNo, taskNo) {
+	var tempstring = "Are you sure?<br /><br />This will delete the task ";
+	tempstring += "from the queue but not from this page.  It'll show up ";
+	tempstring += "as purple (other) status";
+
+	$("#multiusedialog")
+	.html(tempstring)
+	.dialog({
+		width : 300,
+		title : "Confirmation Required",
+		buttons : {
+			"Confirm" : function() {
+				var AJAXparams = "sgeid=" + jobNo
+				AJAXparams += "&taskno=" + taskNo;
+
+				$.ajax({
+					url: "cgi/stopTask.cgi",
+					data: AJAXparams,
+					type: "GET",
 					dataType: "json",
 					success: function(data) {
 						refreshPage();
@@ -179,24 +246,50 @@ function updateDurations() {
 		if (startTimeMonth != "") {
 			tempArray1 = startTime.split(" ");
 			tempArray2 = tempArray1[2].split(":");
-			var startDate = new Date(theYear, startTimeMonth-1, tempArray1[0],
-				tempArray2[0], tempArray2[1], tempArray2[2]);
+			var startDate = new Date(theYear, startTimeMonth-1,
+				tempArray1[0], tempArray2[0],
+				tempArray2[1], tempArray2[2]);
 			var delta = rightNow - startDate;
 
 			delta = Math.floor(delta/1000);
-			var hours=Math.floor(delta/3600); 
+			var hours=Math.floor(delta/3600);
 			var minutes=Math.floor(delta/60)-(hours*60); 
 			var seconds=delta-(hours*3600)-(minutes*60);
 
-			$(this).html(hours + "h " + minutes + "m " + seconds + "s");
+			$(this).html(hours+"h "+minutes+"m "+seconds+"s");
 		}
 	});
-}	
+}
+
+// Add a job tab if it's not already there.
+function addJobTab(jobNo) {
+	var tabID = "#" + jobNo + "tab"
+
+	if ($(tabID).length == 0) {
+		$("#tabs").tabs( "add", tabID, jobNo )
+
+		var tempString = "<table class=\"jobTable\" "
+		tempString +="id=\"" + jobNo + "Table\">";
+		tempString +="<thead><tr><th class=\"narrow2\">Actions";
+		tempString +="</th><th class=\"narrow1\">ID</th>";
+		tempString +="<th class=\"normalwidth\">Start Time";
+		tempString +="</th><th class=\"normalwidth\">End Time";
+		tempString +="</th><th class=\"narrow2\">Duration</th>";
+		tempString +="<th class=\"narrow2\">Return Code</th>";
+		tempString +="</tr></thead><tbody></tbody></table>";
+
+		$("#" + jobNo + "tab").append(tempString);
+	}
+	$("#tabs").tabs("select", tabID);
+
+	getJob("", jobNo);
+	return false;
+}
 
 // jQuery setup thingy
 $(function() {
 	// Set up the tabs
-	$("#tabs").tabs();
+	$("#tabs").tabs({closable: true});
 	// and the modal dialogs
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
@@ -226,7 +319,7 @@ $(function() {
 	});
 
 	// Now populate the jobsTable
-	getJobs("", createJobTable);
+	getJobs("");
 
 	lastUpdated();
 });

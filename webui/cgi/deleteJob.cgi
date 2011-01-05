@@ -7,7 +7,7 @@ print "Content-type:application/json\r\n\r\n"
 import psycopg2
 import datetime
 import simplejson as json
-from subprocess import call
+from subprocess import Popen,PIPE
 
 import sgewebuisettings
 
@@ -27,6 +27,7 @@ conn.close()
 
 # Now do the SGE removal
 command = ['workers/qdel', sgeid]
-call(command)
+p1 = Popen(command, stdout=PIPE)
+theOutput = p1.communicate()[0]
 
 print json.dumps({"sgeid": sgeid})

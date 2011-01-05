@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
 	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.7.custom.min.js"></script>
+	<script type="text/javascript" src="js/ui.tabs.closable.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
@@ -20,8 +21,8 @@
 </div>
 <div id="tabs">
 	<ul>
-		<li><a href="#jobstab">Jobs</a></li>
-		<li><a href="#workerstab">Workers</a></li>
+		<li class="tab-no-close"><a href="#jobstab"><span>Jobs</span></a></li>
+		<li class="tab-no-close"><a href="#workerstab">Workers</a></li>
 	</ul>
 	<div id="jobstab">
 		<div id="toolbar" class="ui-widget-header ui-corner-all">
@@ -57,6 +58,7 @@
 	<div class="greenbg">Running</div>
 	<div class="bluebg">Completed</div>
 	<div class="redbg">Error</div>
+	<div class="purplebg">Other</div>
 </div>
 </body>
 </html>

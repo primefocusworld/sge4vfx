@@ -24,4 +24,8 @@ PSQL_CMD="${PSQL_CMD}UPDATE jobs set donetasks = donetasks + 1 WHERE sgeid = ${S
 PSQL_CMD="${PSQL_CMD}UPDATE jobs set endtime = current_timestamp, status = 3 WHERE donetasks = (lasttask - firsttask + 1) AND sgeid = ${SGE_ID};"
 
 # Run the task command
-psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
+psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null
+
+# Now remove empty logs
+[ -r "$SGE_STDOUT_PATH" -a -f "$SGE_STDOUT_PATH" ] && [ ! -s "$SGE_STDOUT_PATH" ] && rm -f $SGE_STDOUT_PATH
+[ -r "$SGE_STDERR_PATH" -a -f "$SGE_STDERR_PATH" ] && [ ! -s "$SGE_STDERR_PATH" ] && rm -f $SGE_STDERR_PATH

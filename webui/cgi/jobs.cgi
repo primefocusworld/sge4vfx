@@ -57,9 +57,13 @@ for record in cur:
 
 	# Zebra stripe the rows
 	if zebra:
-		tempstring = "<tr id=\"row" + sgeid + "\" class=\"" + statusclass + " zebra\">"
+		tempstring = "<tr onclick=\"addJobTab(" + sgeid + ");\""
+		tempstring += "id=\"row" + sgeid + "\" class=\"" + statusclass
+		tempstring += " zebra\">"
 	else:
-		tempstring = "<tr id=\"row" + sgeid + "\" class=\"" + statusclass + "\">"
+		tempstring = "<tr onclick=\"addJobTab(" + sgeid + ");\""
+		tempstring += "id=\"row" + sgeid + "\" class=\"" + statusclass
+		tempstring += "\">"
 	zebra = not zebra
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob("
@@ -82,7 +86,7 @@ for record in cur:
 
 	percentdone = (float(donetasks) / (float(lasttask) - float(firsttask) + 1.0)) * 100.0
 
-	tempstring += "</td><td class=\"percentdone\">" + str(int(percentdone)) + "%"
+	tempstring += "</td><td class=\"percentdone\">" + str(int(percentdone)) + "% (" + str(donetasks) + ")"
 	tempstring += "</td></tr>"
 	print tempstring
 

@@ -20,6 +20,4 @@ PSQL_CMD="UPDATE tasks SET starttime = current_timestamp WHERE sgeid = ${SGE_ID}
 PSQL_CMD="${PSQL_CMD}UPDATE jobs SET starttime = current_timestamp, status = 1 WHERE sgeid = ${SGE_ID} AND starttime IS NULL;"
 
 # Run the task command
-psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
-
-echo "Done" >> /tmp/prolog_out
+psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null
