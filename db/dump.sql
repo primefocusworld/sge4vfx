@@ -39,7 +39,7 @@ CREATE FUNCTION create_tasks() RETURNS trigger
         last INTEGER = NEW.lasttask;
     BEGIN
         WHILE counter <= last LOOP
-            INSERT INTO tasks (sgeid, taskno, starttime, endtime, retries, returncode)
+            INSERT INTO tasks (sgeid, taskno, starttime, endtime, attempts, returncode)
             VALUES (NEW.sgeid, counter, NULL, NULL, 0, NULL);
             counter := counter + 1;
         END LOOP;
@@ -60,7 +60,7 @@ SET default_with_oids = false;
 
 CREATE TABLE jobs (
     sgeid integer NOT NULL,
-    jobname character varying(32) NOT NULL,
+    jobname character varying(128) NOT NULL,
     username character varying(16) NOT NULL,
     project character varying(16),
     priority real,
@@ -185,7 +185,7 @@ CREATE TABLE tasks (
     taskno integer NOT NULL,
     starttime timestamp without time zone,
     endtime timestamp without time zone,
-    retries smallint NOT NULL,
+    attempts smallint NOT NULL,
     returncode smallint
 );
 
