@@ -79,7 +79,7 @@ else
 	PSQL_CMD="${PSQL_CMD}NULL, current_timestamp, NULL, NULL, ${FIRST}, "
 	PSQL_CMD="${PSQL_CMD}${LAST}, ${CHUNK}, 0, '${SUBMIT_SCRIPT}', 0);"
 
-	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null
+	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
 	if [ "$?" -ne "0" ]; then
 		echo -e "There was an \e[0;31merror\e[0m adding to the database"
 		echo "Please tell your friendly local sysadmin"

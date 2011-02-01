@@ -17,11 +17,23 @@ fi
 echo "SGE: ${SGE_TASK_ID} - TASK_NO: ${TASK_NO}" > /tmp/epilog
 
 # Now compose the psql command to update the endtime of the task
+# check for a returncode and add it to the task, increment attempts,
 # increment the donetasks in jobs, and then set status to completed
 # if the donetasks = (lasttask - firsttask + 1)
-PSQL_CMD="UPDATE tasks SET endtime = current_timestamp WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs set donetasks = donetasks + 1 WHERE sgeid = ${SGE_ID};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs set endtime = current_timestamp, status = 3 WHERE donetasks = (lasttask - firsttask + 1) AND sgeid = ${SGE_ID};"
+STATUS=3
+PSQL_CMD="UPDATE tasks SET endtime = current_timestamp, attempts = attempts + 1"
+if [ -e /tmp/${JOB_ID}-${SGE_TASK_ID}-return ]; then
+	RETURNCODE=`cat /tmp/${JOB_ID}-${SGE_TASK_ID}-return`
+	rm -f /tmp/${JOB_ID}-${SGE_TASK_ID}-return
+	# Now fill in the status for the job (not the task)
+	if [ "${RETURNCODE}" != "0" ]; then
+		STATUS=2
+	fi
+	PSQL_CMD="${PSQL_CMD}, returncode = ${RETURNCODE}"
+fi
+PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs SET donetasks = donetasks + 1 WHERE sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs SET endtime = current_timestamp, status = ${STATUS} WHERE donetasks = (lasttask - firsttask + 1) AND sgeid = ${SGE_ID};"
 
 # Run the task command
 psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null

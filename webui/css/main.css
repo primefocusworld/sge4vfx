@@ -33,8 +33,8 @@ table tbody tr { background: #111; cursor:pointer; }
 table tbody tr.zebra { background: #222; }
 table tbody tr.running { background: #141; }
 table tbody tr.running.zebra { background: #353; }
-table tbody tr.error { background: #311; }
-table tbody tr.error.zebra { background: #433; }
+table tbody tr.error { background: #611; }
+table tbody tr.error.zebra { background: #833; }
 table tbody tr.completed { background: #004; }
 table tbody tr.completed.zebra { background: #006; }
 table tbody tr.other { background: #404; }

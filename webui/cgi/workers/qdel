@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # Source your SGE settings here
-. # Put your SGE settings file here /blah/blah/common/settings.sh
+. /net/viewdisilon/ifs/systems/sge/default/common/settings.sh
 qdel $@

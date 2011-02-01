@@ -95,8 +95,13 @@ function showJobInfo(data, jobNo) {
 
 // Pop up a dialog with info on a particular job
 function jobInfo(jobNo) {
+	// Stop the opening of the job tab
+	event.stopPropagation();
+
 	if ($("#row" + jobNo).hasClass("completed")) {
 		showInfoDialog(jobNo + " Info", "No longer in SGE - TODO");
+	} else if ($("#row" + jobNo).hasClass("error")) {
+		showInfoDialog(jobNo + " Info", "Job has errors - TODO");
 	} else {
 		$.ajax({
 			url: "cgi/getJobInfo.cgi",

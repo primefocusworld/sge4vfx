@@ -1,4 +1,4 @@
-#!/code/tools/python-2.6.6/bin/python
+#!/code/devtools/centos5.5/python-2.6.6/bin/python
 
 import cgi
 

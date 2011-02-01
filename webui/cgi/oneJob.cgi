@@ -1,4 +1,4 @@
-#!/code/tools/python-2.6.6/bin/python
+#!/code/devtools/centos5.5/python-2.6.6/bin/python
 
 import cgi
 
@@ -24,7 +24,7 @@ cur.execute(sqlQuery)
 
 zebra = False
 for record in cur:
-	[sgeid, taskno, starttime, endtime, retries, returncode] = record
+	[sgeid, taskno, starttime, endtime, attempts, returncode] = record
 	sgeid = str(sgeid)
 	taskno = str(taskno)
 	returncode = str(returncode)
@@ -50,7 +50,9 @@ for record in cur:
 		realtimeupdate = " class=\"rtupdate\""
 
 	# Fill in job status based on start and endtime for now
-	if (returncode == "-1"):
+	if ((returncode is not None) and (returncode != "0")):
+		statusclass="error"
+	elif (returncode == "-1"):
 		statusclass="other"
 	elif ((starttime is not None) and (endtime is None)):
 		statusclass="running"

@@ -47,6 +47,16 @@ of the task as well as the number of tasks completed field in the job.  If the
 number of tasks finished equals the total number of tasks, then it also sets the
 end time of the job
 
+It also checks whether the worker part left a return code file in /tmp.  If so,
+it uses this to update the tasks returncode value in the DB then deletes it.
+To have your 'worker' part put an appropriate file somewhere, just include:
+
+# Write return code for epilog script
+echo $? > /tmp/${JOB_ID}-${SGE_TASK_ID}-return
+
+That after the important command.  You could obviously use some more complex 
+logic to determine whether the job was successful.
+
 As with the prolog script, put it somewhere renderboxes can see it
 
 ==== TODO ====

@@ -1,4 +1,4 @@
-#!/code/tools/python-2.6.6/bin/python
+#!/code/devtools/centos5.5/python-2.6.6/bin/python
 
 import cgi
 
@@ -68,7 +68,8 @@ for record in cur:
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob("
 	tempstring += sgeid + ");\" src=\"images/delete.png\" />"
-	tempstring += "<a href=\"http://" + sgewebuisettings.httphost + submissionscript
+	tempstring += "<a onclick=\"event.stopPropagation();\" "
+	tempstring += "href=\"http://" + sgewebuisettings.httphost + submissionscript
 	tempstring += "\"><img class=\"iconbtn\" alt=\"Submission Script\""
 	tempstring += " src=\"images/script.png\" /></a>"
 	tempstring += "<img class=\"iconbtn\" onclick=\"jobInfo("
