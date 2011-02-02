@@ -14,8 +14,6 @@ else
 	TASK_NO=${SGE_TASK_ID}
 fi
 
-echo "SGE: ${SGE_TASK_ID} - TASK_NO: ${TASK_NO}" > /tmp/epilog
-
 # Now compose the psql command to update the endtime of the task
 # check for a returncode and add it to the task, increment attempts,
 # increment the donetasks in jobs, and then set status to completed
@@ -32,12 +30,19 @@ if [ -e /tmp/${JOB_ID}-${SGE_TASK_ID}-return ]; then
 	PSQL_CMD="${PSQL_CMD}, returncode = ${RETURNCODE}"
 fi
 PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs SET donetasks = donetasks + 1 WHERE sgeid = ${SGE_ID};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs SET endtime = current_timestamp, status = ${STATUS} WHERE donetasks = (lasttask - firsttask + 1) AND sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs SET donetasks = donetasks + 1 "
+PSQL_CMD="${PSQL_CMD}WHERE sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs SET endtime = current_timestamp "
+PSQL_CMD="${PSQL_CMD}WHERE donetasks = (lasttask - firsttask + 1) "
+PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE status != 2 "
+PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
 
 # Run the task command
-psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" &> /dev/null
+psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1
 
 # Now remove empty logs
-[ -r "$SGE_STDOUT_PATH" -a -f "$SGE_STDOUT_PATH" ] && [ ! -s "$SGE_STDOUT_PATH" ] && rm -f $SGE_STDOUT_PATH
-[ -r "$SGE_STDERR_PATH" -a -f "$SGE_STDERR_PATH" ] && [ ! -s "$SGE_STDERR_PATH" ] && rm -f $SGE_STDERR_PATH
+[ -r "$SGE_STDOUT_PATH" -a -f "$SGE_STDOUT_PATH" ] && \
+[ ! -s "$SGE_STDOUT_PATH" ] && rm -f $SGE_STDOUT_PATH
+[ -r "$SGE_STDERR_PATH" -a -f "$SGE_STDERR_PATH" ] && \
+[ ! -s "$SGE_STDERR_PATH" ] && rm -f $SGE_STDERR_PATH

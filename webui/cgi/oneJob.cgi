@@ -24,10 +24,11 @@ cur.execute(sqlQuery)
 
 zebra = False
 for record in cur:
-	[sgeid, taskno, starttime, endtime, attempts, returncode] = record
+	[sgeid, taskno, starttime, endtime, attempts, returncode, rhost] = record
 	sgeid = str(sgeid)
 	taskno = str(taskno)
 	returncode = str(returncode)
+	rhost = str(rhost)
 
 	# Format the dates into strings if not Null
 	if starttime is not None:
@@ -50,7 +51,7 @@ for record in cur:
 		realtimeupdate = " class=\"rtupdate\""
 
 	# Fill in job status based on start and endtime for now
-	if ((returncode is not None) and (returncode != "0")):
+	if ((returncode != "None") and (returncode != "0")):
 		statusclass="error"
 	elif (returncode == "-1"):
 		statusclass="other"
@@ -79,6 +80,7 @@ for record in cur:
 	tempstring += "</td><td>" + endtimestr
 	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
 	tempstring += "</td><td>" + returncode
+	tempstring += "</td><td>" + rhost
 	tempstring += "</td></tr>"
 	print tempstring
 

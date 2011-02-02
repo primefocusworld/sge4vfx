@@ -281,6 +281,7 @@ function addJobTab(jobNo) {
 		tempString +="</th><th class=\"normalwidth\">End Time";
 		tempString +="</th><th class=\"narrow2\">Duration</th>";
 		tempString +="<th class=\"narrow2\">Return Code</th>";
+		tempString +="<th class=\"narrow2\">Exec Host</th>";
 		tempString +="</tr></thead><tbody></tbody></table>";
 
 		$("#" + jobNo + "tab").append(tempString);
@@ -323,7 +324,10 @@ $(function() {
 		}
 	});
 
-	// Now populate the jobsTable
+	// Now populate the jobsTable and set the event handler
+	$('#tabs').bind('tabsshow', function(event, ui) {
+		if (ui.panel.id == "jobstab") { getJobs(""); }
+	});
 	getJobs("");
 
 	lastUpdated();
