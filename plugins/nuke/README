@@ -1,0 +1,7 @@
+= Nuke Submission Plugin =
+
+You'll need to add whatever directory you put the two files in to your
+PYTHONPATH and NUKE_PATH environment variables
+
+It'll put a menu option on the bottom of the Render menu that allows
+you to submit
