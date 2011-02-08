@@ -11,12 +11,13 @@ from subprocess import Popen,PIPE
 # Allow user to choose
 # - Which write nodes to render
 # -- Turn off write notes that had the read file flag set
-# - Allow batch rendering
 # - Allow relative paths in the Nuke files (won't work currently because
 #   we're copying the nuke script into the SGE directories)
+# - Batch size (this is part of a bigger work-out-how-to-do-it chunking project)
 
 
-def Submit(fullSize, startFrame, endFrame, batchSize):
+def Submit(fullSize, startFrame, endFrame,
+	batchSize, slotsPerFrame, whichQueue):
 	# Specify where gridsub is
 	gridsub = "gridsub" # assumes it's in the path, otherwise put full path
 
@@ -48,6 +49,7 @@ def Submit(fullSize, startFrame, endFrame, batchSize):
 
 	nukeCmd = ("nuke -x " + fullSizeBit + "-F ${SGE_TASK_ID} "
 		+ sgePath + "/" + job_path)
+
 	nf = open(sgePath + "/nukeCommand.sh", "w")
 	nf.write("#!/bin/bash\n\n")
 	nf.write("#$ -o " + sgePath + "/logs/o_$TASK_ID\n")
@@ -62,6 +64,8 @@ def Submit(fullSize, startFrame, endFrame, batchSize):
 	sgeCmd = (gridsub
 		+ " -N " + job_title
 		+ " -V -S /bin/bash "
+		+ " -pe pe1 " + slotsPerFrame
+		+ " -q " + whichQueue
 		+ " -t " + startFrame + "-" + endFrame + " "
 		+ sgePath
 		+ "/nukeCommand.sh")
@@ -89,14 +93,18 @@ def RenderPanel():
 	# Set defaults
 	startFrame = str(nuke.root().firstFrame())
 	endFrame = str(nuke.root().lastFrame())
-	batchSize = 1
+	batchSize = str(1)
+	slotsRequired = str(4)
 	renderFullSize = not(nuke.root().proxy())
+	whichQueue = "farm.q"
 
 	# Create the panel and put the bits on it
 	p = nuke.Panel("Render on theQ")
 	p.addBooleanCheckBox("Ensure render full size:", renderFullSize)
 	p.addSingleLineInput("Start Frame:", startFrame)
 	p.addSingleLineInput("End Frame:", endFrame)
+	p.addSingleLineInput("Slots per frame:", slotsRequired)
+	p.addSingleLineInput("Queue:", whichQueue)
 	#p.addSingleLineInput("Batch Size:", batchSize)
 	p.addButton("Cancel")
 	p.addButton("OK")
@@ -109,6 +117,13 @@ def RenderPanel():
 		renderFullSize = str(p.value("Ensure render full size:"))
 		startFrame = p.value("Start Frame:")
 		endFrame = p.value("End Frame:")
+		slotsPerFrame = p.value("Slots per frame:")
+		queue = p.value("Queue:")
 		#batchSize = p.value("Batch Size:")
 
-		Submit(renderFullSize, startFrame, endFrame, batchSize)
+		Submit(renderFullSize,
+			startFrame,
+			endFrame,
+			batchSize,
+			slotsPerFrame,
+			whichQueue)

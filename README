@@ -4,6 +4,18 @@ An attempt to make SGE more usable for VFX houses.
 
 == Install ==
 
+This doesn't cover doing the actual SGE install.  Have a look at
+Sun/Oracle/whoever own's it this week's website for that.
+
+I've created queues called:
+farm.q
+workstations.q
+all.q
+
+and a parallel environment associated with all those queues called:
+pe1
+
+Once SGE's set up...
 Go through the steps in the db/README then webui/README and once you're done,
 use scripts/gridsub to submit stuff (as described in scripts/README)
 
