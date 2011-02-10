@@ -36,7 +36,7 @@ PSQL_CMD="${PSQL_CMD}UPDATE jobs SET endtime = current_timestamp "
 PSQL_CMD="${PSQL_CMD}WHERE donetasks = (lasttask - firsttask + 1) "
 PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
 PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE status != 2 "
-PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
+PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID} AND endtime IS NOT NULL;"
 
 # Run the task command
 psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1
