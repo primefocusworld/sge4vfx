@@ -60,9 +60,14 @@ function refreshPage() {
 // Refresh the last updated bit top-right
 function lastUpdated() {
 	rightNow = new Date();
-	hours = rightNow.getHours();
-	minutes = rightNow.getMinutes();
-	seconds = rightNow.getSeconds();
+	hours = '' + rightNow.getHours();	// Use "'' +" to make string
+	minutes = '' + rightNow.getMinutes();
+	seconds = '' + rightNow.getSeconds();
+
+	if (hours.length == 1) { hours = '0' + hours }
+	if (minutes.length == 1) { minutes = '0' + minutes }
+	if (seconds.length == 1) { seconds = '0' + seconds }
+
 	timeString = hours + ":" + minutes + ":" + seconds;
 	$("#lastrefresh").html("Last refreshed: " + timeString);
 }
@@ -302,8 +307,9 @@ $(function() {
 	setupToolbar();
 
 	// Setup all the autoRefresh bits
-	if ($.cookie("autoRefresh")) {
-		$("#autorefresh INPUT[name=autorefresh]").attr("checked", true);
+	if ($.cookie("doNOTautoRefresh")) {
+		$("#autorefresh INPUT[name=autorefresh]").attr("checked", false);
+	} else {
 		refreshTimeout = setTimeout(function() {
 						refreshPage()
 					}, refreshInterval);
@@ -311,15 +317,14 @@ $(function() {
 	$("#autorefresh input").click( function() {
 		var checkbox = $(this).find(":checkbox");
 		checkbox.attr('checked', !checkbox.attr('checked'));
-
 		if( $(this).is(":checked") ) {
-			$.cookie("autoRefresh", true, { expires: 30 });
+			$.cookie("doNOTautoRefresh", null);
 			refreshTimeout = setTimeout(function() {
 							refreshPage();
 						}, refreshInterval);
 		}
 		if( $(this).is(":not(:checked)") ) {
-			$.cookie("autoRefresh", null);
+			$.cookie("doNOTautoRefresh", true, { expires: 30 });
 			clearTimeout(refreshTimeout);
 		}
 	});
