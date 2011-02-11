@@ -35,6 +35,8 @@ qsub $@ > /tmp/OUT.$$.tmp 2>&1
 if [ "$?" -ne "0" ]; then
 	echo -e "There was an \e[0;31merror\e[0m with qsub - here it is..."
 	cat /tmp/OUT.$$.tmp
+	rm /tmp/OUT.$$.tmp
+	exit 1
 # If there wasn't an error - create and submit the psql command
 else
 	# Get the last param which should be path to the submission script
