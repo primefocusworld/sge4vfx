@@ -9,6 +9,7 @@ var sortJobsDir = "DESC";
 var sortJobBy = "taskno";
 var sortJobDir = "ASC";
 var filters = "";
+var usernameVal = "";
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
@@ -202,28 +203,45 @@ function stopTask(jobNo, taskNo) {
 // Remove all completed jobs.  Don't need to remove from queue because they
 // already have been since they're done
 function removeAllComplete() {
-	$("#multiusedialog")
-	.html("Are you sure?")
-	.dialog({
-		width : 300,
-		title : "Confirmation Required",
-		buttons : {
-			"Confirm" : function() {
-				$.ajax({
-					url: "cgi/deleteComplete.cgi",
-					type: "POST",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-					}
-				});
-			},
-			"Cancel" : function() {
-				$(this).dialog("close");
+	if (usernameVal == "") {
+		$("#multiusedialog")
+		.html("You need to have a username in the filter box on the left")
+		.dialog({
+			width : 300,
+			title : "Whoops",
+			buttons : {
+				"OK" : function() {
+					$(this).dialog("close");
+				}
 			}
-		}
-	});
+		});
+	} else {
+		$("#multiusedialog")
+		.html("Are you sure?")
+		.dialog({
+			width : 300,
+			title : "Confirmation Required",
+			buttons : {
+				"Confirm" : function() {
+					var AJAXparams = "user=" + usernameVal;
+
+					$.ajax({
+						url: "cgi/deleteComplete.cgi",
+						data: AJAXparams,
+						type: "POST",
+						success: function(data) {
+							refreshPage();
+							$("#multiusedialog")
+								.dialog("close");
+						}
+					});
+				},
+				"Cancel" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	}
 	$("#multiusedialog").dialog("open");
 }
 
@@ -308,7 +326,7 @@ function refreshFilters() {
 	filters = "";
 	usernameVal = $("#username").val();
 	if (usernameVal != "") { filters += "username="+usernameVal; }
-	projnameVal = $("#projname").val();
+	var projnameVal = $("#projname").val();
 	if (projnameVal != "") {
 		var ampersand = "";
 		if (filters != "") { ampersand="&"; }
