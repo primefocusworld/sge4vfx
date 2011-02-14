@@ -8,10 +8,14 @@ var sortJobsBy = "sgeid";
 var sortJobsDir = "DESC";
 var sortJobBy = "taskno";
 var sortJobDir = "ASC";
+var filters = "";
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
-	var AJAXparams = "sortby=" + sortJobsBy + "&sortdir=" + sortJobsDir + params;
+	var ampersand = ""
+	if (filters != "") { ampersand = "&"; }
+	var AJAXparams = filters + ampersand + "sortby=" + sortJobsBy +
+		"&sortdir=" + sortJobsDir + params;
 
 	$.ajax({
 		url: "cgi/jobs.cgi",
@@ -99,9 +103,10 @@ function showJobInfo(data, jobNo) {
 }
 
 // Pop up a dialog with info on a particular job
-function jobInfo(jobNo) {
+function jobInfo(e, jobNo) {
 	// Stop the opening of the job tab
-	event.stopPropagation();
+	e.stopPropagation();
+	e.preventDefault();
 
 	if ($("#row" + jobNo).hasClass("completed")) {
 		showInfoDialog(jobNo + " Info", "No longer in SGE - TODO");
@@ -121,9 +126,10 @@ function jobInfo(jobNo) {
 }
 
 // Remove a single job from both the DB and the SGE queue
-function deleteJob(jobNo) {
+function deleteJob(e, jobNo) {
 	// Stop the opening of the job tab
-	event.stopPropagation();
+	e.stopPropagation();
+	e.preventDefault();
 
 	$("#multiusedialog")
 	.html("Are you sure?")
@@ -278,7 +284,7 @@ function addJobTab(jobNo) {
 	if ($(tabID).length == 0) {
 		$("#tabs").tabs( "add", tabID, jobNo )
 
-		var tempString = "<table class=\"jobTable\" "
+		var tempString = "<table class=\"jobTable mainTable\" "
 		tempString +="id=\"" + jobNo + "Table\">";
 		tempString +="<thead><tr><th class=\"narrow2\">Actions";
 		tempString +="</th><th class=\"narrow1\">ID</th>";
@@ -297,6 +303,52 @@ function addJobTab(jobNo) {
 	return false;
 }
 
+// Apply the filters set in the left filter bar
+function refreshFilters() {
+	filters = "";
+	usernameVal = $("#username").val();
+	if (usernameVal != "") { filters += "username="+usernameVal; }
+	projnameVal = $("#projname").val();
+	if (projnameVal != "") {
+		var ampersand = "";
+		if (filters != "") { ampersand="&"; }
+		filters += ampersand + "projname=" + projnameVal;
+	}
+	if ($("#donestate").is(":checked")) {
+		var ampersand = "";
+		if (filters != "") { ampersand="&"; }
+		filters += ampersand + "done=1";
+	}
+	if ($("#runningstate").is(":checked")) {
+		var ampersand = "";
+		if (filters != "") { ampersand="&"; }
+		filters += ampersand + "running=1";
+	}
+	if ($("#waitstate").is(":checked")) {
+		var ampersand = "";
+		if (filters != "") { ampersand="&"; }
+		filters += ampersand + "wait=1";
+	}
+	if ($("#errorstate").is(":checked")) {
+		var ampersand = "";
+		if (filters != "") { ampersand="&"; }
+		filters += ampersand + "error=1";
+	}
+	refreshPage();
+}
+
+// Set up all the filter functions for the left filter bar
+function setupFilterFunctions() {
+	$("#username").blur(function() { refreshFilters(); });
+	$("#projname").blur(function() { refreshFilters(); });
+	$("#waitstate").button({ icons: {primary:'ui-icon-clock'}, text: false });
+	$("#donestate").button({ icons: {primary:'ui-icon-check'}, text: false });
+	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
+	$("#errorstate").button({ icons: {primary:'ui-icon-alert'}, text: false });
+	$("#stateboxes input").click(function() { refreshFilters(); });
+	
+}
+
 // jQuery setup thingy
 $(function() {
 	// Set up the tabs
@@ -305,6 +357,7 @@ $(function() {
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
 	setupToolbar();
+	setupFilterFunctions();
 
 	// Setup all the autoRefresh bits
 	if ($.cookie("doNOTautoRefresh")) {

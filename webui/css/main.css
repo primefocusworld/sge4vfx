@@ -1,10 +1,35 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img,
+ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody,
+tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure,
+figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,
+time, mark, audio, video { margin:0; padding:0; border:0; font-size:100%;
+font:inherit; vertical-align:baseline }
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav,
+section { display:block }
+body { line-height:1 }
+ol, ul { list-style:none }
+blockquote, q { quotes:none }
+blockquote:before, blockquote:after, q:before, q:after { content:'';
+content:none }
+table { border-collapse:collapse; border-spacing:0 }
+
+/* End of CSS Reset and start of theQ styling */
+
 html, body {
 	margin:0;
 	padding:0;
 	font-family:Segoe UI, Arial, sans-serif;
 	background-color:#444;
 	color:#bbb;
-	font-size:11px;
+	font-size:11px
 }
 h1 {
 	display:inline;
@@ -12,11 +37,41 @@ h1 {
 	color:#bbb;
 	font-size:xx-large;
 	font-weight:bolder;
-	text-decoration:none;
+	text-decoration:none
 }
 
+/* Container Table - Inside jqueryUI Jobs tab */
+
+#containerTable { width:100% }
+#leftContainer {
+	width:9%;
+	vertical-align:top;
+	border-radius:5px;
+	background:#333333 url(custom-theme/images/ui-bg_gloss-wave_25_333333_500x100.png) 0 0 repeat-x;
+}
+#gutter { width:1% }
+#rightContainer { width:90%; vertical-align:top }
+
+
+/* Filters bit on the left */
+#leftContainer h2 {
+	text-align:center;
+	margin:0 0 5px 0;
+	line-height:1.8em;
+	font-size:11px;
+	font-weight:bold;
+	background:#bbb;
+	color:black;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px
+}
+#filters { margin:10px 10px }
+#filters input { margin:7px 0 10px 0; padding:3px 4px }
+#filters #stateboxes { margin:7px 0 10px 0 }
+
+
 /* Main table */
-table {
+.mainTable {
 	width:100%;
 	border-collapse:collapse;
 	text-align:right;
@@ -24,59 +79,61 @@ table {
 	text-align:center;
 	font-size:11px
 }
-table tr { height: 18px; }
-table th { border-right:1px solid #333; }
-table td { border-right:1px solid #888; }
-table th:last-of-type,td:last-of-type { border-right:0 }
-table thead tr { font-weight:bold; background:#bbb; color:black; }
-table tbody tr { background: #111; cursor:pointer; }
-table tbody tr.zebra { background: #222; }
-table tbody tr.running { background: #141; }
-table tbody tr.running.zebra { background: #353; }
-table tbody tr.error { background: #611; }
-table tbody tr.error.zebra { background: #833; }
-table tbody tr.completed { background: #004; }
-table tbody tr.completed.zebra { background: #006; }
-table tbody tr.other { background: #404; }
-table tbody tr.other.zebra { background: #606; }
-table tbody tr:hover { background: #444; }
-table tbody tr.zebra:hover { background: #444; }
-.iconbtn { margin: 0 1px; }
-.iconbtn:hover { opacity:0.6; }
-table img { vertical-align:bottom; border:0; }
+.mainTable tr { height: 18px }
+.mainTable th { border-right:1px solid #333 }
+.mainTable td { border-right:1px solid #666 }
+.mainTable th:last-of-type { border-right:0 }
+.mainTable td:last-of-type { border-right:0 }
+.mainTable thead tr { font-weight:bold; background:#bbb; color:black }
+.mainTable tbody tr { background: #111; cursor:pointer }
+.mainTable tbody tr.zebra { background: #222 }
+.mainTable tbody tr.running { background: #141 }
+.mainTable tbody tr.running.zebra { background: #353 }
+.mainTable tbody tr.error { background: #611 }
+.mainTable tbody tr.error.zebra { background: #833 }
+.mainTable tbody tr.completed { background: #004 }
+.mainTable tbody tr.completed.zebra { background: #006 }
+.mainTable tbody tr.other { background: #404 }
+.mainTable tbody tr.other.zebra { background: #606 }
+.mainTable tbody tr:hover { background: #444 }
+.mainTable tbody tr.zebra:hover { background: #444 }
+.iconbtn { margin: 0 1px }
+.iconbtn:hover { opacity:0.6 }
+.mainTable img { vertical-align:bottom; border:0 }
 /* Gotta have rounded corners :-) */
-table tr:first-child th:first-child { border-top-left-radius:5px }
-table tr:first-child th:last-child { border-top-right-radius:5px }
-table tr:last-child td:first-child { border-bottom-left-radius:5px }
-table tr:last-child td:last-child { border-bottom-right-radius:5px }
+.mainTable tr:first-child th:first-child { border-top-left-radius:5px }
+.mainTable tr:first-child th:last-child { border-top-right-radius:5px }
+.mainTable tr:last-child td:first-child { border-bottom-left-radius:5px }
+.mainTable tr:last-child td:last-child { border-bottom-right-radius:5px }
 
-#jobsTable .narrow1 { width:4%; }
-#jobsTable .narrow2 { width:6%; }
-#jobsTable .normalwidth { width:13%; }
+.mainTable .narrow1 { width:4% }
+.mainTable .narrow2 { width:6% }
+.mainTable .normalwidth { width:13% }
+
 
 /* Tab */
-.ui-tabs .ui-tabs-panel {
-	padding:20px 15px;
-}
+.ui-tabs .ui-tabs-panel { padding:15px 10px }
+
 
 /* Header and footer */
 #header, #footer {
 	position:relative;
 	left:1%;
 	width:98%;
-	padding:0.5em 0;
+	padding:1em 0;
 }
 #autorefresh {
 	text-align:right;
 	float:right;
-	margin-right:5px;
+	margin-right:5px
 }
-#toolbar { margin:0 0 7px 0; }
+#toolbar { margin:0 0 7px 0 }
+
 
 /* Dialog bits */
-#helpdialog { text-align:center; }
-.greybg { background:#111; padding:5px; }
-.bluebg { background:#004; padding:5px; }
-.greenbg { background:#141; padding:5px; }
-.redbg  { background:#311; padding:5px; }
-.purplebg  { background:#313; padding:5px; }
+#helpdialog { text-align:center }
+.greybg { background:#111; padding:5px }
+.bluebg { background:#004; padding:5px }
+.greenbg { background:#141; padding:5px }
+.redbg  { background:#311; padding:5px }
+.purplebg  { background:#313; padding:5px }
