@@ -363,8 +363,11 @@ function refreshFilters() {
 
 // Set up all the filter functions for the left filter bar
 function setupFilterFunctions() {
-	$("#username").blur(function() { refreshFilters(); });
-	$("#projname").blur(function() { refreshFilters(); });
+	$("#filters input").blur(function() { refreshFilters(); });
+	$("#filters input").bind('keyup', function (e) {
+		var key = e.keyCode || e.which;
+		if (key === 13) { refreshFilters(); }
+	});
 	$("#waitstate").button({ icons: {primary:'ui-icon-clock'}, text: false });
 	$("#donestate").button({ icons: {primary:'ui-icon-check'}, text: false });
 	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
