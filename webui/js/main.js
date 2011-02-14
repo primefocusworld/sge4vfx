@@ -274,7 +274,7 @@ function updateDurations() {
 	$(".rtupdate").each(function() {
 		rowID = $(this).parent().attr("id");
 		startTimeTD = $("#" + rowID + " td.starttime");
-		startTime = startTimeTD.html();
+		startTime = startTimeTD.attr("title");
 		startTimeMonth = startTimeTD.attr("alt");
 
 		if (startTimeMonth != "") {
@@ -290,7 +290,13 @@ function updateDurations() {
 			var minutes=Math.floor(delta/60)-(hours*60); 
 			var seconds=delta-(hours*3600)-(minutes*60);
 
-			$(this).html(hours+"h "+minutes+"m "+seconds+"s");
+			if (hours > 0) {
+				$(this).html(hours+"h "+minutes+"m "+seconds+"s");
+			} else if (minutes > 0) {
+				$(this).html(minutes+"m "+seconds+"s");
+			} else {
+				$(this).html(seconds+"s");
+			}
 		}
 	});
 }

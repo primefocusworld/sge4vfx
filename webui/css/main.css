@@ -28,7 +28,7 @@ html, body {
 	padding:0;
 	font-family:Segoe UI, Arial, sans-serif;
 	background-color:#444;
-	color:#bbb;
+	color:#ccc;
 	font-size:11px
 }
 h1 {
@@ -131,7 +131,9 @@ h1 {
 
 
 /* Dialog bits */
-#helpdialog { text-align:center }
+#helpdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }
+#helpdialog h3:first-of-type { margin-top:5px }
+.colourbar { text-align:center; width:80%; margin-left:10% }
 .greybg { background:#111; padding:5px }
 .bluebg { background:#004; padding:5px }
 .greenbg { background:#141; padding:5px }
