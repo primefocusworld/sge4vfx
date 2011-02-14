@@ -282,7 +282,7 @@ function addJobTab(jobNo) {
 	var tabID = "#" + jobNo + "tab"
 
 	if ($(tabID).length == 0) {
-		$("#tabs").tabs( "add", tabID, jobNo )
+		$("#tabs").tabs("add", tabID, jobNo)
 
 		var tempString = "<table class=\"jobTable mainTable\" "
 		tempString +="id=\"" + jobNo + "Table\">";
@@ -352,7 +352,10 @@ function setupFilterFunctions() {
 // jQuery setup thingy
 $(function() {
 	// Set up the tabs
-	$("#tabs").tabs({closable: true});
+	$("#tabs").tabs({closable: true,
+			remove: function(event, ui) {
+				$("#tabs").tabs("select", "#jobstab");
+			}});
 	// and the modal dialogs
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
