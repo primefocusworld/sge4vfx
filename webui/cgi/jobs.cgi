@@ -121,7 +121,7 @@ for record in cur:
 		oldDate = ""
 		newDate = ":%S"
 		if todayStr != starttime.strftime("%d %b"):
-			oldDate = "%d/%m "
+			oldDate = "%d %b "
 			newDate = ""
 		starttimestr = starttime.strftime(oldDate + "%H:%M" + newDate)
 		starttimetitle = starttime.strftime("%d %b %H:%M:%S")
@@ -134,7 +134,7 @@ for record in cur:
 		oldDate = ""
 		newDate = ":%S"
 		if todayStr != endtime.strftime("%d %b"):
-			oldDate = "%d/%m "
+			oldDate = "%d %b "
 			newDate = ""
 		endtimestr = endtime.strftime(oldDate + "%H:%M" + newDate)
 		endtimetitle = endtime.strftime("%d %b %H:%M:%S")
