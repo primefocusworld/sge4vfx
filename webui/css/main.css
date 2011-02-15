@@ -110,24 +110,23 @@ h1 {
 .mainTable .narrow2 { width:6% }
 .mainTable .normalwidth { width:13% }
 
+#jobsToolbar { margin:0 0 7px 0 }
+
 
 /* Tab */
 .ui-tabs .ui-tabs-panel { padding:15px 10px }
 
 
 /* Header and footer */
-#header, #footer {
-	position:relative;
-	left:1%;
-	width:98%;
-	padding:1em 0;
+#header { position:relative; left:1%; width:98%; padding:1em 0; }
+#topToolbar { float:right; margin-right:0px; padding:3px 6px }
+#lastupdate {
+	position:fixed;
+	bottom:7px;
+	right:7px;
+	color:#999;
+	font-size:smaller
 }
-#autorefresh {
-	text-align:right;
-	float:right;
-	margin-right:5px
-}
-#toolbar { margin:0 0 7px 0 }
 
 
 /* Dialog bits */

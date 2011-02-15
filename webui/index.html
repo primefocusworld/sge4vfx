@@ -14,9 +14,9 @@
 <body>
 <div id="header">
 	<h1>theQ</h1>
-	<div id="autorefresh">
-		<input type="checkbox" name="autorefresh" checked>Auto Refresh<br />
-		<span id="lastrefresh">Last Refreshed: </span>
+	<div id="topToolbar" class="ui-widget-header ui-corner-all">
+		<button id="showLegend">Help</button>
+		<input type="checkbox" id="autorefresh" name="autorefresh" checked><label for="autorefresh">Auto Refresh</label>
 	</div>
 </div>
 <div id="tabs">
@@ -43,9 +43,8 @@
 			</div>
 		</td><td id="gutter">&nbsp;
 		</td><td id="rightContainer">
-			<div id="toolbar" class="ui-widget-header ui-corner-all">
+			<div id="jobsToolbar" class="ui-widget-header ui-corner-all">
 				<button id="removeAllComplete">Remove Complete</button>
-				<button id="showLegend">Help</button>
 			</div>
 			<table id="jobsTable" class="mainTable">
 				<thead>
@@ -81,6 +80,7 @@
 	<div class="redbg colourbar">Error</div>
 	<div class="purplebg colourbar">Other</div>
 </div>
+<div id="lastupdate">Last Updated: Never</div>
 </body>
 </html>
 

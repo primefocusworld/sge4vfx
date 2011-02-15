@@ -10,6 +10,9 @@ var sortJobBy = "taskno";
 var sortJobDir = "ASC";
 var filters = "";
 var usernameVal = "";
+var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
+	"ui-icon-arrowrefresh-1-s", "ui-icon-arrowrefresh-1-w"];
+var whichRefreshIcon = 1;
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
@@ -47,6 +50,11 @@ function getJob(params, whichJob) {
 
 // Refresh the jobsTable
 function refreshPage() {
+	whichRefreshIcon += 1;
+	if (whichRefreshIcon > 3) { whichRefreshIcon = 0; }
+	$("#autorefresh").button("option",
+		"icons",
+		{ primary: refreshIcons[whichRefreshIcon] });
 	// Figure out which tab is visible and only refresh that one
 	if ($("#jobsTable").is(":visible")) { getJobs(""); }
 	else if ($(".jobTable").is(":visible")) {
@@ -74,7 +82,7 @@ function lastUpdated() {
 	if (seconds.length == 1) { seconds = '0' + seconds }
 
 	timeString = hours + ":" + minutes + ":" + seconds;
-	$("#lastrefresh").html("Last refreshed: " + timeString);
+	$("#lastupdate").html("Last Updated: " + timeString);
 }
 
 function showInfoDialog(theTitle, theContent, theWidth) {
@@ -258,7 +266,14 @@ function showHelpDialog() {
 	$("#helpdialog").dialog("open");
 }
 
-function setupToolbar() {
+function setupTopToolbar() {
+	$("#autorefresh").button({
+		text: false,
+		icons: { primary: "ui-icon-refresh" }
+	});
+}
+
+function setupJobsToolbar() {
 	$("#removeAllComplete").button({
 		icons: { primary: "ui-icon-closethick" }
 	}).click(function() { removeAllComplete(); });
@@ -373,7 +388,30 @@ function setupFilterFunctions() {
 	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
 	$("#errorstate").button({ icons: {primary:'ui-icon-alert'}, text: false });
 	$("#stateboxes input").click(function() { refreshFilters(); });
-	
+}
+
+// Set up autorefresh code
+function setupAutoRefresh() {
+	// Setup all the autoRefresh bits
+	if ($.cookie("doNOTautoRefresh")) {
+		$("#autorefresh").attr("checked", false);
+	} else {
+		refreshTimeout = setTimeout(function() {
+						refreshPage()
+					}, refreshInterval);
+	}
+	$("#autorefresh").change( function() {
+		if( $("#autorefresh").is(":checked") ) {
+			$.cookie("doNOTautoRefresh", null);
+			refreshPage();
+		} else {
+			$.cookie("doNOTautoRefresh", true, { expires: 30 });
+			clearTimeout(refreshTimeout);
+			$("#autorefresh").button("option",
+				"icons",
+				{ primary: "ui-icon-refresh" });
+		}
+	});
 }
 
 // jQuery setup thingy
@@ -386,31 +424,10 @@ $(function() {
 	// and the modal dialogs
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
-	setupToolbar();
+	setupTopToolbar();
+	setupJobsToolbar();
+	setupAutoRefresh();
 	setupFilterFunctions();
-
-	// Setup all the autoRefresh bits
-	if ($.cookie("doNOTautoRefresh")) {
-		$("#autorefresh INPUT[name=autorefresh]").attr("checked", false);
-	} else {
-		refreshTimeout = setTimeout(function() {
-						refreshPage()
-					}, refreshInterval);
-	}
-	$("#autorefresh input").click( function() {
-		var checkbox = $(this).find(":checkbox");
-		checkbox.attr('checked', !checkbox.attr('checked'));
-		if( $(this).is(":checked") ) {
-			$.cookie("doNOTautoRefresh", null);
-			refreshTimeout = setTimeout(function() {
-							refreshPage();
-						}, refreshInterval);
-		}
-		if( $(this).is(":not(:checked)") ) {
-			$.cookie("doNOTautoRefresh", true, { expires: 30 });
-			clearTimeout(refreshTimeout);
-		}
-	});
 
 	// Now populate the jobsTable and set the event handler
 	$('#tabs').bind('tabsshow', function(event, ui) {
