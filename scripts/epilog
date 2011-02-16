@@ -30,14 +30,14 @@ if [ -e /tmp/${JOB_ID}-${SGE_TASK_ID}-return ]; then
 	PSQL_CMD="${PSQL_CMD}, returncode = ${RETURNCODE}"
 fi
 # Figure out if it's batch or not and make the appropriate chunk of psql code
-if [ ${SGE_TASK_STEPSIZE} > 1 ]; then
+if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
 	PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno >= ${TASK_NO}"
 	PSQL_CMD="${PSQL_CMD} AND taskno < (${TASK_NO} + ${SGE_TASK_STEPSIZE});"
 	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET"
 	# Check we don't set donetasks to a number greater than the total number
 	# of tasks
 	let TEMP_LAST=${TASK_NO}+${SGE_TASK_STEPSIZE}-1
-	if [ ${TEMP_LAST} > ${SGE_TASK_LAST} ]; then
+	if [ ${TEMP_LAST} -gt ${SGE_TASK_LAST} ]; then
 		let TOTAL_TASKS=${SGE_TASK_LAST}-${SGE_TASK_FIRST}+1
 		PSQL_CMD="${PSQL_CMD} donetasks = ${TOTAL_TASKS} "
 	else

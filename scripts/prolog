@@ -21,7 +21,7 @@ fi
 PSQL_CMD="UPDATE tasks SET starttime = current_timestamp"
 PSQL_CMD="${PSQL_CMD}, rhost = '${RHOST}' WHERE sgeid = ${SGE_ID} "
 # Figure out if it's batch or not and make the appropriate chunk of psql code
-if [ ${SGE_TASK_STEPSIZE} > 1 ]; then
+if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
 	PSQL_CMD="${PSQL_CMD}AND taskno >= ${TASK_NO} "
 	PSQL_CMD="${PSQL_CMD}AND taskno < (${TASK_NO} + ${SGE_TASK_STEPSIZE});"
 else
