@@ -20,7 +20,13 @@ fi
 # tasks table and to update the starttime/status of the job
 PSQL_CMD="UPDATE tasks SET starttime = current_timestamp"
 PSQL_CMD="${PSQL_CMD}, rhost = '${RHOST}' WHERE sgeid = ${SGE_ID} "
-PSQL_CMD="${PSQL_CMD}AND taskno = ${TASK_NO};"
+# Figure out if it's batch or not and make the appropriate chunk of psql code
+if [ ${SGE_TASK_STEPSIZE} > 1 ]; then
+	PSQL_CMD="${PSQL_CMD}AND taskno >= ${TASK_NO} "
+	PSQL_CMD="${PSQL_CMD}AND taskno < (${TASK_NO} + ${SGE_TASK_STEPSIZE});"
+else
+	PSQL_CMD="${PSQL_CMD}AND taskno = ${TASK_NO};"
+fi
 PSQL_CMD="${PSQL_CMD}UPDATE jobs SET starttime = current_timestamp, status = 1 "
 PSQL_CMD="${PSQL_CMD}WHERE sgeid = ${SGE_ID} AND starttime IS NULL;"
 
