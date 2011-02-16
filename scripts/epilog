@@ -38,8 +38,9 @@ if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
 	# of tasks
 	let TEMP_LAST=${TASK_NO}+${SGE_TASK_STEPSIZE}-1
 	if [ ${TEMP_LAST} -gt ${SGE_TASK_LAST} ]; then
-		let TOTAL_TASKS=${SGE_TASK_LAST}-${SGE_TASK_FIRST}+1
-		PSQL_CMD="${PSQL_CMD} donetasks = ${TOTAL_TASKS} "
+		let HOW_MANY_TASKS_HERE=${SGE_TASK_LAST}-${TASK_NO}+1
+		PSQL_CMD="${PSQL_CMD} donetasks ="
+		PSQL_CMD="${PSQL_CMD} donetasks + ${HOW_MANY_TASKS_HERE} "
 	else
 		PSQL_CMD="${PSQL_CMD} donetasks ="
 		PSQL_CMD="${PSQL_CMD} donetasks + ${SGE_TASK_STEPSIZE} "
