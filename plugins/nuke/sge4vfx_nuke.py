@@ -105,7 +105,7 @@ def RenderPanel():
 	# Set defaults
 	startFrame = str(nuke.root().firstFrame())
 	endFrame = str(nuke.root().lastFrame())
-	batchSize = str(1)
+	batchSize = str(5)
 	slotsRequired = str(4)
 	renderFullSize = not(nuke.root().proxy())
 	whichQueue = "farm.q"
