@@ -47,13 +47,25 @@ def Submit(fullSize, startFrame, endFrame,
 	else:
 		fullSizeBit = ""
 
-	nukeCmd = ("nuke -x " + fullSizeBit + "-F ${SGE_TASK_ID} "
-		+ sgePath + "/" + job_path)
+	# If it's a batch job, do batch stuff...
+	if int(batchSize) > 1:
+		frameRangeBit = "-F ${SGE_TASK_ID}-${ENDFRAME} "
+	else:
+		frameRangeBit = "-F ${SGE_TASK_ID} "
+	nukeCmd = ("nuke -x " + fullSizeBit + frameRangeBit + sgePath +
+		"/" + job_path)
 
 	nf = open(sgePath + "/nukeCommand.sh", "w")
 	nf.write("#!/bin/bash\n\n")
 	nf.write("#$ -o " + sgePath + "/logs/o_$TASK_ID\n")
 	nf.write("#$ -e " + sgePath + "/logs/e_$TASK_ID\n\n")
+	# I put the batch endframe calculation stuff into the script either way
+	# If it's not a batch job, ENDFRAME will just never be used by the
+	# Nuke command on the following lines
+	nf.write("let ENDFRAME=${SGE_TASK_ID}+${SGE_TASK_STEPSIZE}\n")
+	nf.write("if [ ${ENDFRAME} -gt ${SGE_TASK_LAST} ]; then\n")
+	nf.write("	ENDFRAME=${SGE_TASK_LAST}\n")
+	nf.write("fi\n\n")
 	nf.write(nukeCmd + "\n")
 	nf.write("\n# Write return code for epilog script\n")
 	nf.write("echo $? > /tmp/${JOB_ID}-${SGE_TASK_ID}-return\n")
@@ -66,7 +78,7 @@ def Submit(fullSize, startFrame, endFrame,
 		+ " -V -S /bin/bash "
 		+ " -pe pe1 " + slotsPerFrame
 		+ " -q " + whichQueue
-		+ " -t " + startFrame + "-" + endFrame + " "
+		+ " -t " + startFrame + "-" + endFrame + ":" + batchSize + " "
 		+ sgePath
 		+ "/nukeCommand.sh")
 	sf = open(sgePath + "/sgeNuke.sh", "w")
@@ -105,7 +117,7 @@ def RenderPanel():
 	p.addSingleLineInput("End Frame:", endFrame)
 	p.addSingleLineInput("Slots per frame:", slotsRequired)
 	p.addSingleLineInput("Queue:", whichQueue)
-	#p.addSingleLineInput("Batch Size:", batchSize)
+	p.addSingleLineInput("Batch Size:", batchSize)
 	p.addButton("Cancel")
 	p.addButton("OK")
 
@@ -119,7 +131,7 @@ def RenderPanel():
 		endFrame = p.value("End Frame:")
 		slotsPerFrame = p.value("Slots per frame:")
 		queue = p.value("Queue:")
-		#batchSize = p.value("Batch Size:")
+		batchSize = p.value("Batch Size:")
 
 		Submit(renderFullSize,
 			startFrame,
