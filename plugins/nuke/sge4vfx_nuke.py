@@ -64,7 +64,7 @@ def Submit(fullSize, startFrame, endFrame,
 		# I put the batch endframe calculation stuff into the script
 		# either way.  If it's not a batch job, ENDFRAME will just never
 		# be used by the Nuke command on the following lines
-		nf.write("let ENDFRAME=${SGE_TASK_ID}+${SGE_TASK_STEPSIZE}\n")
+		nf.write("let ENDFRAME=${SGE_TASK_ID}+${SGE_TASK_STEPSIZE}-1\n")
 		nf.write("if [ ${ENDFRAME} -gt ${SGE_TASK_LAST} ]; then\n")
 		nf.write("	ENDFRAME=${SGE_TASK_LAST}\n")
 		nf.write("fi\n\n")
