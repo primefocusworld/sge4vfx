@@ -13,8 +13,8 @@ from subprocess import Popen,PIPE
 # -- Turn off write notes that had the read file flag set
 # - Allow relative paths in the Nuke files (won't work currently because
 #   we're copying the nuke script into the SGE directories)
-# - Batch size (this is part of a bigger work-out-how-to-do-it chunking project)
-
+# - Automatic retries?  Part of a larger effort to add max-auto-retries to the
+#   DB schema and use exit code 99 to have the epilog re-queue jobs
 
 def Submit(fullSize, startFrame, endFrame,
 	batchSize, slotsPerFrame, whichQueue):
@@ -32,12 +32,12 @@ def Submit(fullSize, startFrame, endFrame,
 		# Build a date string to save off the SGE submission stuff
 		dt = datetime.today()
 		tt = dt.timetuple()
-		dateStr = (str(tt[0]) + str(tt[1]).zfill(2) + str(tt[2]).zfill(2) +
-			"-" + str(tt[3]).zfill(2) + str(tt[4]).zfill(2) +
-			str(tt[5]).zfill(2))
+		dateStr = (str(tt[0]) + str(tt[1]).zfill(2)
+			+ str(tt[2]).zfill(2) +	"-" + str(tt[3]).zfill(2)
+			+ str(tt[4]).zfill(2) +	str(tt[5]).zfill(2))
 	
-		# Create the SGE folder next to the Nuke script if it doesn't exist
-		# This also creates the log folder for the stdout and stderr
+		# Create the SGE folder next to the Nuke script if it doesn't
+		# exist. It also creates the log folder for the stdout & stderr
 		sgePath = dirPath + "/theQ/" + dateStr
 		prepCmd1 = ("if [ ! -d " + sgePath + " ]; then mkdir -p "
 			+ sgePath + "/logs; fi")
@@ -61,9 +61,9 @@ def Submit(fullSize, startFrame, endFrame,
 		nf.write("#!/bin/bash\n\n")
 		nf.write("#$ -o " + sgePath + "/logs/o_$TASK_ID\n")
 		nf.write("#$ -e " + sgePath + "/logs/e_$TASK_ID\n\n")
-		# I put the batch endframe calculation stuff into the script either way
-		# If it's not a batch job, ENDFRAME will just never be used by the
-		# Nuke command on the following lines
+		# I put the batch endframe calculation stuff into the script
+		# either way.  If it's not a batch job, ENDFRAME will just never
+		# be used by the Nuke command on the following lines
 		nf.write("let ENDFRAME=${SGE_TASK_ID}+${SGE_TASK_STEPSIZE}\n")
 		nf.write("if [ ${ENDFRAME} -gt ${SGE_TASK_LAST} ]; then\n")
 		nf.write("	ENDFRAME=${SGE_TASK_LAST}\n")
@@ -80,7 +80,8 @@ def Submit(fullSize, startFrame, endFrame,
 			+ " -V -S /bin/bash "
 			+ " -pe pe1 " + slotsPerFrame
 			+ " -q " + whichQueue
-			+ " -t " + startFrame + "-" + endFrame + ":" + batchSize + " "
+			+ " -t " + startFrame + "-" + endFrame
+			+ ":" + batchSize + " "
 			+ sgePath
 			+ "/nukeCommand.sh")
 		sf = open(sgePath + "/sgeNuke.sh", "w")
@@ -111,6 +112,9 @@ def RenderPanel():
 	slotsRequired = str(4)
 	renderFullSize = not(nuke.root().proxy())
 	whichQueue = "farm.q"
+	notePadBits = ("When you click OK, this will save your script " +
+		"in it's current form.\n\nIf you don't want your file " +
+		"overwritten now, click Cancel." )
 
 	# Create the panel and put the bits on it
 	p = nuke.Panel("Render on theQ")
@@ -120,7 +124,7 @@ def RenderPanel():
 	p.addSingleLineInput("Slots per frame:", slotsRequired)
 	p.addSingleLineInput("Queue:", whichQueue)
 	p.addSingleLineInput("Batch Size:", batchSize)
-	p.addNotepad("Important:", "When you click OK, this will save your script in it's current form.\n\nIf you don't want your file overwritten now, click Cancel.")
+	p.addNotepad("Important:", notePadBits)
 	p.addButton("Cancel")
 	p.addButton("OK")
 
