@@ -13,6 +13,7 @@ var usernameVal = "";
 var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
 	"ui-icon-arrowrefresh-1-s", "ui-icon-arrowrefresh-1-w"];
 var whichRefreshIcon = 1;
+var removeOldOnly = 1;
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
@@ -150,7 +151,7 @@ function deleteJob(e, jobNo) {
 				$.ajax({
 					url: "cgi/deleteJob.cgi",
 					data: "sgeid=" + jobNo,
-					type: "GET",
+					type: "POST",
 					dataType: "json",
 					success: function(data) {
 						refreshPage();
@@ -191,7 +192,7 @@ function stopTask(jobNo, taskNo) {
 				$.ajax({
 					url: "cgi/stopTask.cgi",
 					data: AJAXparams,
-					type: "GET",
+					type: "POST",
 					dataType: "json",
 					success: function(data) {
 						refreshPage();
@@ -210,7 +211,7 @@ function stopTask(jobNo, taskNo) {
 
 // Remove all completed jobs.  Don't need to remove from queue because they
 // already have been since they're done
-function removeAllComplete() {
+function removeComplete() {
 	if (usernameVal == "") {
 		$("#multiusedialog")
 		.html("You need to have a username in the filter box on the left")
@@ -232,6 +233,9 @@ function removeAllComplete() {
 			buttons : {
 				"Confirm" : function() {
 					var AJAXparams = "user=" + usernameVal;
+					if (removeOldOnly == 1) {
+						AJAXparams = AJAXparams + "&old=1";
+					}
 
 					$.ajax({
 						url: "cgi/deleteComplete.cgi",
@@ -276,7 +280,10 @@ function setupTopToolbar() {
 function setupJobsToolbar() {
 	$("#removeAllComplete").button({
 		icons: { primary: "ui-icon-closethick" }
-	}).click(function() { removeAllComplete(); });
+	}).click(function() { removeOldOnly = 0; removeComplete(); });
+	$("#removeOld").button({
+		icons: { primary: "ui-icon-closethick" }
+	}).click(function() { removeOldOnly = 1; removeComplete(); });
 	$("#showLegend").button({
 		icons: { primary: "ui-icon-info" }
 	}).click(function() { showHelpDialog(); });
