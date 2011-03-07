@@ -16,9 +16,21 @@ else
 	TASK_NO=${SGE_TASK_ID}
 fi
 
+# Add the stdout/stderr paths to the extras table if this is the first task
+# (Does SGE always start the first task first????)
+EXT_CMD=""
+if [ ${TASK_NO} -eq ${SGE_TASK_FIRST} ]; then
+	STDOUT_PATH=`echo ${SGE_STDOUT_PATH} | sed -e 's/\.[0-9]*$//g'`
+	STDERR_PATH=`echo ${SGE_STDERR_PATH} | sed -e 's/\.[0-9]*$//g'`
+	EXT_CMD="INSERT INTO job_extras (sgeid, key, value) VALUES "
+	EXT_CMD="${EXT_CMD}(${SGE_ID}, 'stdout', '${STDOUT_PATH}'); "
+	EXT_CMD="${EXT_CMD}INSERT INTO job_extras (sgeid, key, value) VALUES "
+	EXT_CMD="${EXT_CMD}(${SGE_ID}, 'stderr', '${STDERR_PATH}');"
+fi
+
 # Now compose the psql command to insert the row into the
 # tasks table and to update the starttime/status of the job
-PSQL_CMD="UPDATE tasks SET starttime = current_timestamp"
+PSQL_CMD="${EXT_CMD} UPDATE tasks SET starttime = current_timestamp"
 PSQL_CMD="${PSQL_CMD}, rhost = '${RHOST}' WHERE sgeid = ${SGE_ID} "
 # Figure out if it's batch or not and make the appropriate chunk of psql code
 if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
