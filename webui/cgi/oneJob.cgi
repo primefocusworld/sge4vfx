@@ -101,6 +101,7 @@ for record in cur:
 	tempstring += "</td><td title=\"" + starttimetitle + "\">" + endtimestr
 	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
 	tempstring += "</td><td>" + returncode
+	tempstring += "</td><td>" + str(attempts)
 	tempstring += "</td><td>" + rhost
 	tempstring += "</td></tr>"
 	print tempstring
