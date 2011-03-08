@@ -46,15 +46,18 @@ h1 {
 #leftContainer {
 	width:9%;
 	vertical-align:top;
-	border-radius:5px;
-	background:#333333 url(custom-theme/images/ui-bg_gloss-wave_25_333333_500x100.png) 0 0 repeat-x;
 }
 #gutter { width:1% }
 #rightContainer { width:90%; vertical-align:top }
 
 
 /* Filters bit on the left */
-#leftContainer h2 {
+#filtersContainer {
+	border-radius:5px;
+	background:#333333 url(custom-theme/images/ui-bg_gloss-wave_25_333333_500x100.png) 0 0 repeat-x;
+	padding-bottom:5px
+}
+#filtersContainer h2 {
 	text-align:center;
 	margin:0 0 5px 0;
 	line-height:1.8em;
@@ -67,7 +70,7 @@ h1 {
 }
 #filters { margin:10px 10px }
 #filters input { margin:7px 0 10px 0; padding:3px 4px }
-#filters #stateboxes { margin:7px 0 10px 0 }
+#filters #stateboxes { margin:7px 0 10px 0; }
 
 
 /* Main table */
