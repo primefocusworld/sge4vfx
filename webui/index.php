@@ -31,9 +31,10 @@
 				<h2>Filters</h2>
 				<div id="filters">
 					Username
-					<input type="text" name="username" id="username" class="text ui-widget-content ui-corner-all" />
+<?php $ruser = preg_replace('/\@.*$/', '', getenv("REMOTE_USER")); ?>
+					<input type="text" name="username" value="<?php echo $ruser; ?>" id="username" class="text ui-widget-content ui-corner-all deletable"/>
 					Project
-					<input type="text" name="projname" id="projname" class="text ui-widget-content ui-corner-all" />
+					<input type="text" name="projname" id="projname" class="text ui-widget-content ui-corner-all deletable" />
 					State<br />
 					<div id="stateboxes">
 						<input type="checkbox" id="waitstate" class="checkbox" checked /><label for="waitstate">Waiting</label>

@@ -71,6 +71,25 @@ h1 {
 #filters { margin:10px 10px }
 #filters input { margin:7px 0 10px 0; padding:3px 4px }
 #filters #stateboxes { margin:7px 0 10px 0; }
+span.deleteicon {
+	position: relative;
+}
+span.deleteicon span {
+	position: absolute;
+	display: block;
+	top: -1px;
+	right: 2px;
+	width: 16px;
+	height: 16px;
+	background: url('custom-theme/images/ui-icons_cccccc_256x240.png') no-repeat -32px -192px;
+	cursor: pointer;
+}
+span.deleteicon span:hover {
+	background: url('custom-theme/images/ui-icons_a83300_256x240.png') no-repeat -32px -192px;
+}
+span.deleteicon input {
+	padding-right: 16px;
+}
 
 
 /* Main table */

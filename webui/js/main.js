@@ -381,6 +381,14 @@ function refreshFilters() {
 		if (filters != "") { ampersand="&"; }
 		filters += ampersand + "error=1";
 	}
+	// Show/hide delete icons in text views depending on content
+	$('span.deleteicon').each(function(index) {
+			if ($(this).children("input").val() == "") {
+				$(this).children("span").css("width", "0px");
+			} else {
+				$(this).children("span").css("width", "16px");
+			}
+		});
 	refreshPage();
 }
 
@@ -396,6 +404,12 @@ function setupFilterFunctions() {
 	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
 	$("#errorstate").button({ icons: {primary:'ui-icon-alert'}, text: false });
 	$("#stateboxes input").click(function() { refreshFilters(); });
+	$('input.deletable').wrap('<span class="deleteicon" />')
+		.after($('<span />'));
+	$("span.deleteicon").children("span").click(function() {
+			$(this).prev("input").val("").focus();
+			refreshFilters();
+		});
 }
 
 // Set up autorefresh code
@@ -441,7 +455,11 @@ $(function() {
 	$('#tabs').bind('tabsshow', function(event, ui) {
 		if (ui.panel.id == "jobstab") { getJobs(""); }
 	});
-	getJobs("");
+
+	// On opening, REMOTE_USER might be set by Apache/Kerberos/whatever and
+	// index.html is set to fill in the user filter with it, so run
+	// refreshFilters to initially populate the jobs table
+	refreshFilters();
 
 	lastUpdated();
 });
