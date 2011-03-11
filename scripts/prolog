@@ -22,10 +22,8 @@ EXT_CMD=""
 if [ ${TASK_NO} -eq ${SGE_TASK_FIRST} ]; then
 	STDOUT_PATH=`echo ${SGE_STDOUT_PATH} | sed -e 's/\.[0-9]*$//g'`
 	STDERR_PATH=`echo ${SGE_STDERR_PATH} | sed -e 's/\.[0-9]*$//g'`
-	EXT_CMD="INSERT INTO job_extras (sgeid, key, value) VALUES "
-	EXT_CMD="${EXT_CMD}(${SGE_ID}, 'stdout', '${STDOUT_PATH}'); "
-	EXT_CMD="${EXT_CMD}INSERT INTO job_extras (sgeid, key, value) VALUES "
-	EXT_CMD="${EXT_CMD}(${SGE_ID}, 'stderr', '${STDERR_PATH}');"
+	EXT_CMD="UPDATE jobs SET stdout = '${STDOUT_PATH}', stderr = "
+	EXT_CMD="${EXT_CMD}'${STDERR_PATH}' WHERE sgeid = ${SGE_ID};"
 fi
 
 # Now compose the psql command to insert the row into the

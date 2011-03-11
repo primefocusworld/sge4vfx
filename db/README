@@ -25,8 +25,7 @@ key constraint against the Jobs table so when the job is removed, all tasks are
 deleted.
 
 Job_Extras contains key/value pairs that can be used to record extra information
-useful for a job.  For example, the stdout and stderr paths, or the number of
-automatic retries to attempt.
+useful for a job.  This is not currently used.
 
 ==== TODO ====
 

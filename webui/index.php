@@ -75,8 +75,8 @@
 		<p>Some other stuff</p>
 	</div>
 </div>
-<div id="multiusedialog"></div>
-<div id="helpdialog" title="Help">
+<div id="multiusedialog" class="popupdialog"></div>
+<div id="helpdialog" title="Help" class="popupdialog">
 	<h3>Colours in the tables</h3>
 	<div class="greybg colourbar">Pending</div>
 	<div class="greenbg colourbar">Running</div>

@@ -35,7 +35,15 @@ gridsub -t 1-100 -N test_name test.sh
 
 You should set this as the prolog script for your various queues.  It updates
 the start times and both the task running and the job (if it hasn't already been
-set)
+set).
+
+At the moment, it also puts stdout and stderr paths into the job table.  I
+wasn't sure how best to go about this since I thought it a bit redundant to have
+stdout and stderr recorded next to every single task, but doing it this way does
+assume that the log names end in the standard SGE for of <SGEID>.<TASKNO> - for
+example: /home/blah/testjob.o2456.1
+Maybe it's bad to make this assumption but for my purposes I think it's ok.
+File an issue if you think it should be changed.
 
 I put this in ${SGE_ROOT}/${SGE_CELL}/scripts but as long as they're visible to
 renderboxes I guess they can go anywhere really

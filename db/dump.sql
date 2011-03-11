@@ -82,20 +82,6 @@ COMMENT ON COLUMN job_extras.sgeid IS 'Foreign key into jobs table';
 
 
 --
--- Name: COLUMN job_extras.key; Type: COMMENT; Schema: public; Owner: sge
---
-
-COMMENT ON COLUMN job_extras.key IS 'key - For example auto_retries';
-
-
---
--- Name: COLUMN job_extras.value; Type: COMMENT; Schema: public; Owner: sge
---
-
-COMMENT ON COLUMN job_extras.value IS 'value - For example 2';
-
-
---
 -- Name: jobs; Type: TABLE; Schema: public; Owner: sge; Tablespace: 
 --
 
@@ -113,7 +99,9 @@ CREATE TABLE jobs (
     chunk integer NOT NULL,
     status smallint NOT NULL,
     submissionscript character varying(256) NOT NULL,
-    donetasks integer DEFAULT 0 NOT NULL
+    donetasks integer DEFAULT 0 NOT NULL,
+    stdout character varying(128),
+    stderr character varying(128)
 );
 
 
@@ -215,6 +203,20 @@ COMMENT ON COLUMN jobs.submissionscript IS 'Path to the qsub submission script';
 --
 
 COMMENT ON COLUMN jobs.donetasks IS 'How many tasks have been completed';
+
+
+--
+-- Name: COLUMN jobs.stdout; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON COLUMN jobs.stdout IS 'Stdout log location with task ID stripped';
+
+
+--
+-- Name: COLUMN jobs.stderr; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON COLUMN jobs.stderr IS 'Stderr log location with task ID stripped';
 
 
 --

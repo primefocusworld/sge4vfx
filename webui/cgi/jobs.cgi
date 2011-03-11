@@ -105,7 +105,7 @@ todayStr = today.strftime("%d %b")
 for record in cur:
 	[sgeid, jobname, username, project, priority, submittime, starttime,
 		endtime, firsttask, lasttask, chunk, status,
-		submissionscript, donetasks] = record
+		submissionscript, donetasks, stdout, stderr] = record
 	sgeid = str(sgeid)
 
 	# Format the dates into strings if not Null

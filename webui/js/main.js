@@ -86,12 +86,14 @@ function lastUpdated() {
 	$("#lastupdate").html("Last Updated: " + timeString);
 }
 
-function showInfoDialog(theTitle, theContent, theWidth) {
+function showInfoDialog(theTitle, theContent, theWidth, theHeight) {
 	if ( theWidth === undefined ) { theWidth = 300; }
+	if ( theHeight === undefined ) { theHeight = "auto"; }
 	$("#multiusedialog")
 	.html(theContent)
 	.dialog({
 		width : theWidth,
+		height : theHeight,
 		title : theTitle,
 		buttons : {
 			"OK" : function() {
@@ -103,13 +105,34 @@ function showInfoDialog(theTitle, theContent, theWidth) {
 }
 
 function showJobInfo(data, jobNo) {
-	tempstring = "<ul>"
-	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>"
-	tempstring += "<li>StdOut Path: " + data.stdout + "</li>"
-	tempstring += "<li>StdErr Path: " + data.stderr + "</li>"
-	tempstring += "</ul>"
+	tempstring = "<ul>";
+	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>";
+	tempstring += "<li>StdOut Path: " + data.stdout + "</li>";
+	tempstring += "<li>StdErr Path: " + data.stderr + "</li>";
+	tempstring += "</ul>";
 
 	showInfoDialog("SGE Info for " + jobNo, tempstring, 500);
+}
+
+// Show stdout/stderr for a task
+function taskInfo(jobNo, taskNo) {
+	$.ajax({
+		url: "cgi/readLog.cgi",
+		data: "sgeid=" + jobNo + "&frame=" + taskNo,
+		type: "GET",
+		dataType: "json",
+		success: function(data) {
+			content = "<div id=\"leftlog\">\n";
+			content += "<h3>Stdout</h3>\n";
+			content += data.stdout + "\n";
+			content += "</div><div id=\"rightlog\">\n";
+			content += "<h3>Stderr</h3>\n";
+			content += data.stderr + "\n";
+			content += "</div>\n";
+			content += "<div class=\"clearboth\"></div>\n";
+			showInfoDialog("Logs", content, 1000, 500);
+		}
+	});
 }
 
 // Pop up a dialog with info on a particular job

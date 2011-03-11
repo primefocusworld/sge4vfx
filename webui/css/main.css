@@ -39,6 +39,7 @@ h1 {
 	font-weight:bolder;
 	text-decoration:none
 }
+.clearboth { clear:both }
 
 /* Container Table - Inside jqueryUI Jobs tab */
 
@@ -152,8 +153,12 @@ span.deleteicon input {
 
 
 /* Dialog bits */
-#helpdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }
-#helpdialog h3:first-of-type { margin-top:5px }
+.popupdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }
+.popupdialog h3:first-of-type { margin-top:5px }
+/* Log Dialog */
+#leftlog { width:49%; min-height:100%; float:left; border-right:1px solid #333 }
+#rightlog { width:49%; height:100%; float:right }
+/* Help Dialog */
 .colourbar { text-align:center; width:80%; margin-left:10% }
 .greybg { background:#111; padding:5px }
 .bluebg { background:#004; padding:5px }
