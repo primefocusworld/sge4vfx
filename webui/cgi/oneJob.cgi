@@ -23,6 +23,8 @@ sqlQuery += " ORDER BY " + sortby + " " + sortdir + ";"
 cur.execute(sqlQuery)
 
 zebra = False
+today = datetime.date.today()
+todayStr = today.strftime("%d %b")
 for record in cur:
 	[sgeid, taskno, starttime, endtime, attempts, returncode, rhost] = record
 	sgeid = str(sgeid)
@@ -32,18 +34,36 @@ for record in cur:
 
 	# Format the dates into strings if not Null
 	if starttime is not None:
-		starttimestr = starttime.strftime("%d %b %H:%M:%S")
+		oldDate = ""
+		newDate = ":%S"
+		if todayStr != starttime.strftime("%d %b"):
+			oldDate = "%d %b "
+			newDate = ""
+		starttimestr = starttime.strftime(oldDate + "%H:%M" + newDate)
+		starttimetitle = starttime.strftime("%d %b %H:%M:%S")
 		starttimealt = starttime.strftime("%m")
 	else:
 		starttimestr = "-"
+		starttimetitle = ""
 		starttimealt = ""
 	if endtime is not None:
-		endtimestr = endtime.strftime("%d %b %H:%M:%S")
+		oldDate = ""
+		newDate = ":%S"
+		if todayStr != endtime.strftime("%d %b"):
+			oldDate = "%d %b "
+			newDate = ""
+		endtimestr = endtime.strftime(oldDate + "%H:%M" + newDate)
+		endtimetitle = endtime.strftime("%d %b %H:%M:%S")
 		duration = endtime - starttime
 		s = duration.seconds
 		hours, remainder = divmod(s, 3600)
 		minutes, seconds = divmod(remainder, 60)
-		durationstr = '%sh %sm %ss' % (hours, minutes, seconds)
+		if (hours > 0):
+			durationstr = '%sh %sm %ss' % (hours, minutes, seconds)
+		elif (minutes > 0):
+			durationstr = '%sm %ss' % (minutes, seconds)
+		else:
+			durationstr = '%ss' % (seconds)
 		realtimeupdate = ""
 	else:
 		endtimestr = "-"
@@ -74,12 +94,14 @@ for record in cur:
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
 	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
-	tempstring += sgeid + "," + taskno + ");\" src=\"images/info.png\" />"
+	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
-	tempstring += "</td><td alt=\"" + starttimealt + "\" class=\"starttime\">" + starttimestr
-	tempstring += "</td><td>" + endtimestr
+	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
+	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr
+	tempstring += "</td><td title=\"" + starttimetitle + "\">" + endtimestr
 	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
 	tempstring += "</td><td>" + returncode
+	tempstring += "</td><td>" + str(attempts)
 	tempstring += "</td><td>" + rhost
 	tempstring += "</td></tr>"
 	print tempstring

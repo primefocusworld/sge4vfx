@@ -39,8 +39,8 @@ CREATE FUNCTION create_tasks() RETURNS trigger
         last INTEGER = NEW.lasttask;
     BEGIN
         WHILE counter <= last LOOP
-            INSERT INTO tasks (sgeid, taskno, starttime, endtime, attempts, returncode)
-            VALUES (NEW.sgeid, counter, NULL, NULL, 0, NULL);
+            INSERT INTO tasks (sgeid, taskno, starttime, endtime, attempts, returncode, rhost)
+            VALUES (NEW.sgeid, counter, NULL, NULL, 0, NULL, NULL);
             counter := counter + 1;
         END LOOP;
         RETURN NEW;
@@ -53,6 +53,33 @@ ALTER FUNCTION public.create_tasks() OWNER TO sge;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: job_extras; Type: TABLE; Schema: public; Owner: sge; Tablespace: 
+--
+
+CREATE TABLE job_extras (
+    sgeid integer NOT NULL,
+    key character varying(32) NOT NULL,
+    value character varying(128)
+);
+
+
+ALTER TABLE public.job_extras OWNER TO sge;
+
+--
+-- Name: TABLE job_extras; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON TABLE job_extras IS 'Additional information per job';
+
+
+--
+-- Name: COLUMN job_extras.sgeid; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON COLUMN job_extras.sgeid IS 'Foreign key into jobs table';
+
 
 --
 -- Name: jobs; Type: TABLE; Schema: public; Owner: sge; Tablespace: 
@@ -72,7 +99,9 @@ CREATE TABLE jobs (
     chunk integer NOT NULL,
     status smallint NOT NULL,
     submissionscript character varying(256) NOT NULL,
-    donetasks integer DEFAULT 0 NOT NULL
+    donetasks integer DEFAULT 0 NOT NULL,
+    stdout character varying(128),
+    stderr character varying(128)
 );
 
 
@@ -177,6 +206,20 @@ COMMENT ON COLUMN jobs.donetasks IS 'How many tasks have been completed';
 
 
 --
+-- Name: COLUMN jobs.stdout; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON COLUMN jobs.stdout IS 'Stdout log location with task ID stripped';
+
+
+--
+-- Name: COLUMN jobs.stderr; Type: COMMENT; Schema: public; Owner: sge
+--
+
+COMMENT ON COLUMN jobs.stderr IS 'Stderr log location with task ID stripped';
+
+
+--
 -- Name: tasks; Type: TABLE; Schema: public; Owner: pgadmin; Tablespace: 
 --
 
@@ -186,7 +229,8 @@ CREATE TABLE tasks (
     starttime timestamp without time zone,
     endtime timestamp without time zone,
     attempts smallint NOT NULL,
-    returncode smallint
+    returncode smallint,
+    rhost character varying(32)
 );
 
 
@@ -197,6 +241,21 @@ ALTER TABLE public.tasks OWNER TO pgadmin;
 --
 
 COMMENT ON COLUMN tasks.returncode IS 'Return code from task command';
+
+
+--
+-- Name: COLUMN tasks.rhost; Type: COMMENT; Schema: public; Owner: pgadmin
+--
+
+COMMENT ON COLUMN tasks.rhost IS 'The renderbox the task last ran on';
+
+
+--
+-- Name: job_extras_pkey; Type: CONSTRAINT; Schema: public; Owner: sge; Tablespace: 
+--
+
+ALTER TABLE ONLY job_extras
+    ADD CONSTRAINT job_extras_pkey PRIMARY KEY (sgeid, key);
 
 
 --
@@ -244,6 +303,14 @@ CREATE TRIGGER create_tasks
     AFTER INSERT ON jobs
     FOR EACH ROW
     EXECUTE PROCEDURE create_tasks();
+
+
+--
+-- Name: job_extras_sgeid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sge
+--
+
+ALTER TABLE ONLY job_extras
+    ADD CONSTRAINT job_extras_sgeid_fkey FOREIGN KEY (sgeid) REFERENCES jobs(sgeid) ON DELETE CASCADE;
 
 
 --

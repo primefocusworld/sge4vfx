@@ -9,6 +9,11 @@ var sortJobsDir = "DESC";
 var sortJobBy = "taskno";
 var sortJobDir = "ASC";
 var filters = "";
+var usernameVal = "";
+var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
+	"ui-icon-arrowrefresh-1-s", "ui-icon-arrowrefresh-1-w"];
+var whichRefreshIcon = 1;
+var removeOldOnly = 1;
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
@@ -46,6 +51,11 @@ function getJob(params, whichJob) {
 
 // Refresh the jobsTable
 function refreshPage() {
+	whichRefreshIcon += 1;
+	if (whichRefreshIcon > 3) { whichRefreshIcon = 0; }
+	$("#autorefresh").button("option",
+		"icons",
+		{ primary: refreshIcons[whichRefreshIcon] });
 	// Figure out which tab is visible and only refresh that one
 	if ($("#jobsTable").is(":visible")) { getJobs(""); }
 	else if ($(".jobTable").is(":visible")) {
@@ -73,15 +83,17 @@ function lastUpdated() {
 	if (seconds.length == 1) { seconds = '0' + seconds }
 
 	timeString = hours + ":" + minutes + ":" + seconds;
-	$("#lastrefresh").html("Last refreshed: " + timeString);
+	$("#lastupdate").html("Last Updated: " + timeString);
 }
 
-function showInfoDialog(theTitle, theContent, theWidth) {
+function showInfoDialog(theTitle, theContent, theWidth, theHeight) {
 	if ( theWidth === undefined ) { theWidth = 300; }
+	if ( theHeight === undefined ) { theHeight = "auto"; }
 	$("#multiusedialog")
 	.html(theContent)
 	.dialog({
 		width : theWidth,
+		height : theHeight,
 		title : theTitle,
 		buttons : {
 			"OK" : function() {
@@ -93,13 +105,34 @@ function showInfoDialog(theTitle, theContent, theWidth) {
 }
 
 function showJobInfo(data, jobNo) {
-	tempstring = "<ul>"
-	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>"
-	tempstring += "<li>StdOut Path: " + data.stdout + "</li>"
-	tempstring += "<li>StdErr Path: " + data.stderr + "</li>"
-	tempstring += "</ul>"
+	tempstring = "<ul>";
+	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>";
+	tempstring += "<li>StdOut Path: " + data.stdout + "</li>";
+	tempstring += "<li>StdErr Path: " + data.stderr + "</li>";
+	tempstring += "</ul>";
 
 	showInfoDialog("SGE Info for " + jobNo, tempstring, 500);
+}
+
+// Show stdout/stderr for a task
+function taskInfo(jobNo, taskNo) {
+	$.ajax({
+		url: "cgi/readLog.cgi",
+		data: "sgeid=" + jobNo + "&frame=" + taskNo,
+		type: "GET",
+		dataType: "json",
+		success: function(data) {
+			content = "<div id=\"leftlog\">\n";
+			content += "<h3>Stdout</h3>\n";
+			content += data.stdout + "\n";
+			content += "</div><div id=\"rightlog\">\n";
+			content += "<h3>Stderr</h3>\n";
+			content += data.stderr + "\n";
+			content += "</div>\n";
+			content += "<div class=\"clearboth\"></div>\n";
+			showInfoDialog("Logs", content, 1000, 500);
+		}
+	});
 }
 
 // Pop up a dialog with info on a particular job
@@ -141,7 +174,7 @@ function deleteJob(e, jobNo) {
 				$.ajax({
 					url: "cgi/deleteJob.cgi",
 					data: "sgeid=" + jobNo,
-					type: "GET",
+					type: "POST",
 					dataType: "json",
 					success: function(data) {
 						refreshPage();
@@ -182,7 +215,7 @@ function stopTask(jobNo, taskNo) {
 				$.ajax({
 					url: "cgi/stopTask.cgi",
 					data: AJAXparams,
-					type: "GET",
+					type: "POST",
 					dataType: "json",
 					success: function(data) {
 						refreshPage();
@@ -201,29 +234,49 @@ function stopTask(jobNo, taskNo) {
 
 // Remove all completed jobs.  Don't need to remove from queue because they
 // already have been since they're done
-function removeAllComplete() {
-	$("#multiusedialog")
-	.html("Are you sure?")
-	.dialog({
-		width : 300,
-		title : "Confirmation Required",
-		buttons : {
-			"Confirm" : function() {
-				$.ajax({
-					url: "cgi/deleteComplete.cgi",
-					type: "POST",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-					}
-				});
-			},
-			"Cancel" : function() {
-				$(this).dialog("close");
+function removeComplete() {
+	if (usernameVal == "") {
+		$("#multiusedialog")
+		.html("You need to have a username in the filter box on the left")
+		.dialog({
+			width : 300,
+			title : "Whoops",
+			buttons : {
+				"OK" : function() {
+					$(this).dialog("close");
+				}
 			}
-		}
-	});
+		});
+	} else {
+		$("#multiusedialog")
+		.html("Are you sure?")
+		.dialog({
+			width : 300,
+			title : "Confirmation Required",
+			buttons : {
+				"Confirm" : function() {
+					var AJAXparams = "user=" + usernameVal;
+					if (removeOldOnly == 1) {
+						AJAXparams = AJAXparams + "&old=1";
+					}
+
+					$.ajax({
+						url: "cgi/deleteComplete.cgi",
+						data: AJAXparams,
+						type: "POST",
+						success: function(data) {
+							refreshPage();
+							$("#multiusedialog")
+								.dialog("close");
+						}
+					});
+				},
+				"Cancel" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	}
 	$("#multiusedialog").dialog("open");
 }
 
@@ -240,10 +293,20 @@ function showHelpDialog() {
 	$("#helpdialog").dialog("open");
 }
 
-function setupToolbar() {
+function setupTopToolbar() {
+	$("#autorefresh").button({
+		text: false,
+		icons: { primary: "ui-icon-refresh" }
+	});
+}
+
+function setupJobsToolbar() {
 	$("#removeAllComplete").button({
 		icons: { primary: "ui-icon-closethick" }
-	}).click(function() { removeAllComplete(); });
+	}).click(function() { removeOldOnly = 0; removeComplete(); });
+	$("#removeOld").button({
+		icons: { primary: "ui-icon-closethick" }
+	}).click(function() { removeOldOnly = 1; removeComplete(); });
 	$("#showLegend").button({
 		icons: { primary: "ui-icon-info" }
 	}).click(function() { showHelpDialog(); });
@@ -256,7 +319,7 @@ function updateDurations() {
 	$(".rtupdate").each(function() {
 		rowID = $(this).parent().attr("id");
 		startTimeTD = $("#" + rowID + " td.starttime");
-		startTime = startTimeTD.html();
+		startTime = startTimeTD.attr("title");
 		startTimeMonth = startTimeTD.attr("alt");
 
 		if (startTimeMonth != "") {
@@ -272,7 +335,13 @@ function updateDurations() {
 			var minutes=Math.floor(delta/60)-(hours*60); 
 			var seconds=delta-(hours*3600)-(minutes*60);
 
-			$(this).html(hours+"h "+minutes+"m "+seconds+"s");
+			if (hours > 0) {
+				$(this).html(hours+"h "+minutes+"m "+seconds+"s");
+			} else if (minutes > 0) {
+				$(this).html(minutes+"m "+seconds+"s");
+			} else {
+				$(this).html(seconds+"s");
+			}
 		}
 	});
 }
@@ -282,7 +351,7 @@ function addJobTab(jobNo) {
 	var tabID = "#" + jobNo + "tab"
 
 	if ($(tabID).length == 0) {
-		$("#tabs").tabs( "add", tabID, jobNo )
+		$("#tabs").tabs("add", tabID, jobNo)
 
 		var tempString = "<table class=\"jobTable mainTable\" "
 		tempString +="id=\"" + jobNo + "Table\">";
@@ -292,6 +361,7 @@ function addJobTab(jobNo) {
 		tempString +="</th><th class=\"normalwidth\">End Time";
 		tempString +="</th><th class=\"narrow2\">Duration</th>";
 		tempString +="<th class=\"narrow2\">Return Code</th>";
+		tempString +="<th class=\"narrow2\">Attempts</th>";
 		tempString +="<th class=\"narrow2\">Exec Host</th>";
 		tempString +="</tr></thead><tbody></tbody></table>";
 
@@ -308,7 +378,7 @@ function refreshFilters() {
 	filters = "";
 	usernameVal = $("#username").val();
 	if (usernameVal != "") { filters += "username="+usernameVal; }
-	projnameVal = $("#projname").val();
+	var projnameVal = $("#projname").val();
 	if (projnameVal != "") {
 		var ampersand = "";
 		if (filters != "") { ampersand="&"; }
@@ -334,59 +404,85 @@ function refreshFilters() {
 		if (filters != "") { ampersand="&"; }
 		filters += ampersand + "error=1";
 	}
+	// Show/hide delete icons in text views depending on content
+	$('span.deleteicon').each(function(index) {
+			if ($(this).children("input").val() == "") {
+				$(this).children("span").css("width", "0px");
+			} else {
+				$(this).children("span").css("width", "16px");
+			}
+		});
 	refreshPage();
 }
 
 // Set up all the filter functions for the left filter bar
 function setupFilterFunctions() {
-	$("#username").blur(function() { refreshFilters(); });
-	$("#projname").blur(function() { refreshFilters(); });
+	$("#filters input").blur(function() { refreshFilters(); });
+	$("#filters input").bind('keyup', function (e) {
+		var key = e.keyCode || e.which;
+		if (key === 13) { refreshFilters(); }
+	});
 	$("#waitstate").button({ icons: {primary:'ui-icon-clock'}, text: false });
 	$("#donestate").button({ icons: {primary:'ui-icon-check'}, text: false });
 	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
 	$("#errorstate").button({ icons: {primary:'ui-icon-alert'}, text: false });
 	$("#stateboxes input").click(function() { refreshFilters(); });
-	
+	$('input.deletable').wrap('<span class="deleteicon" />')
+		.after($('<span />'));
+	$("span.deleteicon").children("span").click(function() {
+			$(this).prev("input").val("").focus();
+			refreshFilters();
+		});
 }
 
-// jQuery setup thingy
-$(function() {
-	// Set up the tabs
-	$("#tabs").tabs({closable: true});
-	// and the modal dialogs
-	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
-	$("#helpdialog").dialog({ autoOpen: false, modal: true });
-	setupToolbar();
-	setupFilterFunctions();
-
+// Set up autorefresh code
+function setupAutoRefresh() {
 	// Setup all the autoRefresh bits
 	if ($.cookie("doNOTautoRefresh")) {
-		$("#autorefresh INPUT[name=autorefresh]").attr("checked", false);
+		$("#autorefresh").attr("checked", false);
 	} else {
 		refreshTimeout = setTimeout(function() {
 						refreshPage()
 					}, refreshInterval);
 	}
-	$("#autorefresh input").click( function() {
-		var checkbox = $(this).find(":checkbox");
-		checkbox.attr('checked', !checkbox.attr('checked'));
-		if( $(this).is(":checked") ) {
+	$("#autorefresh").change( function() {
+		if( $("#autorefresh").is(":checked") ) {
 			$.cookie("doNOTautoRefresh", null);
-			refreshTimeout = setTimeout(function() {
-							refreshPage();
-						}, refreshInterval);
-		}
-		if( $(this).is(":not(:checked)") ) {
+			refreshPage();
+		} else {
 			$.cookie("doNOTautoRefresh", true, { expires: 30 });
 			clearTimeout(refreshTimeout);
+			$("#autorefresh").button("option",
+				"icons",
+				{ primary: "ui-icon-refresh" });
 		}
 	});
+}
+
+// jQuery setup thingy
+$(function() {
+	// Set up the tabs
+	$("#tabs").tabs({closable: true,
+			remove: function(event, ui) {
+				$("#tabs").tabs("select", "#jobstab");
+			}});
+	// and the modal dialogs
+	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
+	$("#helpdialog").dialog({ autoOpen: false, modal: true });
+	setupTopToolbar();
+	setupJobsToolbar();
+	setupAutoRefresh();
+	setupFilterFunctions();
 
 	// Now populate the jobsTable and set the event handler
 	$('#tabs').bind('tabsshow', function(event, ui) {
 		if (ui.panel.id == "jobstab") { getJobs(""); }
 	});
-	getJobs("");
+
+	// On opening, REMOTE_USER might be set by Apache/Kerberos/whatever and
+	// index.html is set to fill in the user filter with it, so run
+	// refreshFilters to initially populate the jobs table
+	refreshFilters();
 
 	lastUpdated();
 });

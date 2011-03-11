@@ -47,5 +47,7 @@ Task view
 
 ==== Notes ====
 
-The UI currently only displays one user
+It's worth noting that I've been developing almost entirely in Google Chrome
+I've checked every now and then that it looks ok in Firefox, but it's certainly
+not as pretty as in Chrome.  Just use Chrome :-)
 It assumes everything is an array task

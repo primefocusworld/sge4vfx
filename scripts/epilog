@@ -29,14 +29,41 @@ if [ -e /tmp/${JOB_ID}-${SGE_TASK_ID}-return ]; then
 	fi
 	PSQL_CMD="${PSQL_CMD}, returncode = ${RETURNCODE}"
 fi
-PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs SET donetasks = donetasks + 1 "
+# Figure out if it's batch or not and make the appropriate chunk of psql code
+if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
+	PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno >= ${TASK_NO}"
+	PSQL_CMD="${PSQL_CMD} AND taskno < (${TASK_NO} + ${SGE_TASK_STEPSIZE});"
+	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET"
+	# Check we don't set donetasks to a number greater than the total number
+	# of tasks
+	let TEMP_LAST=${TASK_NO}+${SGE_TASK_STEPSIZE}-1
+	if [ ${TEMP_LAST} -gt ${SGE_TASK_LAST} ]; then
+		let HOW_MANY_TASKS_HERE=${SGE_TASK_LAST}-${TASK_NO}+1
+		PSQL_CMD="${PSQL_CMD} donetasks ="
+		PSQL_CMD="${PSQL_CMD} donetasks + ${HOW_MANY_TASKS_HERE} "
+	else
+		PSQL_CMD="${PSQL_CMD} donetasks ="
+		PSQL_CMD="${PSQL_CMD} donetasks + ${SGE_TASK_STEPSIZE} "
+	fi
+else
+	PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno = ${TASK_NO};"
+	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET donetasks = donetasks + 1 "
+fi
 PSQL_CMD="${PSQL_CMD}WHERE sgeid = ${SGE_ID};"
 PSQL_CMD="${PSQL_CMD}UPDATE jobs SET endtime = current_timestamp "
 PSQL_CMD="${PSQL_CMD}WHERE donetasks = (lasttask - firsttask + 1) "
 PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
-PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE status != 2 "
-PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID} AND endtime IS NOT NULL;"
+# If there's an error, set the job status
+if [ ${STATUS} -eq 2 ]; then
+	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE "
+	PSQL_CMD="${PSQL_CMD}sgeid = ${SGE_ID};"
+# Otherwise, set the status to ${STATUS} if it's not already set to error
+# and the job has finished
+else
+	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE "
+	PSQL_CMD="${PSQL_CMD}status != 2 AND sgeid = ${SGE_ID} AND "
+	PSQL_CMD="${PSQL_CMD}endtime IS NOT NULL;"
+fi
 
 # Run the task command
 psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1

@@ -100,26 +100,54 @@ psqlcommand += "ORDER BY " + sortby + " " + sortdir + ";"
 # Execute the SQL query
 cur.execute(psqlcommand)
 zebra = False
+today = datetime.date.today()
+todayStr = today.strftime("%d %b")
 for record in cur:
 	[sgeid, jobname, username, project, priority, submittime, starttime,
 		endtime, firsttask, lasttask, chunk, status,
-		submissionscript, donetasks] = record
+		submissionscript, donetasks, stdout, stderr] = record
 	sgeid = str(sgeid)
 
 	# Format the dates into strings if not Null
+	oldDate = ""
+	newDate = ":%S"
+	if todayStr != submittime.strftime("%d %b"):
+		oldDate = "%d %b "
+		newDate = ""
+	submittimestr = submittime.strftime(oldDate + "%H:%M" + newDate)
+	submittimetitle = submittime.strftime("%d %b %H:%M:%S")
+
 	if starttime is not None:
-		starttimestr = starttime.strftime("%d %b %H:%M:%S")
+		oldDate = ""
+		newDate = ":%S"
+		if todayStr != starttime.strftime("%d %b"):
+			oldDate = "%d %b "
+			newDate = ""
+		starttimestr = starttime.strftime(oldDate + "%H:%M" + newDate)
+		starttimetitle = starttime.strftime("%d %b %H:%M:%S")
 		starttimealt = starttime.strftime("%m")
 	else:
 		starttimestr = "-"
+		starttimetitle = ""
 		starttimealt = ""
 	if endtime is not None:
-		endtimestr = endtime.strftime("%d %b %H:%M:%S")
+		oldDate = ""
+		newDate = ":%S"
+		if todayStr != endtime.strftime("%d %b"):
+			oldDate = "%d %b "
+			newDate = ""
+		endtimestr = endtime.strftime(oldDate + "%H:%M" + newDate)
+		endtimetitle = endtime.strftime("%d %b %H:%M:%S")
 		duration = endtime - starttime
 		s = duration.seconds
 		hours, remainder = divmod(s, 3600)
 		minutes, seconds = divmod(remainder, 60)
-		durationstr = '%sh %sm %ss' % (hours, minutes, seconds)
+		if (hours > 0):
+			durationstr = '%sh %sm %ss' % (hours, minutes, seconds)
+		elif (minutes > 0):
+			durationstr = '%sm %ss' % (minutes, seconds)
+		else:
+			durationstr = '%ss' % (seconds)
 		realtimeupdate = ""
 	else:
 		endtimestr = "-"
@@ -160,9 +188,10 @@ for record in cur:
 	tempstring += "</td><td>" + username
 	tempstring += "</td><td>" + str(project)
 	tempstring += "</td><td>" + str(priority)
-	tempstring += "</td><td>" + submittime.strftime("%d %b %H:%M:%S")
-	tempstring += "</td><td alt=\"" + starttimealt + "\" class=\"starttime\">" + starttimestr
-	tempstring += "</td><td>" + endtimestr
+	tempstring += "</td><td title=\"" + submittimetitle + "\">" + submittimestr
+	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
+	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr
+	tempstring += "</td><td title=\"" + starttimetitle + "\">" + endtimestr
 	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
 	tempstring += "</td><td>" + str(firsttask) + "-" + str(lasttask) + ":" + str(chunk)
 
