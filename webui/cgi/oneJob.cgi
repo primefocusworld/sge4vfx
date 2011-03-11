@@ -94,7 +94,7 @@ for record in cur:
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
 	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
-	tempstring += sgeid + "," + taskno + ");\" src=\"images/info.png\" />"
+	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr
