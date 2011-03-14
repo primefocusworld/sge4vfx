@@ -61,7 +61,6 @@ function refreshPage() {
 		getJob("", tempSplit[0]);
 	}
 	lastUpdated();
-	alert("Refreshing");
 
 	if (autoRefresh == true) {
 		whichRefreshIcon += 1;
