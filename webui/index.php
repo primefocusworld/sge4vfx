@@ -16,6 +16,7 @@
 	<h1>theQ</h1>
 	<div id="topToolbar" class="ui-widget-header ui-corner-all">
 		<button id="showLegend">Help</button>
+		<button id="manualRefresh" title="Manual Refresh">Refresh</button>
 		<input type="checkbox" id="autorefresh" name="autorefresh"><label for="autorefresh">Auto Refresh</label>
 	</div>
 </div>

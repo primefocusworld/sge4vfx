@@ -61,6 +61,7 @@ function refreshPage() {
 		getJob("", tempSplit[0]);
 	}
 	lastUpdated();
+	alert("Refreshing");
 
 	if (autoRefresh == true) {
 		whichRefreshIcon += 1;
@@ -303,6 +304,10 @@ function setupTopToolbar() {
 		text: false,
 		icons: { primary: "ui-icon-locked" }
 	});
+	$("#manualRefresh").button({
+		text: false,
+		icons: { primary: "ui-icon-refresh" }
+	}).click(function() { refreshPage(); });
 }
 
 function setupJobsToolbar() {
