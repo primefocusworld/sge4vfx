@@ -40,8 +40,8 @@ set).
 At the moment, it also puts stdout and stderr paths into the job table.  I
 wasn't sure how best to go about this since I thought it a bit redundant to have
 stdout and stderr recorded next to every single task, but doing it this way does
-assume that the log names end in the standard SGE for of <SGEID>.<TASKNO> - for
-example: /home/blah/testjob.o2456.1
+assume that the log names end with .<TASKNO> - for example:
+/home/blah/testjob.o2456.1 or /blah/blah/test.4
 Maybe it's bad to make this assumption but for my purposes I think it's ok.
 File an issue if you think it should be changed.
 
