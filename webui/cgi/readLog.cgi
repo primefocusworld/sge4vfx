@@ -26,23 +26,29 @@ conn.commit()
 cur.execute(sqlQuery)
 for record in cur:
 	[stdout, stderr] = record
-	soFilename = stdout + "." + frame
-	seFilename = stderr + "." + frame
+	if stdout is None:
+		stdoutReturn = "No stdout path specified"
+	if stderr is None:
+		stderrReturn = "No stderr path specified"
 
-	# Stdout
-	try:
-		f = open(soFilename, 'r')
-		stdoutReturn = f.read()
-		stdoutReturn = stdoutReturn.replace("\n","<br />\n")
-	except IOError as e:
-		stdoutReturn = "No stdout"
+	if stderr is not None and stderr is not None:
+		soFilename = stdout + "." + frame
+		seFilename = stderr + "." + frame
 
-	# Stderr
-	try:
-                f = open(seFilename, 'r')
-                stderrReturn = f.read()
-        except IOError as e:
-                stderrReturn = "No stderr"
+		# Stdout
+		try:
+			f = open(soFilename, 'r')
+			stdoutReturn = f.read()
+			stdoutReturn = stdoutReturn.replace("\n","<br />\n")
+		except IOError as e:
+			stdoutReturn = "No stdout"
+
+		# Stderr
+		try:
+                	f = open(seFilename, 'r')
+	                stderrReturn = f.read()
+        	except IOError as e:
+                	stderrReturn = "No stderr"
 
 cur.close()
 conn.close()
