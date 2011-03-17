@@ -92,10 +92,27 @@ for record in cur:
 		tempstring += "\" class=\"" + statusclass+ "\">"
 	zebra = not zebra
 
+	# Look for an output path in the job_extras table
+	output_path = ""
+	cur2 = conn.cursor()
+	sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + jobNumber
+	sqlQuery2 += " AND key = 'output_path';"
+	cur2.execute(sqlQuery2)
+	for record2 in cur2:
+		[output_path] = record2
+		full_output_path = re.sub("\.(#+)\.",
+			lambda x:".%s."%str(taskno).zfill(
+				len(x.groups()[0])), output_path)
+	cur2.close
+
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
 	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
+	if output_path != "":
+		tempstring += "<a href=\"rvlink://" + full_output_path + "\">"
+		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
+		tempstring += "</a>"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr

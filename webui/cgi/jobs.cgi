@@ -175,6 +175,16 @@ for record in cur:
 		tempstring += "\">"
 	zebra = not zebra
 
+	# Look for an output path in the job_extras table
+	output_path = ""
+	cur2 = conn.cursor()
+	sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + sgeid
+	sqlQuery2 += " AND key = 'output_path';"
+	cur2.execute(sqlQuery2)
+	for record2 in cur2:
+		[output_path] = record2
+	cur2.close
+
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "
 	tempstring += sgeid + ");\" src=\"images/delete.png\" />"
 	tempstring += "<a onclick=\"event.stopPropagation();\" "
@@ -183,6 +193,11 @@ for record in cur:
 	tempstring += " src=\"images/script.png\" /></a>"
 	tempstring += "<img class=\"iconbtn\" onclick=\"jobInfo(event, "
 	tempstring += sgeid + ");\" src=\"images/info.png\" />"
+	if output_path != "":
+		tempstring += "<a onclick=\"event.stopPropagation();\" "
+		tempstring += "href=\"rvlink://" + output_path + "\">"
+		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
+		tempstring += "</a>"
 	tempstring += "</td><td>" + sgeid
 	tempstring += "</td><td>" + jobname
 	tempstring += "</td><td>" + username
