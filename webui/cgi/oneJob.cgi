@@ -6,6 +6,7 @@ print "Content-type:text/html\r\n\r\n"
 
 import psycopg2
 import datetime
+import re
 
 import sgewebuisettings
 
@@ -99,7 +100,11 @@ for record in cur:
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr
 	tempstring += "</td><td title=\"" + starttimetitle + "\">" + endtimestr
-	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
+	# Only auto-update durations that aren't already known
+	if durationstr == "-" and starttimestr != "-":
+		tempstring += "</td><td" + realtimeupdate + ">" + durationstr
+	else:
+		tempstring += "</td><td>" + durationstr
 	tempstring += "</td><td>" + returncode
 	tempstring += "</td><td>" + str(attempts)
 	tempstring += "</td><td>" + rhost

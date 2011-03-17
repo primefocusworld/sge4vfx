@@ -192,7 +192,11 @@ for record in cur:
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr
 	tempstring += "</td><td title=\"" + starttimetitle + "\">" + endtimestr
-	tempstring += "</td><td" + realtimeupdate + ">" + durationstr
+	# Only auto-update durations that aren't already known
+	if durationstr == "-" and starttimestr != "-":
+		tempstring += "</td><td" + realtimeupdate + ">" + durationstr
+	else:
+		tempstring += "</td><td>" + durationstr
 	tempstring += "</td><td>" + str(firsttask) + "-" + str(lasttask) + ":" + str(chunk)
 
 	percentdone = (float(donetasks) / (float(lasttask) - float(firsttask) + 1.0)) * 100.0
