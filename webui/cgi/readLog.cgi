@@ -19,21 +19,29 @@ conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 	sgewebuisettings.user, sgewebuisettings.host))
 cur = conn.cursor()
 
-sqlQuery = "SELECT stdout,stderr FROM jobs WHERE sgeid = " + sgeid + ";"
+sqlQuery = "SELECT firsttask, chunk, stdout, stderr FROM jobs "
+sqlQuery += "WHERE sgeid = " + sgeid + ";"
 cur.execute(sqlQuery)
 conn.commit()
 
 cur.execute(sqlQuery)
 for record in cur:
-	[stdout, stderr] = record
+	[firsttask, chunk, stdout, stderr] = record
 	if stdout is None:
 		stdoutReturn = "No stdout path specified"
 	if stderr is None:
 		stderrReturn = "No stderr path specified"
 
 	if stderr is not None and stderr is not None:
-		soFilename = stdout + "." + frame
-		seFilename = stderr + "." + frame
+		# Logs are only recorded by the first task in a batch
+		# The maths below works out what that batchNumber is
+		frameNum = int(frame)
+		fTaskNum = int(firsttask)
+		cNum = int(chunk)
+		batchNumber = str(frameNum - (frameNum - fTaskNum) % cNum)
+
+		soFilename = stdout + "." + batchNumber
+		seFilename = stderr + "." + batchNumber
 
 		# Stdout
 		try:
