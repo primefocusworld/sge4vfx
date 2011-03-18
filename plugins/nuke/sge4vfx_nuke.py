@@ -137,7 +137,7 @@ def RenderPanel():
 		startFrame = p.value("Start Frame:")
 		endFrame = p.value("End Frame:")
 		slotsPerFrame = p.value("Slots per frame:")
-		queue = p.value("Queue:")
+		whichQueue = p.value("Queue:")
 		batchSize = p.value("Batch Size:")
 
 		Submit(renderFullSize,
