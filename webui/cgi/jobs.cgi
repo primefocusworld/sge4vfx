@@ -9,6 +9,9 @@ import datetime
 
 import sgewebuisettings
 
+rvInstalled = True
+rvString = "Opening RV.  Please wait..."
+
 # Get the CGI values from the form submission
 vals_in = cgi.FieldStorage()
 sortby = vals_in.getvalue("sortby")
@@ -175,15 +178,16 @@ for record in cur:
 		tempstring += "\">"
 	zebra = not zebra
 
-	# Look for an output path in the job_extras table
-	output_path = ""
-	cur2 = conn.cursor()
-	sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + sgeid
-	sqlQuery2 += " AND key = 'output_path';"
-	cur2.execute(sqlQuery2)
-	for record2 in cur2:
-		[output_path] = record2
-	cur2.close
+	# If RV is installed, look for an output path in the job_extras table
+	if rvInstalled:
+		output_path = ""
+		cur2 = conn.cursor()
+		sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + sgeid
+		sqlQuery2 += " AND key = 'output_path';"
+		cur2.execute(sqlQuery2)
+		for record2 in cur2:
+			[output_path] = record2
+		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "
 	tempstring += sgeid + ");\" src=\"images/delete.png\" />"
@@ -193,8 +197,9 @@ for record in cur:
 	tempstring += " src=\"images/script.png\" /></a>"
 	tempstring += "<img class=\"iconbtn\" onclick=\"jobInfo(event, "
 	tempstring += sgeid + ");\" src=\"images/info.png\" />"
-	if output_path != "":
-		tempstring += "<a onclick=\"event.stopPropagation();\" "
+	if rvInstalled and output_path != "" and donetasks > 1:
+		tempstring += "<a onclick=\"event.stopPropagation(); "
+		tempstring += "toast('RV','" + rvString + "');\" "
 		tempstring += "href=\"rvlink://" + output_path + "\">"
 		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
 		tempstring += "</a>"

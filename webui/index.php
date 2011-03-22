@@ -4,10 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>theQ</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/custom-theme/jquery-ui-1.8.7.custom.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/ui.notify.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/main.css">
 	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.7.custom.min.js"></script>
 	<script type="text/javascript" src="js/ui.tabs.closable.js"></script>
+	<script type="text/javascript" src="js/jquery.notify.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
@@ -84,6 +86,13 @@
 	<div class="bluebg colourbar">Completed</div>
 	<div class="redbg colourbar">Error</div>
 	<div class="purplebg colourbar">Other</div>
+</div>
+<div id="notifications">
+	<div id="basic-notification">
+		<a class="ui-notify-close" href="#"><span class="ui-icon ui-icon-close" style="float:right"></span></a>
+		<h1>#{title}</h1>
+		<p>#{text}</p>
+	</div>
 </div>
 <div id="lastupdate">Last Updated: Never</div>
 </body>

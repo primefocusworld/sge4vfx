@@ -475,6 +475,19 @@ function setupAutoRefresh() {
 	});
 }
 
+// Setup the toast style notifications
+function setupNotifications() {
+	$("#notifications").notify();
+}
+
+// The actual toast function
+function toast(theTitle, theContent) {
+	$("#notifications").notify("create", {
+		title: theTitle,
+		text: theContent
+	} );
+}
+
 // jQuery setup thingy
 $(function() {
 	// Set up the tabs
@@ -485,6 +498,7 @@ $(function() {
 	// and the modal dialogs
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
+	setupNotifications();
 	setupJobsToolbar();
 	setupAutoRefresh();
 	setupTopToolbar();

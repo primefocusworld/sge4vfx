@@ -15,6 +15,9 @@ sortby = vals_in.getvalue("sortby")
 sortdir = vals_in.getvalue("sortdir")
 jobNumber = vals_in.getvalue("jobno")
 
+rvInstalled = True
+rvString = "Opening RV.  Please wait..."
+
 conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 	sgewebuisettings.user, sgewebuisettings.host))
 cur = conn.cursor()
@@ -92,25 +95,27 @@ for record in cur:
 		tempstring += "\" class=\"" + statusclass+ "\">"
 	zebra = not zebra
 
-	# Look for an output path in the job_extras table
-	output_path = ""
-	cur2 = conn.cursor()
-	sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + jobNumber
-	sqlQuery2 += " AND key = 'output_path';"
-	cur2.execute(sqlQuery2)
-	for record2 in cur2:
-		[output_path] = record2
-		full_output_path = re.sub("\.(#+)\.",
-			lambda x:".%s."%str(taskno).zfill(
-				len(x.groups()[0])), output_path)
-	cur2.close
+	# If RV is installed, look for an output path in the job_extras table
+	if rvInstalled:
+		output_path = ""
+		cur2 = conn.cursor()
+		sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid="
+		sqlQuery2 += jobNumber + " AND key = 'output_path';"
+		cur2.execute(sqlQuery2)
+		for record2 in cur2:
+			[output_path] = record2
+			full_output_path = re.sub("\.(#+)\.",
+				lambda x:".%s."%str(taskno).zfill(
+					len(x.groups()[0])), output_path)
+		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
 	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
-	if output_path != "":
-		tempstring += "<a href=\"rvlink://" + full_output_path + "\">"
+	if rvInstalled and output_path != "" and endtime is not None:
+		tempstring += "<a onclick=\"toast('RV','" + rvString + "');\" "
+		tempstring += "href=\"rvlink://" + full_output_path + "\">"
 		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
 		tempstring += "</a>"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
