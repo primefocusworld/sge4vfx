@@ -140,29 +140,6 @@ function taskInfo(jobNo, taskNo) {
 	});
 }
 
-// Pop up a dialog with info on a particular job
-function jobInfo(e, jobNo) {
-	// Stop the opening of the job tab
-	e.stopPropagation();
-	e.preventDefault();
-
-	if ($("#row" + jobNo).hasClass("completed")) {
-		showInfoDialog(jobNo + " Info", "No longer in SGE - TODO");
-	} else if ($("#row" + jobNo).hasClass("error")) {
-		showInfoDialog(jobNo + " Info", "Job has errors - TODO");
-	} else {
-		$.ajax({
-			url: "cgi/getJobInfo.cgi",
-			data: "sgeid=" + jobNo,
-			type: "POST",
-			dataType: "json",
-			success: function(data, jobNo) {
-				showJobInfo(data, jobNo);
-			}
-		});
-	}
-}
-
 // Remove a single job from both the DB and the SGE queue
 function deleteJob(e, jobNo) {
 	// Stop the opening of the job tab

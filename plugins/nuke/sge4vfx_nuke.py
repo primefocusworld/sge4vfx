@@ -161,7 +161,7 @@ def RenderPanel():
 
 		# Now get all the values and submit if the user clicked OK
 		if result == 1:
-			renderFullSize = str(p.value("Render full size:"))
+			renderFullSize = p.value("Render full size:")
 			startFrame = p.value("Start Frame:")
 			endFrame = p.value("End Frame:")
 			slotsPerFrame = p.value("Slots per frame:")
@@ -196,7 +196,7 @@ def jobExtraPreview(theJobID, previewNode, fullSize):
 	if fullSize:
 		location = theNode['file'].value()
 	else:
-		location = nuke.filename(previewNode)
+		location = nuke.filename(theNode)
 
 	# Replace %0xd with x number of hashes
 	num = re.search("^(.*)(%([0-9]+)d)(.*)$", location)

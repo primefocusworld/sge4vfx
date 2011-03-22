@@ -96,7 +96,8 @@ for record in cur:
 	zebra = not zebra
 
 	# If RV is installed, look for an output path in the job_extras table
-	if rvInstalled:
+	output_path = ""
+	if rvInstalled and endtime is not None and returncode == "0":
 		output_path = ""
 		cur2 = conn.cursor()
 		sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid="
@@ -113,7 +114,7 @@ for record in cur:
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
 	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
-	if rvInstalled and output_path != "" and endtime is not None:
+	if output_path != "":
 		tempstring += "<a onclick=\"toast('RV','" + rvString + "');\" "
 		tempstring += "href=\"rvlink://" + full_output_path + "\">"
 		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"

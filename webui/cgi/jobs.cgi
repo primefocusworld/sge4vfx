@@ -179,7 +179,8 @@ for record in cur:
 	zebra = not zebra
 
 	# If RV is installed, look for an output path in the job_extras table
-	if rvInstalled:
+	output_path = ""
+	if rvInstalled and donetasks > 0 and status != 2:
 		output_path = ""
 		cur2 = conn.cursor()
 		sqlQuery2 = "SELECT value FROM job_extras WHERE sgeid=" + sgeid
@@ -190,19 +191,17 @@ for record in cur:
 		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "
-	tempstring += sgeid + ");\" src=\"images/delete.png\" />"
+	tempstring += sgeid + ");\" src=\"images/delete.png\"/>"
 	tempstring += "<a onclick=\"event.stopPropagation();\" "
 	tempstring += "href=\"http://" + sgewebuisettings.httphost + submissionscript
 	tempstring += "\"><img class=\"iconbtn\" alt=\"Submission Script\""
 	tempstring += " src=\"images/script.png\" /></a>"
-	tempstring += "<img class=\"iconbtn\" onclick=\"jobInfo(event, "
-	tempstring += sgeid + ");\" src=\"images/info.png\" />"
-	if rvInstalled and output_path != "" and donetasks > 1:
+	if output_path != "":
 		tempstring += "<a onclick=\"event.stopPropagation(); "
 		tempstring += "toast('RV','" + rvString + "');\" "
 		tempstring += "href=\"rvlink://" + output_path + "\">"
-		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
-		tempstring += "</a>"
+		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\" "
+		tempstring += "title=\"Preview in RV\"/></a>"
 	tempstring += "</td><td>" + sgeid
 	tempstring += "</td><td>" + jobname
 	tempstring += "</td><td>" + username
