@@ -204,7 +204,8 @@ def jobExtraPreview(theJobID, previewNode, fullSize):
 		hashReplace = "#" * int(num.group(3))
 		newLocation = (num.group(1) + hashReplace + num.group(4))
 	else:
-		newLocation = location
+		# Can't find %XXd so look for %d, otherwise, just return orig
+		newLocation = re.sub("%d", "#", location)
 
 	# Do the gridextra command to add the output_path info
 	previewCmd = ("gridextra " + theJobID + " output_path "
