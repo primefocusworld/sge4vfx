@@ -6,6 +6,7 @@ print "Content-type:text/html\r\n\r\n"
 
 import psycopg2
 import datetime
+import urllib
 
 import sgewebuisettings
 
@@ -187,7 +188,8 @@ for record in cur:
 		sqlQuery2 += " AND key = 'output_path';"
 		cur2.execute(sqlQuery2)
 		for record2 in cur2:
-			[output_path] = record2
+			[tempStr] = record2
+			output_path = urllib.quote(tempStr)
 		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "

@@ -7,6 +7,7 @@ print "Content-type:text/html\r\n\r\n"
 import psycopg2
 import datetime
 import re
+import urllib
 
 import sgewebuisettings
 
@@ -105,9 +106,10 @@ for record in cur:
 		cur2.execute(sqlQuery2)
 		for record2 in cur2:
 			[output_path] = record2
-			full_output_path = re.sub("\.(#+)\.",
+			tempStr = re.sub("\.(#+)\.",
 				lambda x:".%s."%str(taskno).zfill(
 					len(x.groups()[0])), output_path)
+                        output_path = urllib.quote(tempStr)
 		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
@@ -116,7 +118,7 @@ for record in cur:
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
 	if output_path != "":
 		tempstring += "<a onclick=\"toast('RV','" + rvString + "');\" "
-		tempstring += "href=\"rvlink://" + full_output_path + "\">"
+		tempstring += "href=\"rvlink://" + output_path + "\">"
 		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
 		tempstring += "</a>"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
