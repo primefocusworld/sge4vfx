@@ -121,6 +121,10 @@ for record in cur:
 		tempstring += "href=\"rvlink://" + output_path + "\">"
 		tempstring += "<img class=\"iconbtn\" src=\"images/film.png\"/>"
 		tempstring += "</a>"
+	if returncode != "0":
+		tempstring += "<img class=\"iconbtn\" onclick=\"retry(event, "
+		tempstring += sgeid + "." + taskno + ")\" "
+		tempstring += "src=\"images/retry.png\" title=\"Retry\"/>"
 	tempstring += "</td><td>" + sgeid + " - " + taskno
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr

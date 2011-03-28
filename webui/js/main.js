@@ -140,6 +140,44 @@ function taskInfo(jobNo, taskNo) {
 	});
 }
 
+// Retry a job
+function retry(e, jobNo) {
+	// Stop the opening of the job tab
+	e.stopPropagation();
+	e.preventDefault();
+
+	$("#multiusedialog")
+	.html("Want to retry job " + jobNo.toString() + "?")
+	.dialog({
+		width : 300,
+		title : "Confirmation Required",
+		buttons : {
+			"Confirm" : function() {
+				$.ajax({
+					url: "cgi/retry.cgi",
+					data: "sgeid=" + jobNo,
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						refreshPage();
+						$("#multiusedialog")
+							.dialog("close");
+
+						var tabName = "#" + data.sgeid + "tab";
+						if ($(tabName).length > 0) {
+							$("#tabs").tabs("remove", tabName);
+						}
+					}
+				});
+			},
+			"Cancel" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$("#multiusedialog").dialog("open");
+}
+
 // Remove a single job from both the DB and the SGE queue
 function deleteJob(e, jobNo) {
 	// Stop the opening of the job tab
