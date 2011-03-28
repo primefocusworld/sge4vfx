@@ -127,10 +127,10 @@ function taskInfo(jobNo, taskNo) {
 		type: "GET",
 		dataType: "json",
 		success: function(data) {
-			content = "<div id=\"leftlog\">\n";
+			content = "<div id=\"leftlog\" class=\"logpane\">\n";
 			content += "<h3>Stdout</h3>\n";
 			content += data.stdout + "\n";
-			content += "</div><div id=\"rightlog\">\n";
+			content += "</div><div id=\"rightlog\" class=\"logpane\">\n";
 			content += "<h3>Stderr</h3>\n";
 			content += data.stderr + "\n";
 			content += "</div>\n";
