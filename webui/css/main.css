@@ -156,7 +156,7 @@ span.deleteicon input {
 .popupdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }
 .popupdialog h3:first-of-type { margin-top:5px }
 /* Log Dialog */
-.logpane { width:49%; word-wrap: break-word; }
+.logpane { width:49%; max-width:49%; word-wrap:break-word; }
 #leftlog { min-height:100%; float:left; border-right:1px solid #333 }
 #rightlog { height:100%; float:right }
 /* Help Dialog */
