@@ -73,3 +73,8 @@ psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1
 [ ! -s "$SGE_STDOUT_PATH" ] && rm -f $SGE_STDOUT_PATH
 [ -r "$SGE_STDERR_PATH" -a -f "$SGE_STDERR_PATH" ] && \
 [ ! -s "$SGE_STDERR_PATH" ] && rm -f $SGE_STDERR_PATH
+
+# If there were errors, put the job into error hold
+if [ ${STATUS} -eq 2 ]; then
+	exit 100
+fi

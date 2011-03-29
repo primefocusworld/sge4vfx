@@ -21,8 +21,6 @@ cur = conn.cursor()
 
 sqlQuery = "SELECT firsttask, chunk, stdout, stderr FROM jobs "
 sqlQuery += "WHERE sgeid = " + sgeid + ";"
-cur.execute(sqlQuery)
-conn.commit()
 
 cur.execute(sqlQuery)
 for record in cur:
