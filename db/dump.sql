@@ -10,7 +10,7 @@ SET client_min_messages = warning;
 SET escape_string_warning = off;
 
 --
--- Name: sgedb; Type: COMMENT; Schema: -; Owner: pgadmin
+-- Name: sgedb; Type: COMMENT; Schema: -; Owner: postgres
 --
 
 COMMENT ON DATABASE sgedb IS 'GridEngine tracking database';
@@ -220,7 +220,7 @@ COMMENT ON COLUMN jobs.stderr IS 'Stderr log location with task ID stripped';
 
 
 --
--- Name: tasks; Type: TABLE; Schema: public; Owner: pgadmin; Tablespace: 
+-- Name: tasks; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE tasks (
@@ -234,17 +234,17 @@ CREATE TABLE tasks (
 );
 
 
-ALTER TABLE public.tasks OWNER TO pgadmin;
+ALTER TABLE public.tasks OWNER TO postgres;
 
 --
--- Name: COLUMN tasks.returncode; Type: COMMENT; Schema: public; Owner: pgadmin
+-- Name: COLUMN tasks.returncode; Type: COMMENT; Schema: public; Owner: postgres
 --
 
 COMMENT ON COLUMN tasks.returncode IS 'Return code from task command';
 
 
 --
--- Name: COLUMN tasks.rhost; Type: COMMENT; Schema: public; Owner: pgadmin
+-- Name: COLUMN tasks.rhost; Type: COMMENT; Schema: public; Owner: postgres
 --
 
 COMMENT ON COLUMN tasks.rhost IS 'The renderbox the task last ran on';
@@ -267,7 +267,7 @@ ALTER TABLE ONLY jobs
 
 
 --
--- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: pgadmin; Tablespace: 
+-- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
 ALTER TABLE ONLY tasks
@@ -314,7 +314,7 @@ ALTER TABLE ONLY job_extras
 
 
 --
--- Name: sgeid; Type: FK CONSTRAINT; Schema: public; Owner: pgadmin
+-- Name: sgeid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY tasks
@@ -338,16 +338,16 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 REVOKE ALL ON TABLE jobs FROM PUBLIC;
 REVOKE ALL ON TABLE jobs FROM sge;
 GRANT ALL ON TABLE jobs TO sge;
-GRANT ALL ON TABLE jobs TO pgadmin;
+GRANT ALL ON TABLE jobs TO postgres;
 
 
 --
--- Name: tasks; Type: ACL; Schema: public; Owner: pgadmin
+-- Name: tasks; Type: ACL; Schema: public; Owner: postgres
 --
 
 REVOKE ALL ON TABLE tasks FROM PUBLIC;
-REVOKE ALL ON TABLE tasks FROM pgadmin;
-GRANT ALL ON TABLE tasks TO pgadmin;
+REVOKE ALL ON TABLE tasks FROM postgres;
+GRANT ALL ON TABLE tasks TO postgres;
 GRANT ALL ON TABLE tasks TO sge;
 
 

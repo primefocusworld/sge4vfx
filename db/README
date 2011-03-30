@@ -8,7 +8,8 @@ and I'm pretty sure I'm making bad choices when it comes to priveleges and perms
 hence the TODO
 
 1) Create a passwordless user called 'sge'
-2) Apply the dump script
+2) Create a db called 'sgedb'
+3) Apply the dump script
 
 You'll need the psql client on your workstations and renderboxes too
 
