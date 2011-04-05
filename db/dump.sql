@@ -100,8 +100,8 @@ CREATE TABLE jobs (
     status smallint NOT NULL,
     submissionscript character varying(256) NOT NULL,
     donetasks integer DEFAULT 0 NOT NULL,
-    stdout character varying(128),
-    stderr character varying(128)
+    stdout character varying(512),
+    stderr character varying(512)
 );
 
 
