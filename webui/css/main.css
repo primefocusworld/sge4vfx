@@ -43,22 +43,22 @@ h1 {
 
 /* Container Table - Inside jqueryUI Jobs tab */
 
-#containerTable { width:100% }
-#leftContainer {
+.containerTable { width:100% }
+.leftContainer {
 	width:9%;
 	vertical-align:top;
 }
-#gutter { width:1% }
-#rightContainer { width:90%; vertical-align:top }
+.gutter { width:1% }
+.rightContainer { width:90%; vertical-align:top }
 
 
 /* Filters bit on the left */
-#filtersContainer {
+.filtersContainer {
 	border-radius:5px;
 	background:#333333 url(custom-theme/images/ui-bg_gloss-wave_25_333333_500x100.png) 0 0 repeat-x;
 	padding-bottom:5px
 }
-#filtersContainer h2 {
+.filtersContainer h2 {
 	text-align:center;
 	margin:0 0 5px 0;
 	line-height:1.8em;
@@ -69,9 +69,9 @@ h1 {
 	border-top-left-radius:5px;
 	border-top-right-radius:5px
 }
-#filters { margin:10px 10px }
-#filters input { margin:7px 0 10px 0; padding:3px 4px }
-#filters #stateboxes { margin:7px 0 10px 0; }
+.filters { margin:10px 10px }
+.filters input { margin:7px 0 10px 0; padding:3px 4px }
+.filters #stateboxes { margin:7px 0 10px 0; }
 span.deleteicon {
 	position: relative;
 }
@@ -133,7 +133,7 @@ span.deleteicon input {
 .mainTable .narrow2 { width:6% }
 .mainTable .normalwidth { width:13% }
 
-#jobsToolbar { margin:0 0 7px 0 }
+.rightToolbar { margin:0 0 7px 0 }
 
 
 /* Tab */
