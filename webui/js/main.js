@@ -8,7 +8,8 @@ var sortJobsBy = "sgeid";
 var sortJobsDir = "DESC";
 var sortJobBy = "taskno";
 var sortJobDir = "ASC";
-var filters = "";
+var jobsFilters = "";
+var workerFilters = "";
 var usernameVal = "";
 var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
 	"ui-icon-arrowrefresh-1-s", "ui-icon-arrowrefresh-1-w"];
@@ -19,8 +20,8 @@ var autoRefresh = true;
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
 	var ampersand = ""
-	if (filters != "") { ampersand = "&"; }
-	var AJAXparams = filters + ampersand + "sortby=" + sortJobsBy +
+	if (jobsFilters != "") { ampersand = "&"; }
+	var AJAXparams = jobsFilters + ampersand + "sortby=" + sortJobsBy +
 		"&sortdir=" + sortJobsDir + params;
 
 	$.ajax({
@@ -28,6 +29,24 @@ function getJobs(params) {
 		data: AJAXparams,
 		success: function(data) {
 			$("#jobsTable tbody").html(data);
+			if (realTimeInverval == null) {
+				realTimeInverval = setInterval(
+					'updateDurations()', 1000);
+			}
+		}
+	});
+}
+
+// Gets the workers table
+function getWorkers(params) {
+	var AJAXParams = workerFilters + params;
+	
+	$.ajax({
+		url: "cgi/workers.cgi",
+		data: AJAXParams,
+		type: "GET",
+		success: function(data) {
+			$("#workersTable tbody").html(data);
 			if (realTimeInverval == null) {
 				realTimeInverval = setInterval(
 					'updateDurations()', 1000);
@@ -54,6 +73,7 @@ function getJob(params, whichJob) {
 function refreshPage() {
 	// Figure out which tab is visible and only refresh that one
 	if ($("#jobsTable").is(":visible")) { getJobs(""); }
+	if ($("#workersTable").is(":visible")) { getWorkers(""); }
 	else if ($(".jobTable").is(":visible")) {
 		var tempID = $(".jobTable:visible").attr("id");
 		var tempSplit = tempID.split("Table");
@@ -313,6 +333,12 @@ function showHelpDialog() {
 	$("#helpdialog").dialog("open");
 }
 
+function setupToolbars() {
+	setupTopToolbar();
+	setupJobsToolbar();
+	setupWorkersToolbar();
+}
+
 function setupTopToolbar() {
 	$("#autorefresh").button({
 		text: false,
@@ -334,6 +360,12 @@ function setupJobsToolbar() {
 	$("#showLegend").button({
 		icons: { primary: "ui-icon-info" }
 	}).click(function() { showHelpDialog(); });
+}
+
+function setupWorkersToolbar(){
+	$("#something").button({
+		icons: { primary: "ui-icon-closethick" }
+	}).click(function() { alert("Something"); });
 }
 
 function updateDurations() {
@@ -397,37 +429,15 @@ function addJobTab(jobNo) {
 	return false;
 }
 
-// Apply the filters set in the left filter bar
-function refreshFilters() {
-	filters = "";
-	usernameVal = $("#username").val();
-	if (usernameVal != "") { filters += "username="+usernameVal; }
-	var projnameVal = $("#projname").val();
-	if (projnameVal != "") {
-		var ampersand = "";
-		if (filters != "") { ampersand="&"; }
-		filters += ampersand + "projname=" + projnameVal;
+// Apply the filters set in the left filter bar (Workers)
+function refreshWorkerFilters() {
+	workerFilters = "";
+	queueVal = $("#queuename").val();
+	if (queueVal == "") {
+		$("#queuename").val("farm.q");
+		queueVal = "farm.q";
 	}
-	if ($("#donestate").is(":checked")) {
-		var ampersand = "";
-		if (filters != "") { ampersand="&"; }
-		filters += ampersand + "done=1";
-	}
-	if ($("#runningstate").is(":checked")) {
-		var ampersand = "";
-		if (filters != "") { ampersand="&"; }
-		filters += ampersand + "running=1";
-	}
-	if ($("#waitstate").is(":checked")) {
-		var ampersand = "";
-		if (filters != "") { ampersand="&"; }
-		filters += ampersand + "wait=1";
-	}
-	if ($("#errorstate").is(":checked")) {
-		var ampersand = "";
-		if (filters != "") { ampersand="&"; }
-		filters += ampersand + "error=1";
-	}
+	workerFilters += "queue=" + queueVal;
 	// Show/hide delete icons in text views depending on content
 	$('span.deleteicon').each(function(index) {
 			if ($(this).children("input").val() == "") {
@@ -439,23 +449,78 @@ function refreshFilters() {
 	refreshPage();
 }
 
+
+// Apply the filters set in the left filter bar (Jobs)
+function refreshJobsFilters() {
+	jobsFilters = "";
+	usernameVal = $("#username").val();
+	if (usernameVal != "") { jobsFilters += "username="+usernameVal; }
+	var projnameVal = $("#projname").val();
+	if (projnameVal != "") {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "projname=" + projnameVal;
+	}
+	if ($("#donestate").is(":checked")) {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "done=1";
+	}
+	if ($("#runningstate").is(":checked")) {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "running=1";
+	}
+	if ($("#waitstate").is(":checked")) {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "wait=1";
+	}
+	if ($("#errorstate").is(":checked")) {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "error=1";
+	}
+	// Show/hide delete icons in text views depending on content
+	$('span.deleteicon').each(function(index) {
+			if ($(this).children("input").val() == "") {
+				$(this).children("span").css("width", "0px");
+			} else {
+				$(this).children("span").css("width", "16px");
+			}
+		});
+}
+
 // Set up all the filter functions for the left filter bar
 function setupFilterFunctions() {
-	$("#filters input").blur(function() { refreshFilters(); });
-	$("#filters input").bind('keyup', function (e) {
+	$(".filters input").blur(function() {
+		refreshJobsFilters();
+		refreshWorkerFilters();
+		refreshPage();
+	});
+	$(".filters input").bind('keyup', function (e) {
 		var key = e.keyCode || e.which;
-		if (key === 13) { refreshFilters(); }
+		if (key === 13) {
+			refreshJobsFilters();
+			refreshWorkerFilters();
+			refreshPage();
+		}
 	});
 	$("#waitstate").button({ icons: {primary:'ui-icon-clock'}, text: false });
 	$("#donestate").button({ icons: {primary:'ui-icon-check'}, text: false });
 	$("#runningstate").button({ icons: {primary:'ui-icon-gear'}, text: false });
 	$("#errorstate").button({ icons: {primary:'ui-icon-alert'}, text: false });
-	$("#stateboxes input").click(function() { refreshFilters(); });
+	$("#stateboxes input").click(function() {
+		refreshJobsFilters();
+		refreshPage();
+	});
 	$('input.deletable').wrap('<span class="deleteicon" />')
 		.after($('<span />'));
 	$("span.deleteicon").children("span").click(function() {
 			$(this).prev("input").val("").focus();
-			refreshFilters();
+			refreshJobsFilters();
+			refreshWorkerFilters();
+			refreshPage();
 		});
 }
 
@@ -514,20 +579,19 @@ $(function() {
 	$("#multiusedialog").dialog({ autoOpen: false, modal: true });
 	$("#helpdialog").dialog({ autoOpen: false, modal: true });
 	setupNotifications();
-	setupJobsToolbar();
 	setupAutoRefresh();
-	setupTopToolbar();
+	setupToolbars();
 	setupFilterFunctions();
 
 	// Now populate the jobsTable and set the event handler
-	$('#tabs').bind('tabsshow', function(event, ui) {
-		if (ui.panel.id == "jobstab") { getJobs(""); }
-	});
+	$('#tabs').bind('tabsshow', function(event, ui) { refreshPage(); })
 
 	// On opening, REMOTE_USER might be set by Apache/Kerberos/whatever and
 	// index.html is set to fill in the user filter with it, so run
-	// refreshFilters to initially populate the jobs table
-	refreshFilters();
+	// refreshJobsFilters to initially populate the jobs table
+	refreshJobsFilters();
+	refreshWorkerFilters();
+	refreshPage();
 
 	lastUpdated();
 });

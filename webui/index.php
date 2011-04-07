@@ -25,14 +25,14 @@
 <div id="tabs">
 	<ul>
 		<li class="tab-no-close"><a href="#jobstab"><span>Jobs</span></a></li>
-		<li class="tab-no-close"><a href="#workerstab">Workers</a></li>
+		<li class="tab-no-close"><a href="#workerstab"><span>Workers</span></a></li>
 	</ul>
 	<div id="jobstab">
-		<table id="containerTable" cellpadding="0" cellspacing="0">
-		<tr><td id="leftContainer">
-			<div id="filtersContainer">
+		<table class="containerTable" cellpadding="0" cellspacing="0">
+		<tr><td class="leftContainer">
+			<div class="filtersContainer">
 				<h2>Filters</h2>
-				<div id="filters">
+				<div id="jobsFilters" class="filters">
 					Username
 <?php $ruser = preg_replace('/\@.*$/', '', getenv("REMOTE_USER")); ?>
 					<input type="text" name="username" value="<?php echo $ruser; ?>" id="username" class="text ui-widget-content ui-corner-all deletable"/>
@@ -47,9 +47,9 @@
 					</div>
 				</div>
 			</div>
-		</td><td id="gutter">&nbsp;
-		</td><td id="rightContainer">
-			<div id="jobsToolbar" class="ui-widget-header ui-corner-all">
+		</td><td class="gutter">&nbsp;
+		</td><td class="rightContainer">
+			<div id="jobsToolbar" class="ui-widget-header ui-corner-all rightToolbar">
 				<button title="Remove all successfully completed jobs" id="removeAllComplete">Remove Done</button>
 				<button title="Remove jobs older than start of yesterday" id="removeOld">Remove Old</button>
 			</div>
@@ -71,11 +71,37 @@
 				</tr>
 				</thead>
 				<tbody></tbody>
-			</table></div>
+			</table>
 		</td></tr>
 		</table>
+	</div>
 	<div id="workerstab">
-		<p>Some other stuff</p>
+		<table class="containerTable" cellpadding="0" cellspacing="0">
+		<tr><td class="leftContainer">
+			<div class="filtersContainer">
+				<h2>Filters</h2>
+				<div id="workerFilters" class="filters">
+					Queue
+					<input type="text" name="queuename" id="queuename" class="text ui-widget-content ui-corner-all deletable" />
+				</div>
+			</div>
+		</td><td class="gutter">&nbsp;
+		</td><td class="rightContainer">
+			<div id="workersToolbar" class="ui-widget-header ui-corner-all rightToolbar">
+				<button title="Something" id="something">Something</button>
+			</div>
+			<table id="workersTable" class="mainTable">
+				<thead>
+				<tr>
+					<th class="normalwidth">Name</th>
+					<th class="normalwidth">Slots Used/Total</th>
+					<th class="normalwidth">Load Avg.</th>
+				</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</td></tr>
+		</table>
 	</div>
 </div>
 <div id="multiusedialog" class="popupdialog"></div>
