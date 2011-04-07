@@ -207,7 +207,7 @@ for record in cur:
 	if status == 2:
 		tempstring += "<img class=\"iconbtn\" onclick=\"retry(event, "
 		tempstring += sgeid + ")\" src=\"images/retry.png\" "
-		tempstring += "title=\"Retry\"/>"
+		tempstring += "title=\"Retry errors\"/>"
 	tempstring += "</td><td>" + sgeid
 	tempstring += "</td><td>" + jobname
 	tempstring += "</td><td>" + username
