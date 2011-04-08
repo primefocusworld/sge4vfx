@@ -33,19 +33,19 @@ for line in outputList:
 	
 	loadAvg = float(items[3])
 	
-	status = ""
-	if used > 0:
-		status = "running"
+	status = "percent%d usageindicator" % ((float(used)/float(total))*100.0)
 
 	# Zebra stripe the rows
 	if zebra:
-		tempstring = "<tr class=\"" + status + " zebra\">"
+		tempstring = "<tr class=\"zebra\">"
 	else:
-		tempstring = "<tr class=\"" + status + "\">"
+		tempstring = "<tr>"
 	zebra = not zebra
 
 	tempstring += "<td>" + shortName + "</td>"
-	tempstring += "<td>" + str(used) + "/" + str(total) + "</td>"
+	tempstring += "<td><div class=\"slotdivcontainer\">"
+	tempstring += "<div class=\"slotinfo\">" + str(used) + "/" + str(total)
+	tempstring += "</div><div class=\"" + status + "\">&nbsp;</div></div></td>"
 	tempstring += "<td>" + str(loadAvg) + "</td>"
 	tempstring += "</tr>"
 	

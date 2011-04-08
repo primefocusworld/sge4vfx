@@ -151,6 +151,20 @@ span.deleteicon input {
 	font-size:smaller
 }
 
+/* Workers bits */
+.slotdivcontainer { position:relative; height:100%; width:100%; }
+.usageindicator { position:absolute; top:0; left:0; background:#141; z-index:1 }
+.zebra .usageindicator { background:#353 }
+.percent0 { width:0%; }
+.percent12 { width:12%; }
+.percent25 { width:25%; }
+.percent37 { width:37%; }
+.percent50 { width:50%; }
+.percent62 { width:62%; }
+.percent75 { width:75%; }
+.percent87 { width:87%; }
+.percent100 { width:100%; }
+.slotinfo { position:absolute; width:100%; height:100%; z-index:2 }
 
 /* Dialog bits */
 .popupdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }

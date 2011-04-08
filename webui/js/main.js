@@ -47,10 +47,6 @@ function getWorkers(params) {
 		type: "GET",
 		success: function(data) {
 			$("#workersTable tbody").html(data);
-			if (realTimeInverval == null) {
-				realTimeInverval = setInterval(
-					'updateDurations()', 1000);
-			}
 		}
 	});
 }
