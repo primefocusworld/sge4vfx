@@ -49,7 +49,7 @@ for line in outputList:
 	if zebra:
 		tempstring = "<tr class=\"" + trclass + " zebra\">"
 	else:
-		tempstring = "<tr>"
+		tempstring = "<tr class=\"" + trclass + "\">"
 	zebra = not zebra
 
 	tempstring += "<td>" + shortName + "</td>"
