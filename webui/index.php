@@ -96,6 +96,7 @@
 					<th class="normalwidth">Name</th>
 					<th class="normalwidth">Slots Used/Total</th>
 					<th class="normalwidth">Load Avg.</th>
+					<th class="narrow1">Status Codes</th>
 				</tr>
 				</thead>
 				<tbody></tbody>

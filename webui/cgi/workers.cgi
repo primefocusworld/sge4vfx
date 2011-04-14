@@ -31,13 +31,23 @@ for line in outputList:
 	used = int(used)
 	total = int(total)
 	
-	loadAvg = float(items[3])
-	
+	if items[3] != "-NA-":
+		loadAvg = float(items[3])
+	else:
+		loadAvg = "NA"
+
 	status = "percent%d usageindicator" % ((float(used)/float(total))*100.0)
+	if len(items) > 5:
+		trclass = "error"
+		status = ""
+		machineStates = items[5]
+	else:
+		trclass = ""
+		machineStates = ""
 
 	# Zebra stripe the rows
 	if zebra:
-		tempstring = "<tr class=\"zebra\">"
+		tempstring = "<tr class=\"" + trclass + " zebra\">"
 	else:
 		tempstring = "<tr>"
 	zebra = not zebra
@@ -47,6 +57,7 @@ for line in outputList:
 	tempstring += "<div class=\"slotinfo\">" + str(used) + "/" + str(total)
 	tempstring += "</div><div class=\"" + status + "\">&nbsp;</div></div></td>"
 	tempstring += "<td>" + str(loadAvg) + "</td>"
+	tempstring += "<td>" + machineStates + "</td>"
 	tempstring += "</tr>"
 	
 	print tempstring;
