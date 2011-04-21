@@ -79,7 +79,7 @@ fi
 
 # Checked out pretty much everything now, so let's do it...
 # First create the log/script directory
-DATEDIR=`date +%Y%m%d-%I%M%S`
+DATEDIR=`date +%Y%m%d-%H%M%S`
 mkdir -p ${THEQ_DIR}/theQ/${DATEDIR}/logs
 
 # Now create the task script
