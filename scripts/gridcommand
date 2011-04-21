@@ -12,9 +12,9 @@ Usage: $0 options
 Options:
   -c <command>
     Must be enclosed in *single* quotes if it's more than one word
-  -t <range>
-    Must be integers greater than 0.  e.g. 1-10
   -N <displayname>
+  -t <range> (Optional)
+    Must be integers greater than 0.  e.g. 1-10
   -s slots (Optional)
   -d theQ directory (Optional)
     Defaults to \$HOME/theQ - Must be network accessible.
@@ -29,7 +29,7 @@ EOF
 }
 
 # Set defaults
-TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE=""; THEQ_DIR="${HOME}/theQ"
+TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}/theQ"
 
 # Get all the cmd line options
 while getopts ":c:t:N:s:d:" options; do
