@@ -16,8 +16,8 @@ Options:
   -t <range> (Optional)
     Must be integers greater than 0.  e.g. 1-10
   -s slots (Optional)
-  -d theQ directory (Optional)
-    Defaults to \$HOME/theQ - Must be network accessible.
+  -d Where to put theQ directory (Optional)
+    Defaults to \$HOME - Must be network accessible.
 
 To use range numbers in your script, put \${SGE_TASK_ID} in your command.
 For example:
@@ -29,7 +29,7 @@ EOF
 }
 
 # Set defaults
-TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}/theQ"
+TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}"
 
 # Get all the cmd line options
 while getopts ":c:t:N:s:d:" options; do
@@ -80,14 +80,14 @@ fi
 # Checked out pretty much everything now, so let's do it...
 # First create the log/script directory
 DATEDIR=`date +%Y%m%d-%I%M%S`
-mkdir -p ${THEQ_DIR}/${DATEDIR}/logs
+mkdir -p ${THEQ_DIR}/theQ/${DATEDIR}/logs
 
 # Now create the task script
-cat <<EOF > ${THEQ_DIR}/${DATEDIR}/gridCommand.sh
+cat <<EOF > ${THEQ_DIR}/theQ/${DATEDIR}/gridCommand.sh
 #!/bin/bash
 
-#$ -o ${THEQ_DIR}/${DATEDIR}/logs/o.\$TASK_ID
-#$ -e ${THEQ_DIR}/${DATEDIR}/logs/e.\$TASK_ID
+#$ -o ${THEQ_DIR}/theQ/${DATEDIR}/logs/o.\$TASK_ID
+#$ -e ${THEQ_DIR}/theQ/${DATEDIR}/logs/e.\$TASK_ID
 
 ${TO_RUN}
 
@@ -95,14 +95,14 @@ echo \$? > /tmp/\${JOB_ID}-\${SGE_TASK_ID}-return
 EOF
 
 # Now the submission script
-cat <<EOF2 > ${THEQ_DIR}/${DATEDIR}/gridSubmit.sh
+cat <<EOF2 > ${THEQ_DIR}/theQ/${DATEDIR}/gridSubmit.sh
 #!/bin/bash
 
-gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/${DATEDIR}/gridCommand.sh
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/theQ/${DATEDIR}/gridCommand.sh
 EOF2
 
 # Make them executable
-chmod +x ${THEQ_DIR}/${DATEDIR}/*.sh
+chmod +x ${THEQ_DIR}/theQ/${DATEDIR}/*.sh
 
 # Now run it
-${THEQ_DIR}/${DATEDIR}/gridSubmit.sh
+${THEQ_DIR}/theQ/${DATEDIR}/gridSubmit.sh
