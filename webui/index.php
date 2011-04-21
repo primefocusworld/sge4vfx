@@ -60,13 +60,13 @@
 					<th class="narrow1">ID</th>
 					<th class="normalwidth">Job Name</th>
 					<th class="narrow1">Username</th>
-					<th class="narrow2">Project</th>
+					<th class="narrow1">Project</th>
 					<th class="narrow1">Priority</th>
 					<th class="narrow2">Submit Time</th>
 					<th class="narrow2">Start Time</th>
 					<th class="narrow2">End Time</th>
 					<th class="narrow1">Duration</th>
-					<th class="narrow1">Range</th>
+					<th class="narrow2">Range</th>
 					<th class="narrow2">% Done</th>
 				</tr>
 				</thead>
