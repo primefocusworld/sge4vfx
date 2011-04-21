@@ -1,0 +1,108 @@
+#!/bin/bash
+
+# Command line submission script
+# Allows you to submit simple scripts that take just the task number as a
+# parameter.  They'll be executed in whatever directory gridcommand is called
+# from and default to 1 slot unless otherwise specified
+
+function usage {
+	cat <<EOF
+Usage: $0 options
+
+Options:
+  -c <command>
+    Must be enclosed in *single* quotes if it's more than one word
+  -t <range>
+    Must be integers greater than 0.  e.g. 1-10
+  -N <displayname>
+  -s slots (Optional)
+  -d theQ directory (Optional)
+    Defaults to \$HOME/theQ - Must be network accessible.
+
+To use range numbers in your script, put \${SGE_TASK_ID} in your command.
+For example:
+
+$0 -c 'convert \${SGE_TASK_ID}.jpg \${SGE_TASK_ID}.png' -t 1-10 -N egrange
+
+EOF
+	exit
+}
+
+# Set defaults
+TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE=""; THEQ_DIR="${HOME}/theQ"
+
+# Get all the cmd line options
+while getopts ":c:t:N:s:d:" options; do
+	case $options in
+		s) SLOTS_IN=$OPTARG;;
+		c) TO_RUN=$OPTARG;;
+		t) RANGE=$OPTARG;;
+		N) DISP_NAME=$OPTARG;;
+		d) THEQ_DIR=$OPTARG;;
+		\?) usage;;
+		h) usage;;
+		*) usage;;
+	esac
+done
+
+# Check they put a display name
+if [ "${DISP_NAME}" = "" ] || [ "${TO_RUN}" = "" ]; then
+	usage
+fi
+
+# Set number of slots
+SLOTS_REGEX="^[0-9]+$"
+if [[ ${SLOTS_IN} =~ ${SLOTS_REGEX} ]]; then
+	SLOTS=${SLOTS_IN}
+else
+	echo "Slots must be an integer number"
+	usage
+fi
+
+# Check that the second parameter is properly formatted
+RANGE_REGEX="^([0-9]+)-([0-9]+)$"
+if [[ ${RANGE} =~ ${RANGE_REGEX} ]]; then
+	FIRST=${BASH_REMATCH[1]}
+	LAST=${BASH_REMATCH[2]}
+	if [ ${LAST} -lt ${FIRST} ]; then
+		echo "Last task number is less than first!!"
+		usage
+	fi
+	if [ ${LAST} -lt 1 ] || [ ${FIRST} -lt 1 ]; then
+		echo "Task numbers must be greater than 0"
+		usage
+	fi
+else
+	echo "Second parameter must be a range"
+	usage
+fi
+
+# Checked out pretty much everything now, so let's do it...
+# First create the log/script directory
+DATEDIR=`date +%Y%m%d-%I%M%S`
+mkdir -p ${THEQ_DIR}/${DATEDIR}/logs
+
+# Now create the task script
+cat <<EOF > ${THEQ_DIR}/${DATEDIR}/gridCommand.sh
+#!/bin/bash
+
+#$ -o ${THEQ_DIR}/${DATEDIR}/logs/o.\$TASK_ID
+#$ -e ${THEQ_DIR}/${DATEDIR}/logs/e.\$TASK_ID
+
+${TO_RUN}
+
+echo \$? > /tmp/\${JOB_ID}-\${SGE_TASK_ID}-return
+EOF
+
+# Now the submission script
+cat <<EOF2 > ${THEQ_DIR}/${DATEDIR}/gridSubmit.sh
+#!/bin/bash
+
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/${DATEDIR}/gridCommand.sh
+EOF2
+
+# Make them executable
+chmod +x ${THEQ_DIR}/${DATEDIR}/*.sh
+
+# Now run it
+${THEQ_DIR}/${DATEDIR}/gridSubmit.sh
