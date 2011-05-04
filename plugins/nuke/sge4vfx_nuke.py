@@ -76,7 +76,7 @@ def Submit(fullSize, startFrame, endFrame,
 	
 		# Create the SGE folder next to the Nuke script if it doesn't
 		# exist. It also creates the log folder for the stdout & stderr
-		sgePath = dirPath + "/theQ/" + dateStr
+		sgePath = dirPath + "/.theQ/" + dateStr
 		prepCmd1 = ("if [ ! -d " + sgePath + " ]; then mkdir -p "
 			+ sgePath + "/logs; fi")
 		os.system(prepCmd1)
