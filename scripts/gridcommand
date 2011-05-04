@@ -98,7 +98,7 @@ EOF
 cat <<EOF2 > ${THEQ_DIR}/.theQ/${DATEDIR}/gridSubmit.sh
 #!/bin/bash
 
-gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/theQ/${DATEDIR}/gridCommand.sh
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
 EOF2
 
 # Make them executable
