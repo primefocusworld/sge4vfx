@@ -59,8 +59,8 @@ def writeSGECmdFile(sgePath, sgeCmd):
 	os.chmod(sgePath + "/sgeNuke.sh", 0755)
 
 
-def Submit(fullSize, startFrame, endFrame,
-	batchSize, slotsPerFrame, whichQueue, previewNode):
+def Submit(fullSize, startFrame, endFrame, batchSize,
+		slotsPerFrame, whichQueue, previewNode, doesItNeedOcula):
 	# Specify where gridsub is
 	gridsub = "gridsub" # assumes it's in the path, otherwise put full path
 
@@ -98,6 +98,10 @@ def Submit(fullSize, startFrame, endFrame,
 			"/" + job_path)
 		writeNukeCmdFile(sgePath, nukeCmd)
 
+		licenseRequirement = ""
+		if doesItNeedOcula:
+			licenseRequirement = "-l lic_ocula_r=1 "
+
 		# Now the actual gridsub execution thingy
 		sgeCmd = (gridsub
 			+ " -N " + job_title
@@ -106,6 +110,7 @@ def Submit(fullSize, startFrame, endFrame,
 			+ " -q " + whichQueue
 			+ " -t " + startFrame + "-" + endFrame
 			+ ":" + batchSize + " "
+			+ licenseRequirement
 			+ sgePath
 			+ "/nukeCommand.sh")
 		writeSGECmdFile(sgePath, sgeCmd)
@@ -139,6 +144,7 @@ def RenderPanel():
 		"in it's current form.\n\nIf you don't want your file " +
 		"overwritten now, click Cancel." )
 	writeNodes = getWriteNodes()
+	doesItNeedOcula = needsOcula()
 
 	if writeNodes == "":
 		nuke.message("You don't have any write nodes!")
@@ -175,7 +181,8 @@ def RenderPanel():
 				batchSize,
 				slotsPerFrame,
 				whichQueue,
-				previewNode)
+				previewNode,
+				doesItNeedOcula)
 
 
 # Gets the list of write nodes for the enumeration plugin
@@ -186,6 +193,17 @@ def getWriteNodes():
 	if writeNodes:
 		for wNode in writeNodes:
 			returnVal += wNode['name'].value() + " "
+
+	return returnVal
+
+
+# Check if we need an Ocula license
+def needsOcula():
+	returnVal = False
+
+	for n in nuke.allNodes():
+		if n.knob('thisIsAnOculaPlugin'):
+			returnVal = True
 
 	return returnVal
 
