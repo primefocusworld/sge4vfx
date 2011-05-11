@@ -52,6 +52,7 @@
 			<div id="jobsToolbar" class="ui-widget-header ui-corner-all rightToolbar">
 				<button title="Remove all successfully completed jobs" id="removeAllComplete">Remove Done</button>
 				<button title="Remove jobs older than start of yesterday" id="removeOld">Remove Old</button>
+				<button title="Remove jobs with errors" id="removeErrors">Remove Errored</button>
 			</div>
 			<table id="jobsTable" class="mainTable">
 				<thead>

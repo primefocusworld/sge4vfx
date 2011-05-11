@@ -268,6 +268,53 @@ function stopTask(jobNo, taskNo) {
 	$("#multiusedialog").dialog("open");
 }
 
+// Remove all errored jobs.  They do need to be removed from queue
+function removeErrors() {
+	if (usernameVal == "") {
+		$("#multiusedialog")
+		.html("You need to have a username in the filter box on the left")
+		.dialog({
+			width : 300,
+			title : "Whoops",
+			buttons : {
+				"OK" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	} else {
+		$("#multiusedialog")
+		.html("Are you sure?")
+		.dialog({
+			width : 300,
+			title : "Confirmation Required",
+			buttons : {
+				"Confirm" : function() {
+					var AJAXparams = "user=" + usernameVal;
+					if (removeOldOnly == 1) {
+						AJAXparams = AJAXparams + "&old=1";
+					}
+
+					$.ajax({
+						url: "cgi/deleteErrors.cgi",
+						data: AJAXparams,
+						type: "POST",
+						success: function(data) {
+							refreshPage();
+							$("#multiusedialog")
+								.dialog("close");
+						}
+					});
+				},
+				"Cancel" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	}
+	$("#multiusedialog").dialog("open");
+}
+
 // Remove all completed jobs.  Don't need to remove from queue because they
 // already have been since they're done
 function removeComplete() {
@@ -353,6 +400,9 @@ function setupJobsToolbar() {
 	$("#removeOld").button({
 		icons: { primary: "ui-icon-closethick" }
 	}).click(function() { removeOldOnly = 1; removeComplete(); });
+	$("#removeErrors").button({
+		icons: { primary: "ui-icon-closethick" }
+	}).click(function() { removeOldOnly = 0; removeErrors(); });
 	$("#showLegend").button({
 		icons: { primary: "ui-icon-info" }
 	}).click(function() { showHelpDialog(); });
