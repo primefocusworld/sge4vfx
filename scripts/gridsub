@@ -37,7 +37,7 @@ qsub ${FIXED_PARAMS} > /tmp/OUT.$$.tmp 2>&1
 
 # If there was an error
 if [ "$?" -ne "0" ]; then
-	echo -e "There was an \e[0;31merror\e[0m with qsub - here it is..."
+	echo "There was an error with qsub - here it is..."
 	cat /tmp/OUT.$$.tmp
 	rm /tmp/OUT.$$.tmp
 	exit 1
@@ -87,7 +87,7 @@ else
 
 	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1
 	if [ "$?" -ne "0" ]; then
-		echo -e "There was an \e[0;31merror\e[0m adding to the database"
+		echo "There was an error adding to the database"
 		echo "Please tell your friendly local sysadmin"
 		exit 1
 	fi
