@@ -18,6 +18,11 @@ var removeOldOnly = 1;
 var autoRefresh = true;
 var perPageVal = 25;
 var pageNumber = 1;
+var defaultQ = "farm.q";
+var whichQ = defaultQ;
+var queueData;
+var queueChart;
+var queueOptions;
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
@@ -57,6 +62,25 @@ function getJobs(params) {
 // Gets the workers table
 function getWorkers(params) {
 	var AJAXParams = workerFilters + params;
+	
+	$.ajax({
+		url: "cgi/queueStats.cgi",
+		data: AJAXParams,
+		type: "GET",
+		success: function(data) {
+			// Write out the text
+			var tempstring = "Total Slots: " + data.total + "<br />";
+			tempstring += "Used Slots: " + data.used + " (" + data.usedpc;
+			tempstring += "%)<br />Available Slots: " + data.avail + " (";
+			tempstring += data.availpc + "%)<br />";
+			$("#queuestattext").html(tempstring);
+			
+			// Update the guage
+			queueData.setValue(0, 0, whichQ);
+			queueData.setValue(0, 1, Math.floor(data.usedpc));
+			queueChart.draw(queueData, queueOptions);
+		}
+	});
 	
 	$.ajax({
 		url: "cgi/workers.cgi",
@@ -496,11 +520,12 @@ function addJobTab(jobNo) {
 // Apply the filters set in the left filter bar (Workers)
 function refreshWorkerFilters() {
 	workerFilters = "";
-	queueVal = $("#queuename").val();
+	var queueVal = $("#queuename").val();
 	if (queueVal == "") {
-		$("#queuename").val("farm.q");
-		queueVal = "farm.q";
+		$("#queuename").val(defaultQ);
+		queueVal = defaultQ;
 	}
+	whichQ = queueVal;
 	workerFilters += "queue=" + queueVal;
 	// Show/hide delete icons in text views depending on content
 	$('span.deleteicon').each(function(index) {
@@ -655,6 +680,21 @@ function toast(theTitle, theContent) {
 		title: theTitle,
 		text: theContent
 	} );
+}
+
+// Set up the chart data for the farm gauge
+function setupChartData() {
+	queueData = new google.visualization.DataTable();
+	queueData.addColumn('string', 'Label');
+	queueData.addColumn('number', 'Value');
+	queueData.addRows(1);
+	queueData.setValue(0, 0, defaultQ);
+	queueData.setValue(0, 1, 0);
+	
+	queueChart = new google.visualization.Gauge(
+		document.getElementById('queueguage'));
+	queueOptions = {width:120, height:120, redFrom:90, redTo:100,
+		yellowFrom:75, yellowTo:90, minorTicks:5};
 }
 
 // jQuery setup thingy

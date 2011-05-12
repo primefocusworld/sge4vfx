@@ -12,6 +12,11 @@
 	<script type="text/javascript" src="js/jquery.notify.js"></script>
 	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<script type='text/javascript'>
+		google.load('visualization', '1', {packages:['gauge']});
+		google.setOnLoadCallback(setupChartData);
+	</script>
 </head>
 <body>
 <div id="header">
@@ -108,16 +113,35 @@
 			<div id="workersToolbar" class="ui-widget-header ui-corner-all rightToolbar">
 				<button title="Something" id="something">Something</button>
 			</div>
-			<table id="workersTable" class="mainTable">
-				<thead>
+			<table id="workertable">
 				<tr>
-					<th class="normalwidth">Name</th>
-					<th class="normalwidth">Slots Used/Total</th>
-					<th class="normalwidth">Load Avg.</th>
-					<th class="narrow1">Status Codes</th>
+					<td id="workertd1">
+						<div id="workerInfo" class="leftBox gapToTheRight darkBackground">
+							<h2>Queue Info</h2>
+							<div class="leftBoxInner" id="queuestats">
+								<table>
+									<tr>
+										<td id="queueguage"></td>
+										<td id="queuestattext"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</td>
+					<td id="workertd2">
+						<table id="workersTable" class="mainTable">
+							<thead>
+							<tr>
+								<th class="normalwidth">Name</th>
+								<th class="normalwidth">Slots Used/Total</th>
+								<th class="normalwidth">Load Avg.</th>
+								<th class="narrow1">Status Codes</th>
+							</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</td>
 				</tr>
-				</thead>
-				<tbody></tbody>
 			</table>
 		</td></tr>
 		</table>
