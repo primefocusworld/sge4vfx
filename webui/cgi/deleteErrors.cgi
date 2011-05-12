@@ -7,6 +7,7 @@ print "Content-type:application/json\r\n\r\n"
 import psycopg2
 import datetime
 import simplejson as json
+from subprocess import Popen,PIPE
 
 import sgewebuisettings
 
@@ -28,6 +29,29 @@ if vals_in.has_key("old"):
 # Do the database removal
 conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 	sgewebuisettings.user, sgewebuisettings.host))
+deleteCur = conn.cursor()
+
+psqlcommand = "SELECT sgeid FROM jobs WHERE"
+if removeToday:
+        psqlcommand += " status=" + str(2)
+        already_got_criteria = True
+if already_got_criteria:
+        psqlcommand += " AND"
+psqlcommand += " username='" + user + "'"
+if not removeToday:
+        psqlcommand += " AND endtime < 'yesterday'"
+psqlcommand += ";"
+
+deleteCur.execute(psqlcommand)
+for record in deleteCur:
+	[sgeid] = record
+
+	command = ['workers/qdel', str(sgeid)]
+	p1 = Popen(command, stdout=PIPE)
+	theOutput = p1.communicate()[0]
+
+deleteCur.close()
+
 cur = conn.cursor()
 
 psqlcommand = "DELETE FROM jobs WHERE"
