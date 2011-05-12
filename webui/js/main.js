@@ -16,23 +16,40 @@ var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
 var whichRefreshIcon = 1;
 var removeOldOnly = 1;
 var autoRefresh = true;
+var perPageVal = 25;
+var pageNumber = 1;
 
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
 	var ampersand = ""
 	if (jobsFilters != "") { ampersand = "&"; }
 	var AJAXparams = jobsFilters + ampersand + "sortby=" + sortJobsBy +
-		"&sortdir=" + sortJobsDir + params;
+		"&sortdir=" + sortJobsDir + "&limit=" + perPageVal.toString() +
+		"&offset=" + ((pageNumber - 1) * perPageVal).toString() + params;
 
+	// First find out how many pages there are and which one we're on
 	$.ajax({
-		url: "cgi/jobs.cgi",
+		url: "cgi/count.cgi",
 		data: AJAXparams,
-		success: function(data) {
-			$("#jobsTable tbody").html(data);
-			if (realTimeInverval == null) {
-				realTimeInverval = setInterval(
-					'updateDurations()', 1000);
-			}
+		dataType: "json",
+		success: function(countData) {
+			howManyPages = Math.floor(countData.count / perPageVal) + 1;
+			$("#pageno").html(pageNumber.toString() 
+					+ "/" + howManyPages.toString());
+
+			// Now get the actual job table data
+			$.ajax({
+				url: "cgi/jobs.cgi",
+				data: AJAXparams,
+				type: "GET",
+				success: function(data) {
+					$("#jobsTable tbody").html(data);
+					if (realTimeInverval == null) {
+						realTimeInverval = setInterval(
+							'updateDurations()', 1000);
+					}
+				}
+			});	
 		}
 	});
 }
@@ -67,6 +84,7 @@ function getJob(params, whichJob) {
 
 // Refresh the jobsTable
 function refreshPage() {
+	//alert("Refresh run by " + arguments.callee.caller.toString());
 	// Figure out which tab is visible and only refresh that one
 	if ($("#jobsTable").is(":visible")) { getJobs(""); }
 	if ($("#workersTable").is(":visible")) { getWorkers(""); }
@@ -492,7 +510,6 @@ function refreshWorkerFilters() {
 				$(this).children("span").css("width", "16px");
 			}
 		});
-	refreshPage();
 }
 
 
@@ -539,12 +556,12 @@ function refreshJobsFilters() {
 
 // Set up all the filter functions for the left filter bar
 function setupFilterFunctions() {
-	$(".filters input").blur(function() {
+	$("#jobsFilters input").blur(function() {
 		refreshJobsFilters();
 		refreshWorkerFilters();
 		refreshPage();
 	});
-	$(".filters input").bind('keyup', function (e) {
+	$("#jobsFilters input").bind('keyup', function (e) {
 		var key = e.keyCode || e.which;
 		if (key === 13) {
 			refreshJobsFilters();
@@ -568,6 +585,32 @@ function setupFilterFunctions() {
 			refreshWorkerFilters();
 			refreshPage();
 		});
+}
+
+function changePageSize(value) {
+	perPageVal = value;
+	pageNumber = 1;
+	refreshPage();
+}
+
+// Set up the pagination bits on the left side
+function setupPagination() {
+	$("#rowsperpage").buttonset();
+	$("#perpage1").click( function() { changePageSize(25); });
+	$("#perpage2").click( function() { changePageSize(100); });
+	$("#perpage3").click( function() { changePageSize(400); });
+	$("#prevpage").button({
+		icons: {
+			primary:'ui-icon-circle-arrow-w'
+		},
+		text: false
+	}).click( function() { pageNumber--; refreshPage(); });
+	$("#nextpage").button({
+		icons: {
+			primary:'ui-icon-circle-arrow-e'
+		},
+		text: false
+	}).click( function() { pageNumber++; refreshPage(); });
 }
 
 // Set up autorefresh code
@@ -628,6 +671,7 @@ $(function() {
 	setupAutoRefresh();
 	setupToolbars();
 	setupFilterFunctions();
+	setupPagination();
 
 	// Now populate the jobsTable and set the event handler
 	$('#tabs').bind('tabsshow', function(event, ui) { refreshPage(); })

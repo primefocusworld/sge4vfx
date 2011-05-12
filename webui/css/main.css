@@ -52,13 +52,14 @@ h1 {
 .rightContainer { width:90%; vertical-align:top }
 
 
-/* Filters bit on the left */
-.filtersContainer {
+/* Boxes on the left */
+.leftBox {
 	border-radius:5px;
 	background:#333333 url(custom-theme/images/ui-bg_gloss-wave_25_333333_500x100.png) 0 0 repeat-x;
-	padding-bottom:5px
+	padding-bottom:5px;
+	margin-bottom:15px;
 }
-.filtersContainer h2 {
+.leftBox h2 {
 	text-align:center;
 	margin:0 0 5px 0;
 	line-height:1.8em;
@@ -69,12 +70,10 @@ h1 {
 	border-top-left-radius:5px;
 	border-top-right-radius:5px
 }
-.filters { margin:10px 10px }
-.filters input { margin:7px 0 10px 0; padding:3px 4px }
-.filters #stateboxes { margin:7px 0 10px 0; }
-span.deleteicon {
-	position: relative;
-}
+.leftBoxInner { margin:10px 10px }
+.leftBoxInner input { margin:7px 0 10px 0; padding:3px 4px }
+.leftBoxInner #stateboxes,#rowsperpage,#pagebuttons { margin:7px 0 10px 0; }
+span.deleteicon { position:relative; }
 span.deleteicon span {
 	position: absolute;
 	display: block;
@@ -88,9 +87,8 @@ span.deleteicon span {
 span.deleteicon span:hover {
 	background: url('custom-theme/images/ui-icons_a83300_256x240.png') no-repeat -32px -192px;
 }
-span.deleteicon input {
-	padding-right: 16px;
-}
+span.deleteicon input {	padding-right:16px; }
+#pageno { font-weight:bold; margin:0 10px }
 
 
 /* Main table */

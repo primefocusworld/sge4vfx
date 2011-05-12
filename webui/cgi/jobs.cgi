@@ -41,6 +41,16 @@ if vals_in.has_key("wait"):
 	wait = True
 else:
 	wait = False
+if vals_in.has_key("limit"):
+	hasLimit = True
+	limit = vals_in.getvalue("limit")
+else:
+	hasLimit = False
+if vals_in.has_key("offset"):
+	hasOffset = True
+	offset = vals_in.getvalue("offset")
+else:
+	hasOffset = False
 
 # Connect to the Postgres DB
 conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
@@ -99,7 +109,12 @@ if error:
 	gotastatusalready = True
 if gotastatusalready:
 	psqlcommand += ") "
-psqlcommand += "ORDER BY " + sortby + " " + sortdir + ";"
+psqlcommand += "ORDER BY " + sortby + " " + sortdir + " "
+if hasLimit:
+	psqlcommand += "LIMIT " + limit + " "
+	if hasOffset:
+		psqlcommand += "OFFSET " + offset + " "
+psqlcommand += ";"
 
 # Execute the SQL query
 cur.execute(psqlcommand)

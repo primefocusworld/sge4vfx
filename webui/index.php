@@ -30,9 +30,9 @@
 	<div id="jobstab">
 		<table class="containerTable" cellpadding="0" cellspacing="0">
 		<tr><td class="leftContainer">
-			<div class="filtersContainer">
+			<div id="jobsFilters" class="leftBox">
 				<h2>Filters</h2>
-				<div id="jobsFilters" class="filters">
+				<div class="leftBoxInner">
 					Username
 <?php $ruser = preg_replace('/\@.*$/', '', getenv("REMOTE_USER")); ?>
 					<input type="text" name="username" value="<?php echo $ruser; ?>" id="username" class="text ui-widget-content ui-corner-all deletable"/>
@@ -44,6 +44,23 @@
 						<input type="checkbox" id="donestate" class="checkbox" checked /><label for="donestate">Done</label>
 						<input type="checkbox" id="runningstate" class="checkbox" checked /><label for="runningstate">Running</label>
 						<input type="checkbox" id="errorstate" class="checkbox" checked /><label for="errorstate">Error</label>
+					</div>
+				</div>
+			</div>
+			<div id="pagesBox" class="leftBox">
+				<h2>Pages</h2>
+				<div class="leftBoxInner">
+					Rows per page<br />
+					<div id="rowsperpage">
+						<input type="radio" id="perpage1" name="rowsperpage" checked="checked" /><label for="perpage1">25</label>
+						<input type="radio" id="perpage2" name="rowsperpage" /><label for="perpage2">100</label>
+						<input type="radio" id="perpage3" name="rowsperpage" /><label for="perpage3">400</label>
+					</div>
+					Navigation
+					<div id="pagebuttons">
+						<button id="prevpage">Previous Page</button>
+						<span id="pageno">1/1</span>
+						<button id="nextpage">Next Page</button>
 					</div>
 				</div>
 			</div>
@@ -79,9 +96,9 @@
 	<div id="workerstab">
 		<table class="containerTable" cellpadding="0" cellspacing="0">
 		<tr><td class="leftContainer">
-			<div class="filtersContainer">
+			<div id="workerFilters" class="leftBox">
 				<h2>Filters</h2>
-				<div id="workerFilters" class="filters">
+				<div class="leftBoxInner">
 					Queue
 					<input type="text" name="queuename" id="queuename" class="text ui-widget-content ui-corner-all deletable" />
 				</div>
