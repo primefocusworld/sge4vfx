@@ -51,7 +51,7 @@ for record in cur:
 		starttimestr = "-"
 		starttimetitle = ""
 		starttimealt = ""
-	if endtime is not None:
+	if endtime is not None and starttime is not None:
 		oldDate = ""
 		newDate = ":%S"
 		if todayStr != endtime.strftime("%d %b"):
