@@ -2,4 +2,4 @@
 
 # Source your SGE settings here
 . /net/viewdisilon/ifs/systems/sge/default/common/settings.sh
-qmod $@
+qmod "$@"
