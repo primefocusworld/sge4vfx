@@ -55,7 +55,7 @@
 			<div id="pagesBox" class="leftBox">
 				<h2>Pages</h2>
 				<div class="leftBoxInner">
-					Rows per page<br />
+					Jobs per page<br />
 					<div id="rowsperpage">
 						<input type="radio" id="perpage1" name="rowsperpage" checked="checked" /><label for="perpage1">25</label>
 						<input type="radio" id="perpage2" name="rowsperpage" /><label for="perpage2">100</label>

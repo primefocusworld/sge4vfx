@@ -15,6 +15,16 @@ vals_in = cgi.FieldStorage()
 sortby = vals_in.getvalue("sortby")
 sortdir = vals_in.getvalue("sortdir")
 jobNumber = vals_in.getvalue("jobno")
+if vals_in.has_key("limit"):
+	hasLimit = True
+	limit = vals_in.getvalue("limit")
+else:
+	hasLimit = False
+if vals_in.has_key("offset"):
+	hasOffset = True
+	offset = vals_in.getvalue("offset")
+else:
+	hasOffset = False
 
 rvInstalled = True
 rvString = "Opening RV.  Please wait..."
@@ -24,7 +34,12 @@ conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 cur = conn.cursor()
 
 sqlQuery = "SELECT * FROM tasks WHERE sgeid=" + jobNumber
-sqlQuery += " ORDER BY " + sortby + " " + sortdir + ";"
+sqlQuery += " ORDER BY " + sortby + " " + sortdir + " "
+if hasLimit:
+	sqlQuery += "LIMIT " + limit + " "
+	if hasOffset:
+		sqlQuery += "OFFSET " + offset + " "
+sqlQuery += ";"
 cur.execute(sqlQuery)
 
 zebra = False

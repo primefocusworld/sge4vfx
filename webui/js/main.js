@@ -1,6 +1,3 @@
-// AJAX call to simple helper script that sources the SGE env and runs
-// qstat -f -xml
-
 var refreshTimeout;
 var refreshInterval = 5000;
 var realTimeInverval;
@@ -18,6 +15,12 @@ var removeOldOnly = 1;
 var autoRefresh = true;
 var perPageVal = 25;
 var pageNumber = 1;
+var howManyPages = 1;
+var whichTaskLookingAt = 0;
+var defaultTasksPerPage = 50;
+var tPageNumber = new Array();
+var howManyTPages = new Array();
+var tasksPerPageVal = new Array();
 var defaultQ = "farm.q";
 var whichQ = defaultQ;
 var queueData;
@@ -38,7 +41,7 @@ function getJobs(params) {
 		data: AJAXparams,
 		dataType: "json",
 		success: function(countData) {
-			howManyPages = Math.floor(countData.count / perPageVal) + 1;
+			howManyPages = Math.ceil(countData.count / perPageVal);
 			$("#pageno").html(pageNumber.toString() 
 					+ "/" + howManyPages.toString());
 
@@ -95,13 +98,30 @@ function getWorkers(params) {
 // Allows you to call jobTable cgi script
 function getJob(params, whichJob) {
 	var AJAXparams = "sortby=" + sortJobBy + "&sortdir=" + sortJobDir;
-	AJAXparams += "&jobno=" + whichJob + params;
+	AJAXparams += "&jobno=" + whichJob + "&limit=" + 
+		tasksPerPageVal[whichTaskLookingAt].toString() +
+		"&offset=" + ((tPageNumber[whichTaskLookingAt] - 1) *
+		tasksPerPageVal[whichTaskLookingAt]).toString() + params;
 
+	// First find out how many pages there are and which one we're on
 	$.ajax({
-		url: "cgi/oneJob.cgi",
+		url: "cgi/countTasks.cgi",
 		data: AJAXparams,
-		success: function(data) {
-			$("#"+whichJob+"tab tbody").html(data);
+		dataType: "json",
+		success: function(countData) {
+			howManyTPages[whichTaskLookingAt] = Math.ceil(countData.count /
+				tasksPerPageVal[whichTaskLookingAt]);
+			$("#" + whichJob + "tpageno").html(
+					tPageNumber[whichTaskLookingAt].toString() 
+					+ "/" + howManyTPages[whichTaskLookingAt].toString());
+
+			$.ajax({
+				url: "cgi/oneJob.cgi",
+				data: AJAXparams,
+				success: function(data) {
+					$("#"+whichJob+"tab .jobTable tbody").html(data);
+				}
+			});
 		}
 	});
 }
@@ -116,7 +136,12 @@ function refreshPage() {
 		var tempID = $(".jobTable:visible").attr("id");
 		var tempSplit = tempID.split("Table");
 		
-		getJob("", tempSplit[0]);
+		var newTaskNo = tempSplit[0];
+		if (newTaskNo != whichTaskLookingAt) {
+			whichTaskLookingAt = newTaskNo;
+		}
+		
+		getJob("", whichTaskLookingAt);
 	}
 	lastUpdated();
 
@@ -497,7 +522,44 @@ function addJobTab(jobNo) {
 	if ($(tabID).length == 0) {
 		$("#tabs").tabs("add", tabID, jobNo)
 
-		var tempString = "<table class=\"jobTable mainTable\" "
+		var outerString = "<table class=\"containerTable\" cellpadding=\"0\" ";
+		outerString += "cellspacing=\"0\"><tr><td class=\"leftContainer\">";
+		outerString += "<div id=\"" + jobNo + "pagesBox\" class=\"leftBox\">";
+		outerString += "<h2>Pages</h2>";
+		outerString += "<div class=\"leftBoxInner\">";
+		outerString += "Tasks per page<br />";
+		outerString += "<div id=\"" + jobNo + "tasksperpage\" ";
+		outerString += "class=\"tasksperpage\">";
+		outerString += "<input type=\"radio\" id=\"" + jobNo + "tperpage1\" ";
+		outerString += "name=\"" + jobNo + "tasksperpage\" checked=\"checked\"";
+		outerString += "  /><label for=\"" + jobNo + "tperpage1\">50</label>";
+		outerString += "<input type=\"radio\" id=\"" + jobNo + "tperpage2\" ";
+		outerString += "name=\"" + jobNo + "tasksperpage\" /><label for=\"";
+		outerString += jobNo + "tperpage2\">100</label>";
+		outerString += "<input type=\"radio\" id=\"" + jobNo + "tperpage3\" ";
+		outerString += "name=\"" + jobNo + "tasksperpage\" /><label for=\"";
+		outerString += jobNo + "tperpage3\">400</label>";
+		outerString += "</div>";
+		outerString += "Navigation";
+		outerString += "<div id=\"" + jobNo + "tpagebuttons\" "
+		outerString += "class=\"tpagebuttons\">";
+		outerString += "<button id=\"" + jobNo + "tprevpage\">Previous Page";
+		outerString += "</button>";
+		outerString += "<span id=\"" + jobNo + "tpageno\" class=\"tpageno\">";
+		outerString += "1/1</span>";
+		outerString += "<button id=\"" + jobNo + "tnextpage\">Next Page";
+		outerString += "</button>";
+		outerString += "</div>";
+		outerString += "</div>";
+		outerString += "</div>";
+		outerString += "</td><td class=\"gutter\">&nbsp;";
+		outerString += "</td><td class=\"rightContainer\">";
+		// The taskbar.  I'll add this later.  One thing at a time...
+		/*outerString += "<div id=\"tasksToolbar\" class=\"ui-widget-header ui-corner-all rightToolbar\">";
+		outerString += "<button title=\"Retry Errors\" id=\"retryErrors\">Retry Errors</button>";
+		outerString += "</div>";*/
+
+		var tempString = "<table class=\"jobTable mainTable\" ";
 		tempString +="id=\"" + jobNo + "Table\">";
 		tempString +="<thead><tr><th class=\"narrow2\">Actions";
 		tempString +="</th><th class=\"narrow1\">ID</th>";
@@ -508,8 +570,44 @@ function addJobTab(jobNo) {
 		tempString +="<th class=\"narrow2\">Attempts</th>";
 		tempString +="<th class=\"narrow2\">Exec Host</th>";
 		tempString +="</tr></thead><tbody></tbody></table>";
+		
+		var endString = "</td></tr></table>";
 
-		$("#" + jobNo + "tab").append(tempString);
+		$("#" + jobNo + "tab").append(outerString + tempString + endString);
+		tPageNumber[jobNo] = 1;
+		howManyTPages[jobNo] = 1;
+		tasksPerPageVal[jobNo] = defaultTasksPerPage;
+		
+		$("#" + jobNo + "tasksperpage").buttonset();
+		$("#" + jobNo + "tperpage1").click( function() {changeTPageSize(50);});
+		$("#" + jobNo + "tperpage2").click( function() {changeTPageSize(100);});
+		$("#" + jobNo + "tperpage3").click( function() {changeTPageSize(400);});
+		$("#" + jobNo + "tprevpage").button({
+			icons: {
+				primary:'ui-icon-circle-arrow-w'
+			},
+			text: false
+		}).click( function() {
+			tPageNumber[whichTaskLookingAt]--;
+			if (tPageNumber[whichTaskLookingAt] < 1) {
+				tPageNumber[whichTaskLookingAt] = 1;
+			}
+			refreshPage();
+		});
+		$("#" + jobNo + "tnextpage").button({
+			icons: {
+				primary:'ui-icon-circle-arrow-e'
+			},
+			text: false
+		}).click( function() {
+			tPageNumber[whichTaskLookingAt]++;
+			if (tPageNumber[whichTaskLookingAt] >
+					howManyTPages[whichTaskLookingAt]) {
+				tPageNumber[whichTaskLookingAt] =
+					howManyTPages[whichTaskLookingAt];
+			}
+			refreshPage();
+		});
 	}
 	$("#tabs").tabs("select", tabID);
 
@@ -618,6 +716,12 @@ function changePageSize(value) {
 	refreshPage();
 }
 
+function changeTPageSize(value) {
+	tasksPerPageVal[whichTaskLookingAt] = value;
+	tPageNumber[whichTaskLookingAt] = 1;
+	refreshPage();
+}
+
 // Set up the pagination bits on the left side
 function setupPagination() {
 	$("#rowsperpage").buttonset();
@@ -629,13 +733,21 @@ function setupPagination() {
 			primary:'ui-icon-circle-arrow-w'
 		},
 		text: false
-	}).click( function() { pageNumber--; refreshPage(); });
+	}).click( function() {
+		pageNumber--;
+		if (pageNumber < 1) { pageNumber = 1; }
+		refreshPage();
+	});
 	$("#nextpage").button({
 		icons: {
 			primary:'ui-icon-circle-arrow-e'
 		},
 		text: false
-	}).click( function() { pageNumber++; refreshPage(); });
+	}).click( function() {
+		pageNumber++;
+		if (pageNumber > howManyPages) { pageNumber = howManyPages; }
+		refreshPage();
+	});
 }
 
 // Set up autorefresh code
@@ -679,7 +791,7 @@ function toast(theTitle, theContent) {
 	$("#notifications").notify("create", {
 		title: theTitle,
 		text: theContent
-	} );
+	});
 }
 
 // Set up the chart data for the farm gauge
