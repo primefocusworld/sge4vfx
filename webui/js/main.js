@@ -72,9 +72,17 @@ function getWorkers(params) {
 		type: "GET",
 		success: function(data) {
 			// Write out the text
-			var tempstring = "Total Slots: " + data.total + "<br />";
-			tempstring += "Used Slots: " + data.used + " (" + data.usedpc;
-			tempstring += "%)<br />Available Slots: " + data.avail + " (";
+			var tempstring = "Total Slots: " + data.total;
+			tempstring += "<br /><br />";
+			tempstring += "<span class=\"red\">Broken Slots: ";
+			tempstring += data.broken + " (" + data.brokenpc + "%)";
+			tempstring += "</span><br />";
+			tempstring += "<span class=\"green\">Good Slots: ";
+			tempstring += data.good + " (" + data.goodpc + "%)";
+			tempstring += "</span><br /><br />";
+			tempstring += "Used Slots: " + data.used + " (";
+			tempstring += data.usedpc + "%)<br />";
+			tempstring += "Available Slots: " + data.avail + " (";
 			tempstring += data.availpc + "%)<br />";
 			$("#queuestattext").html(tempstring);
 			

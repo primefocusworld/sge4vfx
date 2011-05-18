@@ -21,6 +21,8 @@ avail = 0
 total = ""
 usedpc = 0
 availpc = 0
+broken = 0
+brokenpc = 0
 
 for line in outputList:
 	if whichQueue not in line:
@@ -30,16 +32,29 @@ for line in outputList:
 	used = int(items[2])
 	avail = int(items[4])
 	total = int(items[5])
+	broken = int(items[7])
 
 if used != 0:
 	usedpc = (float(used) / float(total)) * 100.0
 else:
 	usedpc = 0.0
-availpc = 100.0 - usedpc
+if broken != 0:
+	brokenpc = (float(broken) / float(total)) * 100.0
+else:
+	brokenpc = 0.0
+
+availpc = 100.0 - usedpc - brokenpc
 
 usedpc = "%.1f" % usedpc
 availpc = "%.1f" % availpc
+brokenpc = "%.1f" % brokenpc
+
+good = total - broken
+goodpc = (float(good) / float(total)) * 100.0
+goodpc = "%.1f" % goodpc
 
 print json.dumps({"total":total, "used":used,
 	"avail":avail, "usedpc":usedpc,
-	"availpc": availpc})
+	"availpc": availpc, "broken":broken,
+	"brokenpc":brokenpc, "good":good,
+	"goodpc":goodpc})
