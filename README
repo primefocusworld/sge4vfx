@@ -18,6 +18,12 @@ pe1
 also, as written in the scripts README, you'll need to add the prolog and
 epilog scripts to those queues
 
+other SGE settings I've chosen to modify include:
+
+* Setting up a share tree priority configuration
+* Setting reschedule_unknown to 00:03:00 and max_unheard to 00:03:00
+* Setting rerun jobs on farm.q
+
 Once SGE's set up...
 Go through the steps in the db/README then webui/README and once you're done,
 use scripts/gridsub to submit stuff (as described in scripts/README)

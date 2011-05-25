@@ -683,6 +683,7 @@ function refreshJobsFilters() {
 				$(this).children("span").css("width", "16px");
 			}
 		});
+	pageNumber = 1;
 }
 
 // Set up all the filter functions for the left filter bar
