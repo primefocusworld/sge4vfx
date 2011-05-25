@@ -43,6 +43,8 @@
 					<input type="text" name="username" value="<?php echo $ruser; ?>" id="username" class="text ui-widget-content ui-corner-all deletable"/>
 					Project
 					<input type="text" name="projname" id="projname" class="text ui-widget-content ui-corner-all deletable" />
+					Job Name
+					<input type="text" name="jobname" id="jobname" class="text ui-widget-content ui-corner-all deletable" />
 					State<br />
 					<div id="stateboxes">
 						<input type="checkbox" id="waitstate" class="checkbox" checked /><label for="waitstate">Waiting</label>

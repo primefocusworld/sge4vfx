@@ -51,6 +51,10 @@ if vals_in.has_key("offset"):
 	offset = vals_in.getvalue("offset")
 else:
 	hasOffset = False
+if vals_in.has_key("namesearch"):
+	nameSearch = vals_in.getvalue("namesearch")
+else:
+	nameSearch = ""
 
 # Connect to the Postgres DB
 conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
@@ -69,6 +73,12 @@ if project != "":
 		psqlcommand += "AND project='" + project + "' "
 	else:
 		psqlcommand += "WHERE project='" + project + "' "
+	gotawherealready = True
+if nameSearch != "":
+	if gotawherealready:
+		psqlcommand += "AND jobname LIKE '%" + nameSearch + "%' "
+	else:
+		psqlcommand += "WHERE jobname LIKE '%" + nameSearch + "%' "
 	gotawherealready = True
 if done:
 	if gotawherealready:

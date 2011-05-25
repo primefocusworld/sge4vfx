@@ -655,6 +655,12 @@ function refreshJobsFilters() {
 		if (jobsFilters != "") { ampersand="&"; }
 		jobsFilters += ampersand + "projname=" + projnameVal;
 	}
+	var jobnameVal = $("#jobname").val();
+	if (jobnameVal != "") {
+		var ampersand = "";
+		if (jobsFilters != "") { ampersand="&"; }
+		jobsFilters += ampersand + "namesearch=" + jobnameVal;
+	}
 	if ($("#donestate").is(":checked")) {
 		var ampersand = "";
 		if (jobsFilters != "") { ampersand="&"; }
