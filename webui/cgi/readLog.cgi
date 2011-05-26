@@ -53,6 +53,7 @@ for record in cur:
 		try:
                 	f = open(seFilename, 'r')
 	                stderrReturn = f.read()
+			stderrReturn = stderrReturn.replace("\n","<br />\n")
         	except IOError as e:
                 	stderrReturn = "No stderr"
 
