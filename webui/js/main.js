@@ -269,6 +269,39 @@ function retry(e, jobNo) {
 	$("#multiusedialog").dialog("open");
 }
 
+// Reschedule a task
+function reschedule(e, jobNo) {
+	// Stop the opening of the job tab
+	e.stopPropagation();
+	e.preventDefault();
+
+	$("#multiusedialog")
+	.html("Sure you want to kill and retry job " + jobNo.toString() + "?")
+	.dialog({
+		width : 300,
+		title : "Confirmation Required",
+		buttons : {
+			"Confirm" : function() {
+				$.ajax({
+					url: "cgi/reschedule.cgi",
+					data: "sgeid=" + jobNo,
+					type: "POST",
+					dataType: "json",
+					success: function(data) {
+						refreshPage();
+						$("#multiusedialog")
+							.dialog("close");
+					}
+				});
+			},
+			"Cancel" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+	$("#multiusedialog").dialog("open");
+}
+
 // Remove a single job from both the DB and the SGE queue
 function deleteJob(e, jobNo) {
 	// Stop the opening of the job tab

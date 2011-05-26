@@ -31,9 +31,14 @@ if wholeJob:
 	cur.execute(sqlQuery)
 	for record in cur:
 		[doneCount] = record
+	# If donetasks was 100%, then set it to pending, otherwise running
+	sqlQuery = "UPDATE jobs SET status = 0 WHERE sgeid=" + jobNo + " AND "
+	sqlQuery += "donetasks = (lasttask - firsttask + 1); "
+	sqlQuery += "UPDATE jobs SET status = 1 WHERE sgeid=" + jobNo + " AND "
+	sqlQuery += "donetasks != (lasttask - firsttask + 1); "
 	# Now decrease donetasks by that number and set endtime NULL
-	sqlQuery = "UPDATE jobs SET endtime = NULL, donetasks=(" + str(doneCount)
-	sqlQuery += "), status = 0 WHERE sgeid=" + jobNo + "; "
+	sqlQuery += "UPDATE jobs SET endtime = NULL, donetasks=(" + str(doneCount)
+	sqlQuery += ") WHERE sgeid=" + jobNo + "; "
 	# Also, reset any tasks that don't have returncode 0
 	sqlQuery += "UPDATE tasks SET starttime = NULL, endtime = NULL, "
 	sqlQuery += "returncode = NULL, rhost = NULL WHERE sgeid=" + jobNo

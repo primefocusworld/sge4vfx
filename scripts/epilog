@@ -3,6 +3,9 @@
 # Prolog script that updates the task start times and therefore
 # (by trigger) the job start times
 
+# This is needed because qstat may be run lower down
+. /net/viewdisilon/ifs/systems/sge/default/common/settings.sh
+
 PGHOST=queue1 #Put your database server here
 PGUSER=sge #Put your database user here (sge probably)
 PGDB=sgedb #Put your database name here (sgedb probably)
@@ -28,7 +31,18 @@ if [ -e /tmp/${JOB_ID}-${SGE_TASK_ID}-return ]; then
 		STATUS=2
 	fi
 	PSQL_CMD="${PSQL_CMD}, returncode = ${RETURNCODE}"
+else
+	# No return code so we don't know whether the code that's been run just
+	# doesn't return one, or if we were rescheduled, so look for it in the
+	# context.  The webUI puts 'rescheduled-$TASK_NO' in the context if it
+	# was done from there.  Is there a better way to do this?
+	RESCHEDULED=`qstat -j ${SGE_ID} 2>/dev/null | grep "rescheduled-${TASK_NO}"`
+	if [ "${RESCHEDULED}" != "" ]; then
+		# If it was rescheduled then just quit as if epilog didn't run
+		exit 0
+	fi
 fi
+
 # Figure out if it's batch or not and make the appropriate chunk of psql code
 if [ ${SGE_TASK_STEPSIZE} -gt 1 ]; then
 	PSQL_CMD="${PSQL_CMD} WHERE sgeid = ${SGE_ID} AND taskno >= ${TASK_NO}"
