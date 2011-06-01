@@ -16,6 +16,8 @@ Options:
   -t <range> (Optional)
     Must be integers greater than 0.  e.g. 1-10
   -s slots (Optional)
+  -l license (Optional)
+    Which license you need.  It assumes you want 1.
   -d Where to put theQ directory (Optional)
     Defaults to \$HOME - Must be network accessible.
 
@@ -29,16 +31,17 @@ EOF
 }
 
 # Set defaults
-TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}"
+TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}"; LICS=""
 
 # Get all the cmd line options
-while getopts ":c:t:N:s:d:" options; do
+while getopts ":c:t:N:l:s:d:" options; do
 	case $options in
 		s) SLOTS_IN=$OPTARG;;
 		c) TO_RUN=$OPTARG;;
 		t) RANGE=$OPTARG;;
 		N) DISP_NAME=$OPTARG;;
 		d) THEQ_DIR=$OPTARG;;
+		l) LICS=$OPTARG;;
 		\?) usage;;
 		h) usage;;
 		*) usage;;
@@ -48,6 +51,12 @@ done
 # Check they put a display name
 if [ "${DISP_NAME}" = "" ] || [ "${TO_RUN}" = "" ]; then
 	usage
+fi
+
+# Check for license requirements
+NEEDALIC=""
+if [ "${LICS}" != "" ]; then
+	NEEDALIC="-l ${LICS}=1 "
 fi
 
 # Set number of slots
@@ -98,7 +107,7 @@ EOF
 cat <<EOF2 > ${THEQ_DIR}/.theQ/${DATEDIR}/gridSubmit.sh
 #!/bin/bash
 
-gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} ${NEEDALIC} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
 EOF2
 
 # Make them executable
