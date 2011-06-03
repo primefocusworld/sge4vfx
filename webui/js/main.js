@@ -200,16 +200,6 @@ function showInfoDialog(theTitle, theContent, theWidth, theHeight) {
 	$("#multiusedialog").dialog("open");
 }
 
-function showJobInfo(data, jobNo) {
-	tempstring = "<ul>";
-	tempstring += "<li>Scriptfile: " + data.scriptFile + "</li>";
-	tempstring += "<li>StdOut Path: " + data.stdout + "</li>";
-	tempstring += "<li>StdErr Path: " + data.stderr + "</li>";
-	tempstring += "</ul>";
-
-	showInfoDialog("SGE Info for " + jobNo, tempstring, 500);
-}
-
 // Show stdout/stderr for a task
 function taskInfo(jobNo, taskNo) {
 	$.ajax({
@@ -241,6 +231,7 @@ function retry(e, jobNo) {
 	.html("Want to retry job " + jobNo.toString() + "?")
 	.dialog({
 		width : 300,
+		height : 200,
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
@@ -279,6 +270,7 @@ function reschedule(e, jobNo) {
 	.html("Sure you want to kill and retry job " + jobNo.toString() + "?")
 	.dialog({
 		width : 300,
+		height : 200,
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
@@ -312,6 +304,7 @@ function deleteJob(e, jobNo) {
 	.html("Are you sure?")
 	.dialog({
 		width : 300,
+		height : 200,
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
@@ -350,6 +343,7 @@ function stopTask(jobNo, taskNo) {
 	.html(tempstring)
 	.dialog({
 		width : 300,
+		height : 200,
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
@@ -383,6 +377,7 @@ function removeErrors() {
 		.html("You need to have a username in the filter box on the left")
 		.dialog({
 			width : 300,
+			height : 200,
 			title : "Whoops",
 			buttons : {
 				"OK" : function() {
@@ -395,6 +390,7 @@ function removeErrors() {
 		.html("Are you sure?")
 		.dialog({
 			width : 300,
+			height : 200,
 			title : "Confirmation Required",
 			buttons : {
 				"Confirm" : function() {
@@ -431,6 +427,7 @@ function removeComplete() {
 		.html("You need to have a username in the filter box on the left")
 		.dialog({
 			width : 300,
+			height : 200,
 			title : "Whoops",
 			buttons : {
 				"OK" : function() {
@@ -443,6 +440,7 @@ function removeComplete() {
 		.html("Are you sure?")
 		.dialog({
 			width : 300,
+			height : 200,
 			title : "Confirmation Required",
 			buttons : {
 				"Confirm" : function() {
