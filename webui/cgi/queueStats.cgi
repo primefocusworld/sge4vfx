@@ -32,7 +32,7 @@ for line in outputList:
 
 	used = int(items[2])
 	suspended = int(items[6])
-	avail = int(items[4]) - suspended
+	avail = int(items[4])
 	total = int(items[5])
 	broken = int(items[7])
 
@@ -49,7 +49,7 @@ if suspended != 0:
 else:
 	suspendedpc = 0.0
 
-availpc = 100.0 - usedpc - brokenpc
+availpc = 100.0 - usedpc - brokenpc - suspendedpc
 
 usedpc = "%.1f" % usedpc
 availpc = "%.1f" % availpc
