@@ -74,11 +74,15 @@ function getWorkers(params) {
 			// Write out the text
 			var tempstring = "Total Slots: " + data.total;
 			tempstring += "<br /><br />";
-			tempstring += "<span class=\"red\">Broken Slots: ";
+			tempstring += "<span class=\"green\">Good: ";
+			tempstring += data.good + " (" + data.goodpc + "%)";
+			tempstring += "</span><br />";
+			tempstring += "<span class=\"red\">Broken: ";
 			tempstring += data.broken + " (" + data.brokenpc + "%)";
 			tempstring += "</span><br />";
-			tempstring += "<span class=\"green\">Good Slots: ";
-			tempstring += data.good + " (" + data.goodpc + "%)";
+			tempstring += "<span class=\"yellow\">Suspended: ";
+			tempstring += data.suspended + " (";
+			tempstring += data.suspendedpc + "%)";
 			tempstring += "</span><br /><br />";
 			tempstring += "Used Slots: " + data.used + " (";
 			tempstring += data.usedpc + "%)<br />";

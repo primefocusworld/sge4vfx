@@ -33,7 +33,7 @@ for WORD in ${FIXED_PARAMS} ; do
 done
 
 # Actually submit the job to SGE
-qsub ${FIXED_PARAMS} > /tmp/OUT.$$.tmp 2>&1
+qsub -ckpt relocate_on_suspend ${FIXED_PARAMS} > /tmp/OUT.$$.tmp 2>&1
 
 # If there was an error
 if [ "$?" -ne "0" ]; then

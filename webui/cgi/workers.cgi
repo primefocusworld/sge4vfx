@@ -38,9 +38,12 @@ for line in outputList:
 
 	status = "percent%d usageindicator" % ((float(used)/float(total))*100.0)
 	if len(items) > 5:
-		trclass = "error"
-		status = ""
 		machineStates = items[5]
+		if machineStates.find("u") != -1:
+			trclass = "error"
+		else:
+			trclass = "warning"
+		status = ""
 	else:
 		trclass = ""
 		machineStates = ""

@@ -115,6 +115,8 @@ span.deleteicon input {	padding-right:16px; }
 .mainTable tbody tr.running.zebra { background: #353 }
 .mainTable tbody tr.error { background: #611 }
 .mainTable tbody tr.error.zebra { background: #833 }
+.mainTable tbody tr.warning { background: #840 }
+.mainTable tbody tr.warning.zebra { background: #a60 }
 .mainTable tbody tr.completed { background: #004 }
 .mainTable tbody tr.completed.zebra { background: #006 }
 .mainTable tbody tr.other { background: #404 }
@@ -190,3 +192,4 @@ span.deleteicon input {	padding-right:16px; }
 /* Some basic colors */
 .red { color:red }
 .green { color:green }
+.yellow { color:yellow }

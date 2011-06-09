@@ -20,6 +20,10 @@ parameter.
 Note2.  I'm using Postgres rather than MySQL because people who know better than
 me told me to.  I don't know enough about it to argue.
 
+Note3.  This submits everything with -ckpt relocate_on_suspend.  I don't know if
+this stops you using other checkpoint mechanism and needs to be looked into
+further.
+
 Try it with an example submission like this:
 
 ====== test.sh ======
@@ -66,6 +70,12 @@ That after the important command.  You could obviously use some more complex
 logic to determine whether the job was successful.
 
 As with the prolog script, put it somewhere renderboxes can see it
+
+==== logged_in.sh ====
+
+This is a load sensor script that's used to determine whether anyone's logged in
+I plan on writing a small tool that'll force reboots late in the evening so that
+workstations are picked up for rendering.
 
 ==== TODO ====
 
