@@ -36,8 +36,11 @@ for line in outputList:
 	total = int(items[5])
 	broken = int(items[7])
 
+good = total - broken - suspended
+goodpc = (float(good) / float(total)) * 100.0
+
 if used != 0:
-	usedpc = (float(used) / float(total)) * 100.0
+	usedpc = (float(used) / float(good)) * 100.0
 else:
 	usedpc = 0.0
 if broken != 0:
@@ -49,15 +52,12 @@ if suspended != 0:
 else:
 	suspendedpc = 0.0
 
-availpc = 100.0 - usedpc - brokenpc - suspendedpc
+availpc = 100.0 - usedpc
 
 usedpc = "%.1f" % usedpc
 availpc = "%.1f" % availpc
 brokenpc = "%.1f" % brokenpc
 suspendedpc = "%.1f" % suspendedpc
-
-good = total - broken - suspended
-goodpc = (float(good) / float(total)) * 100.0
 goodpc = "%.1f" % goodpc
 
 print json.dumps({"total":total, "used":used,
