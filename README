@@ -24,7 +24,7 @@ You need to create a checkpointing object with the following settings:
 Name: relocate_on_suspend
 Interface: USER_DEFINED
 All commands: NONE
-Checkpoint When: On Shutdown of Execd and also On Job Suspend
+Checkpoint When: On Shutdown of Execd, On Job Suspend and On Reschedule
 Checkpoint Signal: NONE
 This needs to be added to the referenced checkpoint objects on all the queues
 At the moment, gridsub submits all jobs with this checkpoint config.  Maybe
