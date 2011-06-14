@@ -81,7 +81,7 @@
 			<table id="jobsTable" class="mainTable">
 				<thead>
 				<tr>
-					<th class="narrow2">Actions</th>
+					<th class="narrow1">Actions</th>
 					<th class="narrow1">ID</th>
 					<th class="normalwidth">Job Name</th>
 					<th class="narrow1">Username</th>
