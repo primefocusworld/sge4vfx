@@ -186,6 +186,7 @@ span.deleteicon input {	padding-right:16px; }
 .yellow { color:yellow }
 
 /* Percent widths  - There must be a better way to do this! */
+.percent0 { width:0%; }
 .percent1 { width:1%; }
 .percent2 { width:2%; }
 .percent3 { width:3%; }
