@@ -51,8 +51,10 @@ if suspended != 0:
 	suspendedpc = (float(suspended) / float(total)) * 100.0
 else:
 	suspendedpc = 0.0
-
-availpc = 100.0 - usedpc
+if avail != 0:
+	availpc = (float(avail) / float(good)) * 100.0
+else:
+	availpc = 0.0
 
 usedpc = "%.1f" % usedpc
 availpc = "%.1f" % availpc
