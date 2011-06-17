@@ -30,7 +30,7 @@
 <div id="tabs">
 	<ul>
 		<li class="tab-no-close"><a href="#jobstab"><span>Jobs</span></a></li>
-		<li class="tab-no-close"><a href="#workerstab"><span>Workers</span></a></li>
+		<li class="tab-no-close"><a href="#workerstab"><span>Farm</span></a></li>
 	</ul>
 	<div id="jobstab">
 		<table class="containerTable" cellpadding="0" cellspacing="0">

@@ -219,10 +219,10 @@ for record in cur:
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "
 	tempstring += sgeid + ");\" src=\"images/delete.png\"/>"
-	tempstring += "<a onclick=\"event.stopPropagation();\" "
-	tempstring += "href=\"http://" + sgewebuisettings.httphost + submissionscript
-	tempstring += "\"><img class=\"iconbtn\" alt=\"Submission Script\""
-	tempstring += " src=\"images/script.png\" /></a>"
+	#tempstring += "<a onclick=\"event.stopPropagation();\" "
+	#tempstring += "href=\"http://" + sgewebuisettings.httphost + submissionscript
+	#tempstring += "\"><img class=\"iconbtn\" alt=\"Submission Script\""
+	#tempstring += " src=\"images/script.png\" /></a>"
 	if output_path != "":
 		tempstring += "<a onclick=\"event.stopPropagation(); "
 		tempstring += "toast('RV','" + rvString + "');\" "
