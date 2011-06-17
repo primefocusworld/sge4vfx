@@ -25,6 +25,7 @@ var defaultQ = "farm.q";
 var whichQ = defaultQ;
 var queueData;
 var queueChart;
+var jobsPageGuage;
 var queueOptions;
 
 // Allows you to call jobsTable cgi script
@@ -58,6 +59,18 @@ function getJobs(params) {
 					}
 				}
 			});	
+		}
+	});
+	
+	$.ajax({
+		url: "cgi/queueStats.cgi",
+		data: workerFilters,
+		type: "GET",
+		success: function(data) {			
+			// Update the guage
+			queueData.setValue(0, 0, whichQ);
+			queueData.setValue(0, 1, Math.floor(data.usedpc));
+			jobsPageGuage.draw(queueData, queueOptions);
 		}
 	});
 }
@@ -855,6 +868,8 @@ function setupChartData() {
 	
 	queueChart = new google.visualization.Gauge(
 		document.getElementById('queueguage'));
+	jobsPageGuage = new google.visualization.Gauge(
+		document.getElementById('jobsPageGuage'));
 	queueOptions = {width:120, height:120, redFrom:90, redTo:100,
 		yellowFrom:75, yellowTo:90, minorTicks:5};
 }

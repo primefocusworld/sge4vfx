@@ -71,6 +71,14 @@
 					</div>
 				</div>
 			</div>
+			<div id="guageBox" class="leftBox">
+				<h2>Farm Usage</h2>
+				<div class="leftBoxInner">
+					<center>
+						<div id="jobsPageGuage"></div>
+					</center>
+				</div>
+			</div>
 		</td><td class="gutter">&nbsp;
 		</td><td class="rightContainer">
 			<div id="jobsToolbar" class="ui-widget-header ui-corner-all rightToolbar">
