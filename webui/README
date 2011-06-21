@@ -18,6 +18,10 @@ the same reason.
 You'll need to setup the database first.  Have a look at the README in the db
 directory if you haven't already.
 
+===== Memcached =====
+
+Make sure memcache is installed and running on port 11211
+
 ===== Apache =====
 
 1) Set up an apache install somewhere and put these files either in the root or
