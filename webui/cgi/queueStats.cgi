@@ -16,7 +16,7 @@ whichQueue = vals_in.getvalue("queue")
 # Connect to memcache server
 mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 # Try and get the value from memcache
-output = mc.get("theQ-queueStats");
+output = mc.get("theQ-queueStats-" + whichQueue);
 # If it's not there
 if not output:
 	# Run qstat to get the info and do the basic maths
@@ -80,7 +80,7 @@ if not output:
 		"goodpc":goodpc, "suspended":suspended,
 		"suspendedpc":suspendedpc})
 	# and set it in memcache 
-	mc.set("theQ-queueStats", output, cache_expiry)
+	mc.set("theQ-queueStats-" + whichQueue, output, cache_expiry)
 	
 # Finally, print the output
 print output
