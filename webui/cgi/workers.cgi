@@ -3,8 +3,6 @@
 import cgi
 print "Content-type:text/html\r\n\r\n"
 
-import re
-from subprocess import Popen,PIPE
 import memcache
 
 cache_expiry = 5
@@ -18,6 +16,9 @@ mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 output = mc.get("theQ-workers-" + whichQueue);
 # If it's not there
 if not output:
+	import re
+	from subprocess import Popen,PIPE
+
 	# Run qstat to get the info and format the table
 	command = ['workers/qstat', "-f -q " + whichQueue]
 	p1 = Popen(command, stdout=PIPE)
