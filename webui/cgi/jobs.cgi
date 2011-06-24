@@ -64,7 +64,7 @@ cur = conn.cursor()
 # Compose the query using all the submitted filters
 gotawherealready=False
 gotastatusalready=False
-psqlcommand = "SELECT * FROM jobs "
+psqlcommand = ""
 if user != "":
 	psqlcommand += "WHERE username='" + user + "' "
 	gotawherealready = True
@@ -119,15 +119,17 @@ if error:
 	gotastatusalready = True
 if gotastatusalready:
 	psqlcommand += ") "
-psqlcommand += "ORDER BY " + sortby + " " + sortdir + " "
+psqlcommand_end = "ORDER BY " + sortby + " " + sortdir + " "
 if hasLimit:
-	psqlcommand += "LIMIT " + limit + " "
+	psqlcommand_end += "LIMIT " + limit + " "
 	if hasOffset:
-		psqlcommand += "OFFSET " + offset + " "
-psqlcommand += ";"
+		psqlcommand_end += "OFFSET " + offset + " "
+
+jobRecordsQuery = "SELECT * FROM jobs " + psqlcommand + psqlcommand_end + ";"
+countQuery = "SELECT count(*) FROM jobs " + psqlcommand + ";"
 
 # Execute the SQL query
-cur.execute(psqlcommand)
+cur.execute(jobRecordsQuery)
 zebra = False
 today = datetime.date.today()
 todayStr = today.strftime("%d %b")
@@ -255,6 +257,13 @@ for record in cur:
 	tempstring += "</td></tr>"
 	print tempstring
 
+count = 0
+cur.execute(countQuery)
+for record in cur:
+	[count] = record
+	tempstring = "<tr class=\"hiddencountrow\">"
+	tempstring += "<td id=\"hiddencount\">" + str(count) + "</td></tr>"
+	print tempstring
 
 cur.close()
 conn.close()

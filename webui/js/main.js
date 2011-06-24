@@ -36,29 +36,25 @@ function getJobs(params) {
 		"&sortdir=" + sortJobsDir + "&limit=" + perPageVal.toString() +
 		"&offset=" + ((pageNumber - 1) * perPageVal).toString() + params;
 
-	// First find out how many pages there are and which one we're on
+	// Now get the actual job table data
 	$.ajax({
-		url: "cgi/count.cgi",
+		url: "cgi/jobs.cgi",
 		data: AJAXparams,
-		dataType: "json",
-		success: function(countData) {
-			howManyPages = Math.ceil(countData.count / perPageVal);
-			$("#pageno").html(pageNumber.toString() 
+		type: "GET",
+		success: function(data) {
+			// Fill the job table
+			$("#jobsTable tbody").html(data);
+			// Now get the count to create the number of pages thingy
+			lineCount = parseInt($("#hiddencount").text());
+			howManyPages = Math.ceil(lineCount / perPageVal);
+			if (howManyPages == 0) { howManyPages = 1; }
+				$("#pageno").html(pageNumber.toString()
 					+ "/" + howManyPages.toString());
-
-			// Now get the actual job table data
-			$.ajax({
-				url: "cgi/jobs.cgi",
-				data: AJAXparams,
-				type: "GET",
-				success: function(data) {
-					$("#jobsTable tbody").html(data);
-					if (realTimeInverval == null) {
-						realTimeInverval = setInterval(
-							'updateDurations()', 1000);
-					}
-				}
-			});	
+			// and finally set up the duration counters
+			if (realTimeInverval == null) {
+				realTimeInverval = setInterval(
+					'updateDurations()', 1000);
+			}
 		}
 	});
 	
@@ -128,25 +124,23 @@ function getJob(params, whichJob) {
 		"&offset=" + ((tPageNumber[whichTaskLookingAt] - 1) *
 		tasksPerPageVal[whichTaskLookingAt]).toString() + params;
 
-	// First find out how many pages there are and which one we're on
 	$.ajax({
-		url: "cgi/countTasks.cgi",
+		url: "cgi/oneJob.cgi",
 		data: AJAXparams,
-		dataType: "json",
-		success: function(countData) {
-			howManyTPages[whichTaskLookingAt] = Math.ceil(countData.count /
+		success: function(data) {
+			$("#"+whichJob+"tab .jobTable tbody").html(data);
+			
+			var hiddenCountID = "#" + whichJob + "hiddencount";
+			lineCount = parseInt($(hiddenCountID).text());
+			howManyTPages[whichTaskLookingAt] = Math.ceil(lineCount /
 				tasksPerPageVal[whichTaskLookingAt]);
+			if (howManyTPages[whichTaskLookingAt] == 0) {
+				howManyTPages[whichTaskLookingAt] = 1
+			}
 			$("#" + whichJob + "tpageno").html(
-					tPageNumber[whichTaskLookingAt].toString() 
-					+ "/" + howManyTPages[whichTaskLookingAt].toString());
-
-			$.ajax({
-				url: "cgi/oneJob.cgi",
-				data: AJAXparams,
-				success: function(data) {
-					$("#"+whichJob+"tab .jobTable tbody").html(data);
-				}
-			});
+				tPageNumber[whichTaskLookingAt].toString() 
+					+ "/"
+					+ howManyTPages[whichTaskLookingAt].toString());
 		}
 	});
 }

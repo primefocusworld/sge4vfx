@@ -129,8 +129,14 @@ span.deleteicon input {	padding-right:16px; }
 /* Gotta have rounded corners :-) */
 .mainTable tr:first-child th:first-child { border-top-left-radius:5px }
 .mainTable tr:first-child th:last-child { border-top-right-radius:5px }
-.mainTable tr:last-child td:first-child { border-bottom-left-radius:5px }
-.mainTable tr:last-child td:last-child { border-bottom-right-radius:5px }
+.mainTable tr:nth-last-of-type(2) td:first-child {
+	border-bottom-left-radius:5px
+}
+.mainTable tr:nth-last-of-type(2) td:last-child {
+	border-bottom-right-radius:5px
+
+}
+.hiddencountrow { visibility:collapse }
 
 .mainTable .narrow1 { width:4% }
 .mainTable .narrow2 { width:6% }

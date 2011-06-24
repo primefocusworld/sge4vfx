@@ -33,14 +33,18 @@ conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 	sgewebuisettings.user, sgewebuisettings.host))
 cur = conn.cursor()
 
-sqlQuery = "SELECT * FROM tasks WHERE sgeid=" + jobNumber
-sqlQuery += " ORDER BY " + sortby + " " + sortdir + " "
+jobQuery = "SELECT * FROM tasks WHERE sgeid=" + jobNumber
+countQuery = "SELECT count(*) FROM tasks WHERE sgeid=" + jobNumber + ";"
+
+sqlQuery_end = " ORDER BY " + sortby + " " + sortdir + " "
 if hasLimit:
-	sqlQuery += "LIMIT " + limit + " "
+	sqlQuery_end += "LIMIT " + limit + " "
 	if hasOffset:
-		sqlQuery += "OFFSET " + offset + " "
-sqlQuery += ";"
-cur.execute(sqlQuery)
+		sqlQuery_end += "OFFSET " + offset + " "
+
+jobQuery += sqlQuery_end + ";"
+
+cur.execute(jobQuery)
 
 zebra = False
 today = datetime.date.today()
@@ -156,6 +160,15 @@ for record in cur:
 	tempstring += "</td><td>" + returncode
 	tempstring += "</td><td>" + str(attempts)
 	tempstring += "</td><td>" + rhost
+	tempstring += "</td></tr>"
+	print tempstring
+
+count = 0
+cur.execute(countQuery)
+for record in cur:
+	[count] = record
+	tempstring = "<tr class=\"hiddencountrow\">"
+	tempstring += "<td id=\"" + sgeid + "hiddencount\">" + str(count)
 	tempstring += "</td></tr>"
 	print tempstring
 
