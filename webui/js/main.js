@@ -47,13 +47,22 @@ function getJobs(params) {
 			// Now get the count to create the number of pages thingy
 			lineCount = parseInt($("#hiddencount").text());
 			howManyPages = Math.ceil(lineCount / perPageVal);
+			// If there are no results, say there's one page
 			if (howManyPages == 0) { howManyPages = 1; }
+			// If jobs have cleared and you're on a page that no
+			// longer exists, go to the maximum page number and
+			// refresh
+			if (pageNumber > howManyPages) {
+				pageNumber = howManyPages;
+				refreshPage();
+			} else {
 				$("#pageno").html(pageNumber.toString()
 					+ "/" + howManyPages.toString());
-			// and finally set up the duration counters
-			if (realTimeInverval == null) {
-				realTimeInverval = setInterval(
-					'updateDurations()', 1000);
+				// and finally set up the duration counters
+				if (realTimeInverval == null) {
+					realTimeInverval = setInterval(
+						'updateDurations()', 1000);
+				}
 			}
 		}
 	});
@@ -134,9 +143,11 @@ function getJob(params, whichJob) {
 			lineCount = parseInt($(hiddenCountID).text());
 			howManyTPages[whichTaskLookingAt] = Math.ceil(lineCount /
 				tasksPerPageVal[whichTaskLookingAt]);
+			// If there are no results, say there's one page
 			if (howManyTPages[whichTaskLookingAt] == 0) {
 				howManyTPages[whichTaskLookingAt] = 1
 			}
+			// Otherwise, write in page/total
 			$("#" + whichJob + "tpageno").html(
 				tPageNumber[whichTaskLookingAt].toString() 
 					+ "/"
