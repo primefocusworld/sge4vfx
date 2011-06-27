@@ -16,6 +16,7 @@ Options:
   -t <range> (Optional)
     Must be integers greater than 0.  e.g. 1-10
   -s slots (Optional)
+  -P SGE project (Optional)
   -l license (Optional)
     Which license you need.  It assumes you want 1.
   -d Where to put theQ directory (Optional)
@@ -34,7 +35,7 @@ EOF
 TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}"; LICS=""
 
 # Get all the cmd line options
-while getopts ":c:t:N:l:s:d:" options; do
+while getopts ":c:t:N:l:P:s:d:" options; do
 	case $options in
 		s) SLOTS_IN=$OPTARG;;
 		c) TO_RUN=$OPTARG;;
@@ -42,6 +43,7 @@ while getopts ":c:t:N:l:s:d:" options; do
 		N) DISP_NAME=$OPTARG;;
 		d) THEQ_DIR=$OPTARG;;
 		l) LICS=$OPTARG;;
+		P) PROJECT=$OPTARG;;
 		\?) usage;;
 		h) usage;;
 		*) usage;;
@@ -66,6 +68,12 @@ if [[ ${SLOTS_IN} =~ ${SLOTS_REGEX} ]]; then
 else
 	echo "Slots must be an integer number"
 	usage
+fi
+
+# Check whether it was submitted with a project
+PROJBIT=""
+if [[ "${PROJECT}" != "" ]]; then
+	PROJBIT="-P ${PROJECT}"
 fi
 
 # Check that the second parameter is properly formatted
@@ -107,7 +115,7 @@ EOF
 cat <<EOF2 > ${THEQ_DIR}/.theQ/${DATEDIR}/gridSubmit.sh
 #!/bin/bash
 
-gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} ${NEEDALIC} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} ${PROJBIT} ${NEEDALIC} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
 EOF2
 
 # Make them executable
