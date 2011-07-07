@@ -33,6 +33,8 @@ def writeNukeCmdFile(sgePath, nukeCmd):
 	nf.write("#!/bin/bash\n\n")
 	nf.write("#$ -o " + sgePath + "/logs/o.$TASK_ID\n")
 	nf.write("#$ -e " + sgePath + "/logs/e.$TASK_ID\n\n")
+	nf.write("> $SGE_STDOUT_PATH\n")
+	nf.write("> $SGE_STDERR_PATH\n\n")
 	# I put the batch endframe calculation stuff into the script
 	# either way.  If it's not a batch job, ENDFRAME will just never
 	# be used by the Nuke command on the following lines
