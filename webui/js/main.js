@@ -356,6 +356,61 @@ function deleteJob(e, jobNo) {
 }
 
 // Remove a single job from both the DB and the SGE queue
+function changePriority(e, jobNo) {
+	// Stop the opening of the job tab
+	e.stopPropagation();
+	e.preventDefault();
+
+	var priorityHTML = "Please select priority level<br /><br />Be aware that"
+	priorityHTML += " if this system is abused, it'll be taken away and only"
+	priorityHTML += " producers will be able to use this - so <span class=\""
+	priorityHTML += "red\">DON'T</span>!"
+
+	$("#multiusedialog")
+	.html(priorityHTML)
+	.dialog({
+		width : 350,
+		height : 200,
+		title : "Change Priority",
+		buttons : {
+			"Whenever" : function() {
+				changePriorityCallback(jobNo, -600);
+			},
+			"Low" : function() {
+				changePriorityCallback(jobNo, -300);
+			},
+			"Normal" : function() {
+				changePriorityCallback(jobNo, 0);
+			},
+			"High" : function() {
+				changePriorityCallback(jobNo, 300);
+			},
+			"Highest" : function() {
+				changePriorityCallback(jobNo, 600);
+			},
+		},
+		open: function() {
+			// This just stops the 'Whenever' button from being highlighted
+			$(this).parents('.ui-dialog-buttonpane button:eq(0)').blur();
+		}
+	});
+	$("#multiusedialog").dialog("open");
+}
+
+function changePriorityCallback(jobNo, priority) {
+	$.ajax({
+		url: "cgi/changePriority.cgi",
+		data: "sgeid=" + jobNo + "&priority=" + priority,
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			refreshPage();
+			$("#multiusedialog").dialog("close");
+		}
+	});
+}
+
+// Remove a single job from both the DB and the SGE queue
 function stopTask(jobNo, taskNo) {
 	var tempstring = "Are you sure?<br /><br />This will delete the task ";
 	tempstring += "from the queue but not from this page.  It'll show up ";

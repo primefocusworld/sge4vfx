@@ -13,6 +13,13 @@ import sgewebuisettings
 rvInstalled = True
 rvString = "Opening RV.  Please wait..."
 
+priorities = {None: 'Normal',
+	-600: 'Whenever',
+	-300: 'Low',
+	0: 'Normal',
+	300: 'High',
+	600: 'Highest'}
+
 # Get the CGI values from the form submission
 vals_in = cgi.FieldStorage()
 sortby = vals_in.getvalue("sortby")
@@ -220,7 +227,12 @@ for record in cur:
 		cur2.close
 
 	tempstring += "<td><img class=\"iconbtn\" onclick=\"deleteJob(event, "
-	tempstring += sgeid + ");\" src=\"images/delete.png\"/>"
+	tempstring += sgeid + ");\" src=\"images/delete.png\" title=\"Delete"
+	tempstring += " Job\"/>"
+	if status != 3:
+		tempstring += "<img class=\"iconbtn\" onclick=\"changePriority(event, "
+		tempstring += sgeid + ");\" src=\"images/priority.png\" title=\"Change"
+		tempstring += " Priority\"/>"
 	#tempstring += "<a onclick=\"event.stopPropagation();\" "
 	#tempstring += "href=\"http://" + sgewebuisettings.httphost + submissionscript
 	#tempstring += "\"><img class=\"iconbtn\" alt=\"Submission Script\""
@@ -239,7 +251,7 @@ for record in cur:
 	tempstring += "</td><td>" + jobname
 	tempstring += "</td><td>" + username
 	tempstring += "</td><td>" + str(project)
-	tempstring += "</td><td>" + str(priority)
+	tempstring += "</td><td>" + priorities.get(priority, "Unknown")
 	tempstring += "</td><td title=\"" + submittimetitle + "\">" + submittimestr
 	tempstring += "</td><td title=\"" + starttimetitle + "\" alt=\""
 	tempstring += starttimealt + "\" class=\"starttime\">" + starttimestr

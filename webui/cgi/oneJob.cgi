@@ -168,7 +168,7 @@ cur.execute(countQuery)
 for record in cur:
 	[count] = record
 	tempstring = "<tr class=\"hiddencountrow\">"
-	tempstring += "<td id=\"" + sgeid + "hiddencount\">" + str(count)
+	tempstring += "<td id=\"" + jobNumber + "hiddencount\">" + str(count)
 	tempstring += "</td></tr>"
 	print tempstring
 
