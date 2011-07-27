@@ -23,21 +23,22 @@ conn = psycopg2.connect("dbname=%s user=%s host=%s" % (sgewebuisettings.dbname,
 	sgewebuisettings.user, sgewebuisettings.host))
 cur = conn.cursor()
 
+# Get a count of how many tasks where successfully completed
+sqlQuery = "SELECT COUNT(*) FROM TASKS WHERE returncode=0 AND sgeid="
+sqlQuery += jobNo + ";"
+cur.execute(sqlQuery)
+for record in cur:
+	[goodCount] = record
+
 # If it's the whole job
 if wholeJob:
-	# Get a count of how many jobs where successfully completed
-	sqlQuery = "SELECT COUNT(*) FROM TASKS WHERE returncode=0 AND sgeid="
-	sqlQuery += jobNo + ";"
-	cur.execute(sqlQuery)
-	for record in cur:
-		[doneCount] = record
 	# If donetasks was 100%, then set it to pending, otherwise running
 	sqlQuery = "UPDATE jobs SET status = 0 WHERE sgeid=" + jobNo + " AND "
 	sqlQuery += "donetasks = (lasttask - firsttask + 1); "
 	sqlQuery += "UPDATE jobs SET status = 1 WHERE sgeid=" + jobNo + " AND "
 	sqlQuery += "donetasks != (lasttask - firsttask + 1); "
 	# Now decrease donetasks by that number and set endtime NULL
-	sqlQuery += "UPDATE jobs SET endtime = NULL, donetasks=(" + str(doneCount)
+	sqlQuery += "UPDATE jobs SET endtime = NULL, donetasks=(" + str(goodCount)
 	sqlQuery += ") WHERE sgeid=" + jobNo + "; "
 	# Also, reset any tasks that don't have returncode 0
 	sqlQuery += "UPDATE tasks SET starttime = NULL, endtime = NULL, "
@@ -58,8 +59,10 @@ else:
 	batchNumber = frameNum - (frameNum - fTaskNum) % cNum
 	
 	# Now decrease donetasks by the size of a batch
-	sqlQuery = "UPDATE jobs SET endtime = NULL, donetasks=(donetasks-chunk), "
-	sqlQuery += "status = 0 WHERE sgeid=" + jobNo + "; "
+	sqlQuery = "UPDATE jobs SET endtime = NULL, donetasks=(donetasks-chunk) "
+	sqlQuery += "WHERE sgeid=" + jobNo + "; "
+	sqlQuery += "UPDATE jobs SET status = 0 WHERE donetasks="
+	sqlQuery += str(goodCount) + " AND sgeid=" + jobNo + "; "
 	# and reset the tasks in that batch
 	sqlQuery += "UPDATE tasks SET starttime = NULL, endtime = NULL, "
 	sqlQuery += "returncode = NULL, rhost = NULL WHERE sgeid=" + jobNo
