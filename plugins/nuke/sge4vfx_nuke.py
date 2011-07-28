@@ -18,12 +18,7 @@ from subprocess import Popen,PIPE
 
 # Build a date string to save off the SGE submission stuff
 def buildDateTime():
-	dt = datetime.today()
-	tt = dt.timetuple()
-	dateStr = (str(tt[0]) + str(tt[1]).zfill(2)
-		+ str(tt[2]).zfill(2) +	"-" + str(tt[3]).zfill(2)
-		+ str(tt[4]).zfill(2) +	str(tt[5]).zfill(2))
-	return dateStr
+	return datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 # Write out the Nuke command file
