@@ -135,7 +135,7 @@ def RenderPanel():
 	endFrame = str(nuke.root().lastFrame())
 	batchSize = str(5)
 	slotsRequired = str(4)
-	renderFullSize = not(nuke.root().proxy())
+	renderFullSize = True
 	whichQueue = "farm.q"
 	notePadBits = ("When you click OK, this will save your script " +
 		"in it's current form.\n\nIf you don't want your file " +
