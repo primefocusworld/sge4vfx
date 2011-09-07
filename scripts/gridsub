@@ -14,9 +14,10 @@ PGDB=sgedb        # Postgres database name
 # Parse name option from cmd line params if provided
 N="unnamed"
 I=0
+PRIORITY=0
 
 # Prepend names starting with numbers as SGE doesn't like 'em
-FIXED_PARAMS="`echo "$@" | sed -e 's/-N[ \t]*\([0-9]\)/-N theQ_\1/g'`"
+FIXED_PARAMS="`echo $@ | sed -e 's/-N[ \t]*\([0-9]\)/-N theQ_\1/g'`"
 ARGV=( ${FIXED_PARAMS} )
 
 for WORD in ${FIXED_PARAMS} ; do
@@ -29,6 +30,8 @@ for WORD in ${FIXED_PARAMS} ; do
 				echo "Missing argument to -N"
 				exit 1
 			fi ;;
+		-p)
+                        PRIORITY=${ARGV[$I]} ;;
 	esac
 done
 
@@ -82,7 +85,7 @@ else
 		PSQL_CMD="${PSQL_CMD}NULL, "
 	fi
 
-	PSQL_CMD="${PSQL_CMD}NULL, current_timestamp, NULL, NULL, ${FIRST}, "
+	PSQL_CMD="${PSQL_CMD}${PRIORITY},current_timestamp,NULL,NULL,${FIRST}, "
 	PSQL_CMD="${PSQL_CMD}${LAST}, ${CHUNK}, 0, '${SUBMIT_SCRIPT}', 0);"
 
 	psql -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}" > /dev/null 2>&1
