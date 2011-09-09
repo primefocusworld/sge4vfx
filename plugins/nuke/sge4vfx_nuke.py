@@ -181,12 +181,20 @@ def RenderPanel():
 				previewNode,
 				doesItNeedOcula)
 
+# Get all nodes recursively
+def allNodesWithType(nodeType, nodes=[nuke.root()]):
+    return sum( map(lambda x: [x] \
+                    if nuke.allNodes(group=x)==[] \
+                    and x.Class() == nodeType   \
+                    else \
+                    allNodesWithType(nodeType, nuke.allNodes(group=x)), nodes)\
+             ,[] )
 
 # Gets the list of write nodes for the enumeration plugin
 def getWriteNodes():
 	returnVal = ""
 
-	writeNodes = nuke.allNodes("Write")
+	writeNodes = allNodesWithType("Write")
 	if writeNodes:
 		for wNode in writeNodes:
 			returnVal += wNode['name'].value() + " "
@@ -198,7 +206,7 @@ def getWriteNodes():
 def needsOcula():
 	returnVal = False
 
-	for n in nuke.allNodes():
+	for n in allNodesWithType():
 		if n.knob('thisIsAnOculaPlugin'):
 			returnVal = True
 
