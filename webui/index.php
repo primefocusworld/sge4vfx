@@ -98,7 +98,7 @@
 					<th class="narrow2">Submit Time</th>
 					<th class="narrow2">Start Time</th>
 					<th class="narrow2">End Time</th>
-					<th class="narrow1">Duration</th>
+					<th class="narrow2">Duration</th>
 					<th class="narrow2">Range</th>
 					<th class="narrow2">% Done</th>
 				</tr>
