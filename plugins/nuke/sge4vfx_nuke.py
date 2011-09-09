@@ -197,7 +197,7 @@ def getWriteNodes():
 	writeNodes = leafNodes("Write")
 	if writeNodes:
 		for wNode in writeNodes:
-			returnVal += wNode['name'].value() + " "
+			returnVal += wNode.fullName() + " "
 
 	return returnVal
 
