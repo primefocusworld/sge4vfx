@@ -182,11 +182,58 @@ def RenderPanel():
 				doesItNeedOcula)
 
 
+# Needed to get all the write nodes in the script, not only on the root level of it.
+def recursiveSearch(node=None, nodeClass=None, onlySelected = None, subclass=None, depth=None, level=0):    
+    if node == None:
+        node = nuke.root()
+    
+    if nodeClass == '*':
+        nodeClass = None
+
+    with node as group:
+        allNodes = []
+        myGoodNodes = []
+
+        if onlySelected:
+            #print "Getting only the selected nodes" # DEBUG
+            if nodeClass == None:
+                myNodes = nuke.selectedNodes()
+            else:
+                myNodes = nuke.selectedNodes(nodeClass)
+            myGroups = nuke.selectedNodes('Group')
+        else:
+            if nodeClass == None:
+                myNodes = nuke.allNodes()
+            else:
+                myNodes = nuke.allNodes(nodeClass)
+
+            myGroups = nuke.allNodes('Group')
+
+        for i, myNode in enumerate(myNodes):
+            if subclass != None:
+                try:
+                    if myNode['subclass'].value() == subclass:
+                        myGoodNodes.append(myNode)
+                except:
+                    pass
+
+            else:
+                myGoodNodes = myNodes
+
+        allNodes.extend(myGoodNodes)
+
+        if (depth == None) or (level <= depth):
+            level += 1
+            for myGroup in myGroups:
+                allNodes.extend(recursiveSearch(myGroup, nodeClass, subclass=subclass, depth=depth, level=level))
+
+    return allNodes
+    
 # Gets the list of write nodes for the enumeration plugin
 def getWriteNodes():
 	returnVal = ""
 
-	writeNodes = nuke.allNodes("Write")
+	writeNodes = recursiveSearch(nodeClass='Write')
 	if writeNodes:
 		for wNode in writeNodes:
 			returnVal += wNode['name'].value() + " "
