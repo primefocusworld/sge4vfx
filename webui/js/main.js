@@ -410,43 +410,6 @@ function changePriorityCallback(jobNo, priority) {
 	});
 }
 
-// Remove a single job from both the DB and the SGE queue
-function stopTask(jobNo, taskNo) {
-	var tempstring = "Are you sure?<br /><br />This will delete the task ";
-	tempstring += "from the queue but not from this page.  It'll show up ";
-	tempstring += "as purple (other) status";
-
-	$("#multiusedialog")
-	.html(tempstring)
-	.dialog({
-		width : 300,
-		height : 200,
-		title : "Confirmation Required",
-		buttons : {
-			"Confirm" : function() {
-				var AJAXparams = "sgeid=" + jobNo
-				AJAXparams += "&taskno=" + taskNo;
-
-				$.ajax({
-					url: "cgi/stopTask.cgi",
-					data: AJAXparams,
-					type: "POST",
-					dataType: "json",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-					}
-				});
-			},
-			"Cancel" : function() {
-				$(this).dialog("close");
-			}
-		}
-	});
-	$("#multiusedialog").dialog("open");
-}
-
 // Remove all errored jobs.  They do need to be removed from queue
 function removeErrors() {
 	if (usernameVal == "") {

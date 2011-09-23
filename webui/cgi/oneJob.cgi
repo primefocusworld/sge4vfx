@@ -131,9 +131,7 @@ for record in cur:
                         output_path = urllib.quote(tempStr)
 		cur2.close
 
-	tempstring += "<td><img class=\"iconbtn\" onclick=\"stopTask("
-	tempstring += sgeid + "," + taskno + ");\" src=\"images/delete.png\" />"
-	tempstring += "<img class=\"iconbtn\" onclick=\"taskInfo("
+	tempstring += "<td><img class=\"iconbtn\" onclick=\"taskInfo("
 	tempstring += sgeid + "," + taskno + ");\" src=\"images/log.png\" />"
 	if output_path != "":
 		tempstring += "<a onclick=\"toast('RV','" + rvString + "');\" "
