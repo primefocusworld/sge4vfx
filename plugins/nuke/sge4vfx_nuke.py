@@ -97,9 +97,12 @@ def Submit(fullSize, startFrame, endFrame, batchSize,
 			frameRangeBit = "-F ${SGE_TASK_ID} "
 
 		# Create the command file
-		maxMem = str(int(slotsPerFrame) * gigPerSlot)
-		nukeCmd = ("nuke -c " + maxMem + "G -x " + fullSizeBit
-			+ frameRangeBit	+ sgePath + "/" + job_path)
+		# The foundry recommended using -c and asking for half of the
+		# available RAM hence (slots*gigPerSlot)/2
+		maxMem = str((int(slotsPerFrame) * gigPerSlot)/2)
+		nukeCmd = ("nuke -c " + maxMem + "G -m " + slotsPerFrame
+			+ " -x " + fullSizeBit + frameRangeBit
+			+ sgePath + "/" + job_path)
 		writeNukeCmdFile(sgePath, nukeCmd)
 
 		licenseRequirement = ""
