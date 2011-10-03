@@ -16,6 +16,11 @@ from subprocess import Popen,PIPE
 # - Automatic retries?  Part of a larger effort to add max-auto-retries to the
 #   DB schema and use exit code 99 to have the epilog re-queue jobs
 
+priorities = { "Normal" : "0",
+		"Low" : "-300",
+		"Whenever" : "-600" }
+gigPerSlot = 2
+
 # Build a date string to save off the SGE submission stuff
 def buildDateTime():
 	return datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -57,7 +62,8 @@ def writeSGECmdFile(sgePath, sgeCmd):
 
 
 def Submit(fullSize, startFrame, endFrame, batchSize,
-		slotsPerFrame, whichQueue, previewNode, doesItNeedOcula):
+		slotsPerFrame, whichQueue, previewNode,
+		doesItNeedOcula, priority):
 	# Specify where gridsub is
 	gridsub = "gridsub" # assumes it's in the path, otherwise put full path
 
@@ -91,8 +97,9 @@ def Submit(fullSize, startFrame, endFrame, batchSize,
 			frameRangeBit = "-F ${SGE_TASK_ID} "
 
 		# Create the command file
-		nukeCmd = ("nuke -x " + fullSizeBit + frameRangeBit + sgePath +
-			"/" + job_path)
+		maxMem = str(int(slotsPerFrame) * gigPerSlot)
+		nukeCmd = ("nuke -c " + maxMem + "G -x " + fullSizeBit
+			+ frameRangeBit	+ sgePath + "/" + job_path)
 		writeNukeCmdFile(sgePath, nukeCmd)
 
 		licenseRequirement = ""
@@ -104,6 +111,7 @@ def Submit(fullSize, startFrame, endFrame, batchSize,
 			+ " -N " + job_title
 			+ " -V -S /bin/bash "
 			+ " -pe pe1 " + slotsPerFrame
+			+ " -p " + priorities[priority]
 			+ " -q " + whichQueue
 			+ " -t " + startFrame + "-" + endFrame
 			+ ":" + batchSize + " "
@@ -152,6 +160,7 @@ def RenderPanel():
 		p.addSingleLineInput("Start Frame:", startFrame)
 		p.addSingleLineInput("End Frame:", endFrame)
 		p.addSingleLineInput("Slots per frame:", slotsRequired)
+		p.addEnumerationPulldown("Priority:", "Normal Low Whenever")
 		p.addSingleLineInput("Queue:", whichQueue)
 		p.addSingleLineInput("Batch Size:", batchSize)
 		p.addEnumerationPulldown("Write node to preview:", writeNodes)
@@ -171,6 +180,7 @@ def RenderPanel():
 			whichQueue = p.value("Queue:")
 			batchSize = p.value("Batch Size:")
 			previewNode = p.value("Write node to preview:")
+			priority = p.value("Priority:")
 
 			Submit(renderFullSize,
 				startFrame,
@@ -179,7 +189,8 @@ def RenderPanel():
 				slotsPerFrame,
 				whichQueue,
 				previewNode,
-				doesItNeedOcula)
+				doesItNeedOcula,
+				priority)
 
 # Get all nodes recursively
 def leafNodes(nodeType="", nodes=[nuke.root()]):
