@@ -123,6 +123,15 @@ function getWorkers(params) {
 			$("#workersTable tbody").html(data);
 		}
 	});
+
+	$.ajax({
+                url: "cgi/quotas.cgi",
+                data: AJAXParams,
+                type: "GET",
+                success: function(data) {
+                        $("#quotastats tbody").html(data);
+                }
+        });
 }
 
 // Allows you to call jobTable cgi script

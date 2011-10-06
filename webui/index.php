@@ -137,6 +137,20 @@
 								</table>
 							</div>
 						</div>
+						<div id="workerInfo" class="leftBox gapToTheRight darkBackground">
+							<h2>Slot Usage Info</h2>
+							<div class="leftBoxInner">
+								<table id="quotastats">
+									<thead>
+									<tr>
+										<th>Username</th>
+										<th>Slots</th>
+									</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
 					</td>
 					<td id="workertd2">
 						<table id="workersTable" class="mainTable">
