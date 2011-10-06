@@ -13,8 +13,7 @@ whichQueue = vals_in.getvalue("queue")
 # Connect to memcache server
 mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 # Try and get the value from memcache
-#output = mc.get("theQ-quotas-" + whichQueue);
-output=""
+output = mc.get("theQ-quotas-" + whichQueue);
 # If it's not there
 if not output:
 	import re
