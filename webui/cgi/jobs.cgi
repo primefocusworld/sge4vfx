@@ -177,7 +177,7 @@ for record in cur:
 		endtimestr = endtime.strftime(oldDate + "%H:%M" + newDate)
 		endtimetitle = endtime.strftime("%d %b %H:%M:%S")
 		duration = endtime - starttime
-		s = duration.seconds
+		s = duration.seconds + (duration.days * 86400)
 		hours, remainder = divmod(s, 3600)
 		minutes, seconds = divmod(remainder, 60)
 		if (hours > 0):
