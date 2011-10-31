@@ -61,6 +61,17 @@ def writeSGECmdFile(sgePath, sgeCmd):
 	os.chmod(sgePath + "/sgeNuke.sh", 0755)
 
 
+# Dump the shell environment
+def writeEnvFile(sgePath):
+	ef = open(sgePath + "/theEnv", "w")
+
+	for param in os.environ.keys():
+		if os.environ[param].find('*') == -1:
+			ef.write("%s=%s\n" % (param,os.environ[param]))
+
+	ef.close()
+
+
 def Submit(fullSize, startFrame, endFrame, batchSize,
 		slotsPerFrame, whichQueue, previewNode,
 		doesItNeedOcula, priority):
@@ -122,6 +133,7 @@ def Submit(fullSize, startFrame, endFrame, batchSize,
 			+ sgePath
 			+ "/nukeCommand.sh")
 		writeSGECmdFile(sgePath, sgeCmd)
+		writeEnvFile(sgePath)
 
 		# Take a snapshot of the Nuke file (useful for resubmission)
 		shutil.copyfile(script_name, sgePath + "/" + job_path)
