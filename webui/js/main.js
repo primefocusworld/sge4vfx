@@ -776,13 +776,22 @@ function refreshJobsFilters() {
 function setupFilterFunctions() {
 	$("#jobsFilters input").blur(function() {
 		refreshJobsFilters();
-		refreshWorkerFilters();
 		refreshPage();
 	});
 	$("#jobsFilters input").bind('keyup', function (e) {
 		var key = e.keyCode || e.which;
 		if (key === 13) {
 			refreshJobsFilters();
+			refreshPage();
+		}
+	});
+	$("#workerFilters input").blur(function() {
+		refreshWorkerFilters();
+		refreshPage();
+	});
+	$("#workerFilters input").bind('keyup', function (e) {
+		var key = e.keyCode || e.which;
+		if (key === 13) {
 			refreshWorkerFilters();
 			refreshPage();
 		}
