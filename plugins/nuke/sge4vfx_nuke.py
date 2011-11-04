@@ -72,7 +72,7 @@ def writeEnvFile(sgePath):
 	ef.close()
 
 
-def Submit(fullSize, startFrame, endFrame, batchSize,
+def Submit(fullSize, emailNotify, startFrame, endFrame, batchSize,
 		slotsPerFrame, whichQueue, previewNode,
 		doesItNeedOcula, priority):
 	# Specify where gridsub is
@@ -143,6 +143,9 @@ def Submit(fullSize, startFrame, endFrame, batchSize,
 		theJobID = p1.communicate()[0]
 		sgeID = theJobID.partition(".")[0]
 
+		if emailNotify:
+			jobExtraEMail(sgeID)
+
 		# Add the previewNode location to the job_extras table
 		jobExtraPreview(sgeID, previewNode, fullSize)
 	
@@ -159,6 +162,7 @@ def RenderPanel():
 	batchSize = str(5)
 	slotsRequired = str(4)
 	renderFullSize = True
+	emailNotify = False
 	whichQueue = "farm.q"
 	notePadBits = ("When you click OK, this will save your script " +
 		"in it's current form.\n\nIf you don't want your file " +
@@ -172,6 +176,7 @@ def RenderPanel():
 		# Create the panel and put the bits on it
 		p = nuke.Panel("Render on theQ")
 		p.addBooleanCheckBox("Render full size:", renderFullSize)
+		p.addBooleanCheckBox("e-mail Notification:", emailNotify)
 		p.addSingleLineInput("Start Frame:", startFrame)
 		p.addSingleLineInput("End Frame:", endFrame)
 		p.addSingleLineInput("Slots per frame:", slotsRequired)
@@ -189,6 +194,7 @@ def RenderPanel():
 		# Now get all the values and submit if the user clicked OK
 		if result == 1:
 			renderFullSize = p.value("Render full size:")
+			emailNotify = p.value("e-mail Notification:")
 			startFrame = p.value("Start Frame:")
 			endFrame = p.value("End Frame:")
 			slotsPerFrame = p.value("Slots per frame:")
@@ -198,6 +204,7 @@ def RenderPanel():
 			priority = p.value("Priority:")
 
 			Submit(renderFullSize,
+				emailNotify,
 				startFrame,
 				endFrame,
 				batchSize,
@@ -260,3 +267,9 @@ def jobExtraPreview(theJobID, previewNode, fullSize):
 	previewCmd = ("gridextra " + theJobID + " output_path "
 		+ "\"" + newLocation + "\"")
 	os.system(previewCmd)
+
+
+def jobExtraEMail(theJobID):
+	# Do the gridextra command to add the output_path info
+        previewCmd = ("gridextra " + theJobID + " email yes")
+        os.system(previewCmd)
