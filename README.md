@@ -2,15 +2,13 @@ SGE4VFX
 =======
 An attempt to make SGE more usable for VFX houses.
 
-This is far from finished and is currently undergoing a rewrite but has been successfully used at Prime Focus to render in excess of 100,000 array jobs and probably between 10m and 20m individual tasks.
+This is far from finished and is currently undergoing a rewrite but has been successfully used at Prime Focus Film (London) to render in excess of 100,000 array jobs and probably between 10m and 20m individual tasks.
 
 At the moment the CGI scripts use simple Apache CGI which chews too much CPU time for the number of users (I'm running it for about 200 users) and the code is far too hacky.  The rewrite will probably be Tornado backended and far more JSON/templated on the front end.
 
 Install
 -------
-This doesn't cover doing the actual SGE install but there are a couple of bits
-that need to be set up in order for these scripts to work.  Have a look at
-Sun/Oracle/whoever own's it this week's website for that.
+This doesn't cover doing the actual SGE install but there are a couple of bits that need to be set up in order for these scripts to work.  Have a look at Sun/Oracle/whoever owns it this week's website for that.
 
 Queues
 ------
@@ -45,17 +43,13 @@ As written in the scripts README, you'll need to add the prolog and epilog scrip
 
 Load Sensors
 ------------
-for workstation rendering, in the scripts folders you'll find logged_in.sh
-In the cluster config, this must be added as a load sensor script for all the
-machines you want to use for desktop rendering.  It checks whether anyone's
-logged into X.
+For workstation rendering, in the scripts folders you'll find logged_in.sh
+In the cluster config, this must be added as a load sensor script for all the machines you want to use for desktop rendering.  It checks whether anyone's logged into X.
 Add xlogin as a complex resource as follows:
 
     xlogin xlogin INT >= NO NO 0 0
 
-Under the farm.q, add the desktop machines and set a suspend threshold of 1 for
-xlogin.  I've set the jobs suspended per interval to 30 because that's a higher
-number than we have cores in any of our machines.
+Under the farm.q, add the desktop machines and set a suspend threshold of 1 for xlogin.  I've set the jobs suspended per interval to 30 because that's a higher number than we have cores in any of our machines.
 
 Other
 -----
@@ -71,5 +65,4 @@ Other SGE settings I've chosen to modify include:
 * Set no_project as auto_user_default_project
 
 Once SGE's set up...
-Go through the steps in the db/README then webui/README and once you're done,
-use scripts/gridsub to submit stuff (as described in scripts/README)
+Go through the steps in the db/README then webui/README and once you're done, use scripts/gridsub to submit stuff (as described in scripts/README)
