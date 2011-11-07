@@ -22,7 +22,7 @@ Try it with an example submission like this:
     echo "Slept"
     =====================
 
-    gridsub -t 1-100 -N test_name test.sh
+    gridsub -t 1-100 -q farm.q -S /bin/bash -N test_name test.sh
 
 ##prolog
 
