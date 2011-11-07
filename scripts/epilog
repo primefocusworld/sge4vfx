@@ -69,6 +69,18 @@ PSQL_CMD="${PSQL_CMD}AND sgeid = ${SGE_ID};"
 if [ ${STATUS} -eq 2 ]; then
 	PSQL_CMD="${PSQL_CMD}UPDATE jobs SET status = ${STATUS} WHERE "
 	PSQL_CMD="${PSQL_CMD}sgeid = ${SGE_ID};"
+	# and if they've chosen to have a e-mail notification, send one
+	# First, figure out if they want e-mail notifications
+	PSQL_CMD2="SELECT (value='yes') AS want_mail FROM job_extras WHERE "
+	PSQL_CMD2="${PSQL_CMD2}sgeid=${SGE_ID} AND key='email';"
+	NOTIF=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD2}"`
+	if [[ "$NOTIF" =~ "t" ]]; then
+		# Now we know they do, get the jobname
+		PSQL_CMD2="SELECT jobname FROM jobs WHERE sgeid=${SGE_ID};"
+		JOBNAME=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD2}"`
+		# Then send them a mail with the failed task number
+		mail -s "Job ${SGE_ID}:${JOBNAME} - Task ${TASK_NO} has errored" $USER
+	fi
 # Otherwise, set the status to ${STATUS} if it's not already set to error
 # and the job has finished
 else
