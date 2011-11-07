@@ -85,9 +85,11 @@ PSQL_CMD="SELECT donetasks=(lasttask-firsttask+1)AS finished FROM jobs,"
 PSQL_CMD="${PSQL_CMD}job_extras WHERE jobs.sgeid=${SGE_ID} AND "
 PSQL_CMD="${PSQL_CMD}job_extras.sgeid=jobs.sgeid AND job_extras.key='email' "
 PSQL_CMD="${PSQL_CMD}AND job_extras.value='yes';"
-DONE_AND_WANT_EMAIL=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
-if [[ "$DONE_AND_WANT_EMAIL" =~ "t" ]]; then
-	mail -s "Job ${SGE_ID}: All tasks have been run" $USER
+DONE_WANT_EMAIL=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
+if [[ "$DONE_WANT_EMAIL" =~ "t" ]]; then
+	PSQL_CMD="SELECT jobname FROM jobs WHERE sgeid=${SGE_ID};"
+	JOBNAME=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
+	mail -s "Job ${SGE_ID}:${JOBNAME} - All tasks have been run" $USER
 fi
 
 # Now remove empty logs
