@@ -1,0 +1,14 @@
+Very initial at the moment.  Doesn't work but is very much a work in progress and should end up *much* faster than the original.
+
+Uses the following:
+
+http://www.tornadoweb.org/
+https://github.com/bueda/tornado-boilerplate
+https://github.com/FSX/momoko
+http://initd.org/psycopg/
+http://pypi.python.org/pypi/simplejson/
+https://github.com/janl/mustache.js/
+http://jquery.com/
+http://jqueryui.com/
+
+and probably some other bits.  More to come.
