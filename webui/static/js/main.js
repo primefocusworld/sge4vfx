@@ -68,38 +68,7 @@ function getJobs(params) {
 		}
 	});
 	
-	// Now get the actual job table data
 	/*$.ajax({
-		url: "cgi/jobs.cgi",
-		data: AJAXparams,
-		type: "GET",
-		success: function(data) {
-			// Fill the job table
-			$("#jobsTable tbody").html(data);
-			// Now get the count to create the number of pages thingy
-			lineCount = parseInt($("#hiddencount").text());
-			howManyPages = Math.ceil(lineCount / perPageVal);
-			// If there are no results, say there's one page
-			if (howManyPages == 0) { howManyPages = 1; }
-			// If jobs have cleared and you're on a page that no
-			// longer exists, go to the maximum page number and
-			// refresh
-			if (pageNumber > howManyPages) {
-				pageNumber = howManyPages;
-				refreshPage();
-			} else {
-				$("#pageno").html(pageNumber.toString()
-					+ "/" + howManyPages.toString());
-				// and finally set up the duration counters
-				if (realTimeInverval == null) {
-					realTimeInverval = setInterval(
-						'updateDurations()', 1000);
-				}
-			}
-		}
-	});
-	
-	$.ajax({
 		url: "cgi/queueStats.cgi",
 		data: workerFilters,
 		type: "GET",

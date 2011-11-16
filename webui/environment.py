@@ -10,6 +10,7 @@ path = lambda *a: os.path.join(ROOT, *a)
 prev_sys_path = list(sys.path)
 
 site.addsitedir(path('handlers'))
+site.addsitedir(path('lib'))
 if os.path.exists(path('vendor')):
     site.addsitedir(path('vendor'))
     for directory in os.listdir(path('vendor')):
