@@ -115,14 +115,11 @@ function getWorkers(params) {
 		}
 	});
 
-	$.ajax({
-                url: "cgi/quotas.cgi",
-                data: AJAXParams,
-                type: "GET",
-                success: function(data) {
-                        $("#quotastats tbody").html(data);
-                }
-        });
+	$.getJSON("/quotas", AJAXParams, function(data) {
+		var theHTML = Mustache.to_html(userQuotaRowTemplate, data);
+		$("#quotastats tbody").html("");
+		$("#quotastats tbody").append(theHTML);
+	});
 }
 
 // Allows you to call jobTable cgi script

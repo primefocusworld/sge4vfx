@@ -21,3 +21,9 @@ var mainJobTableRowTemplate = "\
 <tr class='hiddencountrow'>\
 	<td id='hiddencount'>{{ totalJobCount }}</td>\
 </tr>;"
+
+var userQuotaRowTemplate = "\
+{{#userRows}}\
+<tr><td>{{ username }}</td><td>{{ slots_used }}</td></tr>\
+{{/userRows}}\
+"

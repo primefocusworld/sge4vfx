@@ -177,7 +177,7 @@ span.deleteicon input {	padding-right:16px; }
 #quotastats th { font-weight: bold; line-height: 22px; }
 #quotastats td { width: 50%; }
 #quotastats tbody tr { background: #111; text-align:center }
-#quotastats tbody tr.zebra { background: #222 }
+#quotastats tbody tr:nth-child(even) { background: #222 }
 
 /* Dialog bits */
 .popupdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }
