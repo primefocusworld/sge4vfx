@@ -1,7 +1,6 @@
 import json
 import tornado.web
 
-from tornado import gen
 import momoko
 
 import logging
@@ -12,6 +11,18 @@ class BaseHandler(tornado.web.RequestHandler):
     """A class to collect common handler methods - all other handlers should
     subclass this one.
     """
+    
+    def initialize(self):
+        self._shellCmdsLocation = "shell_cmds/"
+        self._cacheDuration = 5
+    
+    @property
+    def shellCmdsLocation(self):
+        return self._shellCmdsLocation
+    
+    @property
+    def cacheDuration(self):
+        return self._cacheDuration
 
     @property
     def db(self):

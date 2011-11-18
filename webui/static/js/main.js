@@ -68,52 +68,42 @@ function getJobs(params) {
 		}
 	});
 	
-	/*$.ajax({
-		url: "cgi/queueStats.cgi",
-		data: workerFilters,
-		type: "GET",
-		success: function(data) {			
-			// Update the guage
-			queueData.setValue(0, 0, whichQ);
-			queueData.setValue(0, 1, Math.floor(data.usedpc));
-			jobsPageGuage.draw(queueData, queueOptions);
-		}
-	});*/
+	$.getJSON("/queueStats", workerFilters, function(data) {			
+		// Update the guage
+		queueData.setValue(0, 0, whichQ);
+		queueData.setValue(0, 1, Math.floor(data.usedpc));
+		jobsPageGuage.draw(queueData, queueOptions);
+	});
 }
 
 // Gets the workers table
 function getWorkers(params) {
 	var AJAXParams = workerFilters + params;
 	
-	$.ajax({
-		url: "cgi/queueStats.cgi",
-		data: AJAXParams,
-		type: "GET",
-		success: function(data) {
-			// Write out the text
-			var tempstring = "Total Slots: " + data.total;
-			tempstring += "<br /><br />";
-			tempstring += "<span class=\"green\">Good: ";
-			tempstring += data.good + " (" + data.goodpc + "%)";
-			tempstring += "</span><br />";
-			tempstring += "<span class=\"red\">Broken: ";
-			tempstring += data.broken + " (" + data.brokenpc + "%)";
-			tempstring += "</span><br />";
-			tempstring += "<span class=\"yellow\">Suspended: ";
-			tempstring += data.suspended + " (";
-			tempstring += data.suspendedpc + "%)";
-			tempstring += "</span><br /><br />";
-			tempstring += "Used Slots: " + data.used + " (";
-			tempstring += data.usedpc + "%)<br />";
-			tempstring += "Available Slots: " + data.avail + " (";
-			tempstring += data.availpc + "%)<br />";
-			$("#queuestattext").html(tempstring);
-			
-			// Update the guage
-			queueData.setValue(0, 0, whichQ);
-			queueData.setValue(0, 1, Math.floor(data.usedpc));
-			queueChart.draw(queueData, queueOptions);
-		}
+	$.getJSON("/queueStats", workerFilters, function(data) {
+		// Write out the text
+		var tempstring = "Total Slots: " + data.total;
+		tempstring += "<br /><br />";
+		tempstring += "<span class=\"green\">Good: ";
+		tempstring += data.good + " (" + data.goodpc + "%)";
+		tempstring += "</span><br />";
+		tempstring += "<span class=\"red\">Broken: ";
+		tempstring += data.broken + " (" + data.brokenpc + "%)";
+		tempstring += "</span><br />";
+		tempstring += "<span class=\"yellow\">Suspended: ";
+		tempstring += data.suspended + " (";
+		tempstring += data.suspendedpc + "%)";
+		tempstring += "</span><br /><br />";
+		tempstring += "Used Slots: " + data.used + " (";
+		tempstring += data.usedpc + "%)<br />";
+		tempstring += "Available Slots: " + data.avail + " (";
+		tempstring += data.availpc + "%)<br />";
+		$("#queuestattext").html(tempstring);
+		
+		// Update the guage
+		queueData.setValue(0, 0, whichQ);
+		queueData.setValue(0, 1, Math.floor(data.usedpc));
+		queueChart.draw(queueData, queueOptions);
 	});
 	
 	$.ajax({
