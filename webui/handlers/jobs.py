@@ -2,7 +2,6 @@ from handlers.base import BaseHandler
 
 import tornado.web
 from tornado import gen
-import momoko
 import simplejson as json
 import datetime
 
@@ -24,27 +23,27 @@ class MainJobTable(BaseHandler):
     @gen.engine
     def get(self):
         # Get all the supplied params
-    	sortby = self.get_argument("sortby", "sgeid")
-    	sortdir = self.get_argument("sortdir", "ASC")
-    	username = self.get_argument("username", "")
-    	projname = self.get_argument("projname", "")
-    	done = self.get_argument("done", False)
-    	running = self.get_argument("running", False)
-    	error = self.get_argument("error", False)
-    	wait = self.get_argument("wait", False)
-    	limit = self.get_argument("limit", -1)
-    	offset = self.get_argument("offset", -1)
-    	namesearch = self.get_argument("namesearch", "")
-    	
-    	# Build the two SQL queries
-    	[jobQuery, countQuery] = self.buildMainJobsSQLQuery(sortby, sortdir,
+        sortby = self.get_argument("sortby", "sgeid")
+        sortdir = self.get_argument("sortdir", "ASC")
+        username = self.get_argument("username", "")
+        projname = self.get_argument("projname", "")
+        done = self.get_argument("done", False)
+        running = self.get_argument("running", False)
+        error = self.get_argument("error", False)
+        wait = self.get_argument("wait", False)
+        limit = self.get_argument("limit", -1)
+        offset = self.get_argument("offset", -1)
+        namesearch = self.get_argument("namesearch", "")
+        
+        # Build the two SQL queries
+        [jobQuery, countQuery] = self.buildMainJobsSQLQuery(sortby, sortdir,
                       username, projname, done, running, error, wait, limit,
                       offset, namesearch)
-    	
-    	# ASync run the two queries and yield while doing it
+        
+        # ASync run the two queries and yield while doing it
         jobCursor, countCursor = yield [
-        	gen.Task(self.db.execute, jobQuery),
-        	gen.Task(self.db.execute, countQuery)
+            gen.Task(self.db.execute, jobQuery),
+            gen.Task(self.db.execute, countQuery)
         ]
         
         # Work out today's date
@@ -74,9 +73,9 @@ class MainJobTable(BaseHandler):
                            (float(lasttask) - float(firsttask) + 1.0)) * 100.0
             pcdone = "%3.0f" % percentdone
             if status == 3:
-            	notdone = False
+                notdone = False
             else:
-            	notdone = True
+                notdone = True
             
             # Now put it all into a JSON serializable list
             toAppend = {"sgeid": sgeid, "jobname": jobname,
