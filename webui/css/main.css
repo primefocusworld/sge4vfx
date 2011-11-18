@@ -41,6 +41,9 @@ h1 {
 }
 .clearboth { clear:both }
 
+/* Small jquery-ui correction for tab icons */
+.ui-tabs-nav .ui-icon { display:inline-table }
+
 /* Container Table - Inside jqueryUI Jobs tab */
 
 .containerTable { width:100% }
