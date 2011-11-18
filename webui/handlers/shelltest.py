@@ -2,8 +2,7 @@ from handlers.base import BaseHandler
 
 import tornado.web
 from tornado import gen
-import memcache
-from async_process import call_subprocess, on_subprocess_result
+from async_process import call_subprocess
 
 import logging
 logger = logging.getLogger('theq2.' + __name__)
