@@ -132,7 +132,7 @@ class MainJobTable(BaseHandler):
             starttimetitle = ""
             starttimealt = ""
         # Sort out end time
-        if endtime is not None:
+        if endtime is not None and starttime is not None:
             oldDate = ""
             newDate = ":%S"
             if todayStr != endtime.strftime("%d %b"):
