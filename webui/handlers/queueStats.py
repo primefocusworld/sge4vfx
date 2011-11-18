@@ -2,14 +2,11 @@ from handlers.base import BaseHandler
 
 import tornado.web
 from tornado import gen
-import memcache
 from async_process import call_subprocess
 import simplejson as json
 
 import logging
 logger = logging.getLogger('theq2.' + __name__)
-
-mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 
 class QueueStatsHandler(BaseHandler):
     @tornado.web.asynchronous
@@ -19,7 +16,7 @@ class QueueStatsHandler(BaseHandler):
         qParam = self.get_argument("whichQueue", "farm.q")
         whichQueue = qParam.encode()
         # Try to get it from memcache first
-        output = mc.get("theQ-queueStats-" + whichQueue)
+        output = self.mc.get("theQ-queueStats-" + whichQueue)
         # If it's not there, run the shell commmand to get it
         if not output:
             command = self.shellCmdsLocation + "qstat -g c -q " + whichQueue
@@ -81,7 +78,7 @@ class QueueStatsHandler(BaseHandler):
                                      "goodpc":goodpc, "suspended":suspended,
                                      "suspendedpc":suspendedpc})
                 # and set it in memcache
-                mc.set("theQ-queueStats-" + whichQueue, output,
+                self.mc.set("theQ-queueStats-" + whichQueue, output,
                        self.cacheDuration)
         # Write out the output, whether it came from memcache or the shell cmd
         self.write(output)

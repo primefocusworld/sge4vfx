@@ -2,6 +2,7 @@ import json
 import tornado.web
 
 import momoko
+import memcache
 
 import logging
 logger = logging.getLogger('boilerplate.' + __name__)
@@ -23,6 +24,13 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def cacheDuration(self):
         return self._cacheDuration
+    
+    @property
+    def mc(self):
+        # Create a memcache client and attach it to the application object
+        if not hasattr(self.application, 'mc'):
+            self.application.mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+        return self.application.mc
 
     @property
     def db(self):
