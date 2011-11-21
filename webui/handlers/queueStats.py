@@ -13,7 +13,7 @@ class QueueStatsHandler(BaseHandler):
     @gen.engine
     def get(self):
         # Get all the supplied params
-        qParam = self.get_argument("whichQueue", "farm.q")
+        qParam = self.get_argument("queue", "farm.q")
         whichQueue = qParam.encode()
         # Try to get it from memcache first
         output = self.mc.get("theQ-queueStats-" + whichQueue)
