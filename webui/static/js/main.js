@@ -114,27 +114,29 @@ function getJob(params, whichJob) {
 		tasksPerPageVal[whichTaskLookingAt].toString() +
 		"&offset=" + ((tPageNumber[whichTaskLookingAt] - 1) *
 		tasksPerPageVal[whichTaskLookingAt]).toString() + params;
-
-	$.ajax({
-		url: "cgi/oneJob.cgi",
-		data: AJAXparams,
-		success: function(data) {
-			$("#"+whichJob+"tab .jobTable tbody").html(data);
-			
-			var hiddenCountID = "#" + whichJob + "hiddencount";
-			lineCount = parseInt($(hiddenCountID).text());
-			howManyTPages[whichTaskLookingAt] = Math.ceil(lineCount /
+	
+	$.getJSON("/oneJob", AJAXparams, function(data) {
+		//
+		// This bit fills in the table rows
+		//
+		var theHTML = Mustache.to_html(oneJobRowTemplate, data);
+		$("#"+whichJob+"tab .jobTable tbody").html("");
+		$("#"+whichJob+"tab .jobTable tbody").append(theHTML);
+		
+		//
+		// This bit now does the pagination
+		//
+		lineCount = data.totalJobCount;
+		howManyTPages[whichTaskLookingAt] = Math.ceil(lineCount /
 				tasksPerPageVal[whichTaskLookingAt]);
-			// If there are no results, say there's one page
-			if (howManyTPages[whichTaskLookingAt] == 0) {
-				howManyTPages[whichTaskLookingAt] = 1
-			}
-			// Otherwise, write in page/total
-			$("#" + whichJob + "tpageno").html(
-				tPageNumber[whichTaskLookingAt].toString() 
-					+ "/"
-					+ howManyTPages[whichTaskLookingAt].toString());
+		// If there are no results, say there's one page
+		if (howManyTPages[whichTaskLookingAt] == 0) {
+			howManyTPages[whichTaskLookingAt] = 1
 		}
+		// Otherwise, write in page/total
+		$("#" + whichJob + "tpageno").html(
+				tPageNumber[whichTaskLookingAt].toString() + "/"
+				+ howManyTPages[whichTaskLookingAt].toString());
 	});
 }
 

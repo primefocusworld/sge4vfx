@@ -25,6 +25,28 @@ var mainJobTableRowTemplate = "\
 	<td id='hiddencount'>{{ totalJobCount }}</td>\
 </tr>"
 
+var oneJobRowTemplate = "\
+{{#rows}}\
+<tr id='row{{ sgeid }}-{{taskno}}' class='{{ status }}'>\
+	<td>\
+		<img class='iconbtn' onclick='taskInfo({{ sgeid }}, {{ taskno }});' src='static/images/log.png' />\
+{{#output_path}}<a onclick='toast(\"RV\",\"Opening RV.  Please wait...\");' href='rvlink://{{ output_path }}'>\
+<img class='iconbtn' src='static/images/film.png' title='Preview in RV'>\
+</a>{{/output_path}}\
+{{#errorRetryIcon}}<img class='iconbtn' onclick='retry(event, \"{{ sgeid }}.{{ taskno }}\")' src='static/images/retry.png' title='Retry' />{{/errorRetryIcon}}\
+{{#rescheduleIcon}}<img class='iconbtn' onclick='reschedule(event, \"{{ sgeid }}.{{ taskno }}\")' src='static/images/resched.png' title='Kill and Retry' />{{/rescheduleIcon}}\
+	</td>\
+	<td>{{ sgeid }}-{{ taskno }}</td>\
+	<td title='{{ starttimetitle }}' alt='{{ starttimealt }}' class='starttime'>{{ starttimestr }}</td>\
+	<td title='{{ endtimetitle }}'>{{ endtimestr }}</td>\
+	<td{{#realtimeupdate}} class='rtupdate'{{/realtimeupdate}}>{{ durationstr }}</td>\
+	<td>{{ returncode }}</td>\
+	<td>{{ attempts }}</td>\
+	<td>{{ rhost }}</td>\
+</tr>\
+{{/rows}}\
+"
+
 var userQuotaRowTemplate = "\
 {{#rows}}\
 <tr><td>{{ username }}</td><td>{{ slots_used }}</td></tr>\
