@@ -4,6 +4,9 @@ var mainJobTableRowTemplate = "\
 	<td>\
 		<img class='iconbtn' onclick='deleteJob(event, {{ sgeid }});' src='static/images/delete.png' title='Delete Job' />\
 {{#notdone}}<img class='iconbtn' onclick='changePriority(event, {{ sgeid }});' src='static/images/priority.png' title='Change Priority' />{{/notdone}}\
+{{#output_path}}<a onclick='event.stopPropagation(); toast(\"RV\",\"Opening RV.  Please wait...\");' href='rvlink://{{ output_path }}'>\
+<img class='iconbtn' src='static/images/film.png' title='Preview in RV'>\
+</a>{{/output_path}}\
 	</td>\
 	<td>{{ sgeid }}</td>\
 	<td>{{ jobname }}</td>\

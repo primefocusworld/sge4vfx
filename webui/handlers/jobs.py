@@ -4,6 +4,7 @@ import tornado.web
 from tornado import gen
 import simplejson as json
 import datetime
+import urllib
 
 import logging
 logger = logging.getLogger('theq2.' + __name__)
@@ -77,6 +78,17 @@ class MainJobTable(BaseHandler):
             else:
                 notdone = True
             
+            outputPath = ""
+            if donetasks > 0 and status != 2:
+                outPathQ = "SELECT value FROM job_extras WHERE sgeid="
+                outPathQ += str(sgeid) + " AND key = 'output_path';"
+                
+                outPathCursor = yield gen.Task(self.db.execute, outPathQ)
+                
+                for outPathRecord in outPathCursor:
+                        [tempStr] = outPathRecord
+                        outputPath = urllib.quote(tempStr)
+            
             # Now put it all into a JSON serializable list
             toAppend = {"sgeid": sgeid, "jobname": jobname,
                 "username": username, "project": project, "priority": priorstr,
@@ -87,7 +99,7 @@ class MainJobTable(BaseHandler):
                 "realtimeupdate": realtimeupdate, "firsttask": firsttask,
                 "lasttask": lasttask, "chunk": chunk, "status": statusstr,
                 "submissionscript": submissionscript, "donetasks": donetasks,
-                "pcdone": pcdone, "notdone": notdone}
+                "pcdone": pcdone, "notdone": notdone, "output_path": outputPath}
             # and append it to the current big fat object
             tableContents.append(toAppend)
         
