@@ -117,7 +117,7 @@ span.deleteicon input {	padding-right:16px; }
 .mainTable tbody tr.running { background: #141 }
 .mainTable tbody tr.running:nth-child(even) { background: #353 }
 .mainTable tbody tr.error { background: #611 }
-.mainTable tbody tr.error:nth-child(even) { background: #833 }
+.mainTable tbody tr.error:nth-child(even) { background: #811 }
 .mainTable tbody tr.warning { background: #840 }
 .mainTable tbody tr.warning:nth-child(even) { background: #a60 }
 .mainTable tbody tr.completed { background: #004 }
@@ -167,8 +167,8 @@ span.deleteicon input {	padding-right:16px; }
 #workertd1 { width:25% }
 #workertd2 { width:75% }
 .slotdivcontainer { position:relative; height:100%; width:100%; }
-.usageindicator { position:absolute; top:0; left:0; background:#141; z-index:1 }
-.zebra .usageindicator { background:#353 }
+tr .usageindicator { position:absolute; top:0; left:0; background:#141; z-index:1 }
+tr:nth-child(even) .usageindicator { background:#353 }
 .slotinfo { position:absolute; width:100%; height:100%; z-index:2 }
 #queueguage { width:145px }
 #queuestattext { vertical-align:middle }

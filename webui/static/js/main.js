@@ -68,12 +68,14 @@ function getJobs(params) {
 		}
 	});
 	
-	$.getJSON("/queueStats", workerFilters, function(data) {			
-		// Update the guage
-		queueData.setValue(0, 0, whichQ);
-		queueData.setValue(0, 1, Math.floor(data.usedpc));
-		jobsPageGuage.draw(queueData, queueOptions);
-	});
+	if( queueData ) {
+		$.getJSON("/queueStats", workerFilters, function(data) {			
+			// Update the guage
+			queueData.setValue(0, 0, whichQ);
+			queueData.setValue(0, 1, Math.floor(data.usedpc));
+			jobsPageGuage.draw(queueData, queueOptions);
+		});
+	}
 }
 
 // Gets the workers table
@@ -82,23 +84,9 @@ function getWorkers(params) {
 	
 	$.getJSON("/queueStats", workerFilters, function(data) {
 		// Write out the text
-		var tempstring = "Total Slots: " + data.total;
-		tempstring += "<br /><br />";
-		tempstring += "<span class=\"green\">Good: ";
-		tempstring += data.good + " (" + data.goodpc + "%)";
-		tempstring += "</span><br />";
-		tempstring += "<span class=\"red\">Broken: ";
-		tempstring += data.broken + " (" + data.brokenpc + "%)";
-		tempstring += "</span><br />";
-		tempstring += "<span class=\"yellow\">Suspended: ";
-		tempstring += data.suspended + " (";
-		tempstring += data.suspendedpc + "%)";
-		tempstring += "</span><br /><br />";
-		tempstring += "Used Slots: " + data.used + " (";
-		tempstring += data.usedpc + "%)<br />";
-		tempstring += "Available Slots: " + data.avail + " (";
-		tempstring += data.availpc + "%)<br />";
-		$("#queuestattext").html(tempstring);
+		var theHTML = Mustache.to_html(farmDivisionTemplate, data);
+		$("#queuestattext").html("");
+		$("#queuestattext").append(theHTML);
 		
 		// Update the guage
 		queueData.setValue(0, 0, whichQ);
@@ -106,13 +94,10 @@ function getWorkers(params) {
 		queueChart.draw(queueData, queueOptions);
 	});
 	
-	$.ajax({
-		url: "cgi/workers.cgi",
-		data: AJAXParams,
-		type: "GET",
-		success: function(data) {
-			$("#workersTable tbody").html(data);
-		}
+	$.getJSON("/workers", AJAXParams, function(data) {
+		var theHTML = Mustache.to_html(workerTableRowTemplate, data);
+		$("#workersTable tbody").html("");
+		$("#workersTable tbody").append(theHTML);
 	});
 
 	$.getJSON("/quotas", AJAXParams, function(data) {
