@@ -20,10 +20,41 @@ var mainJobTableRowTemplate = "\
 {{/rows}}\
 <tr class='hiddencountrow'>\
 	<td id='hiddencount'>{{ totalJobCount }}</td>\
-</tr>;"
+</tr>"
 
 var userQuotaRowTemplate = "\
-{{#userRows}}\
+{{#rows}}\
 <tr><td>{{ username }}</td><td>{{ slots_used }}</td></tr>\
-{{/userRows}}\
+{{/rows}}\
+"
+
+var farmDivisionTemplate = "\
+Total Slots: {{ total }}<br /><br />\
+<span class='green'>\
+	Good: {{ good }} ({{ goodpc }}%)\
+</span><br />\
+<span class='red'>\
+	Broken: {{ broken }} ({{ brokenpc }}%)\
+</span><br />\
+<span class='yellow'>\
+	Suspended: {{ suspended }} ({{ suspendedpc }}%)\
+</span><br /><br />\
+Used Slots: {{ used }} ({{ usedpc }}%)<br />\
+Available Slots: {{ avail }} ({{ availpc }}%)\
+"
+
+var workerTableRowTemplate = "\
+{{#rows}}\
+<tr class='{{ status }}'>\
+<td>{{ hostname }}</td>\
+<td>\
+	<div class='slotdivcontainer'>\
+		<div class='slotinfo'>{{ used }}/{{ total }}</div>\
+		<div{{#pcused}} class='percent{{ pcused }} usageindicator'{{/pcused}}>&nbsp;</div>\
+	</div>\
+</td>\
+<td>{{ load_avg }}</td>\
+<td>{{ machine_states }}</td>\
+</tr>\
+{{/rows}}\
 "
