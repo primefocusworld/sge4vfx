@@ -38,9 +38,9 @@ class QuotaHandler(BaseHandler):
                 
                 toAppend = {"username": username, "slots_used": slots_used}
                 userRows.append(toAppend)
-            output = json.dumps({"userRows": userRows})
-        # Set it in memcache
-        self.mc.set("theQ-quotas-" + whichQueue, output, self.cacheDuration)
+            output = json.dumps({"rows": userRows})
+            # Set it in memcache
+            self.mc.set("theQ-quotas-" + whichQueue, output, self.cacheDuration)
         # Write out the output, whether it came from memcache or the shell cmd
         self.write(output)
         self.finish()
