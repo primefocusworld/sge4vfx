@@ -112,7 +112,8 @@ span.deleteicon input {	padding-right:16px; }
 .mainTable th:last-of-type { border-right:0 }
 .mainTable td:last-of-type { border-right:0 }
 .mainTable thead tr { font-weight:bold; background:#bbb; color:black }
-.mainTable tbody tr { background: #111; cursor:pointer }
+.mainTable tbody tr { background: #111 }
+#jobsTable tbody tr { cursor:pointer }
 .mainTable tbody tr:nth-child(even) { background: #222 }
 .mainTable tbody tr.running { background: #141 }
 .mainTable tbody tr.running:nth-child(even) { background: #353 }
@@ -124,8 +125,8 @@ span.deleteicon input {	padding-right:16px; }
 .mainTable tbody tr.completed:nth-child(even) { background: #006 }
 .mainTable tbody tr.other { background: #404 }
 .mainTable tbody tr.other:nth-child(even) { background: #606 }
-.mainTable tbody tr:hover { background: #444 }
-.iconbtn { margin: 0 1px }
+.mainTable tbody tr:hover { background: #444 !important }
+.iconbtn { margin: 0 1px; cursor:pointer }
 .iconbtn:hover { opacity:0.6 }
 .mainTable img { vertical-align:bottom; border:0 }
 /* Gotta have rounded corners :-) */
