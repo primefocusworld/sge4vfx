@@ -12,7 +12,7 @@
 	   Each of these properties takes two values. These values respectively match a setting
 	   for fade and drop.
 	*/
-	-webkit-animation-iteration-count: infinite, 20;
+	-webkit-animation-iteration-count: infinite, infinite;
 	-webkit-animation-direction: normal, normal;
 	-webkit-animation-timing-function: linear, ease-in;
 }
