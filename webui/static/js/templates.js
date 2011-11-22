@@ -86,3 +86,15 @@ var workerTableRowTemplate = "\
 </tr>\
 {{/rows}}\
 "
+
+var logTemplate = "\
+<div id='leftlog' class='logpane'>\
+	<h3>Stdout</h3>\
+	{{{ stdout }}}\
+</div>\
+<div id='rightlog' class='logpane'>\
+	<h3>Stderr</h3>\
+	{{{ stderr }}}\
+</div>\
+<div class='clearboth'></div>\
+"

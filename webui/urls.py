@@ -10,6 +10,7 @@ from handlers.deleteErrors import DeleteErrors
 from handlers.deleteJob import DeleteJob
 from handlers.reschedule import Reschedule
 from handlers.retry import Retry
+from handlers.readLog import ReadLog
 
 url_patterns = [
     (r"/", IndexHandler),
@@ -24,4 +25,5 @@ url_patterns = [
     (r"/deleteJob", DeleteJob),
     (r"/reschedule", Reschedule),
     (r"/retry", Retry),
+    (r"/readLog", ReadLog),
 ]

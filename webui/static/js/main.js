@@ -208,22 +208,11 @@ function showInfoDialog(theTitle, theContent, theWidth, theHeight) {
 
 // Show stdout/stderr for a task
 function taskInfo(jobNo, taskNo) {
-	$.ajax({
-		url: "cgi/readLog.cgi",
-		data: "sgeid=" + jobNo + "&frame=" + taskNo,
-		type: "GET",
-		dataType: "json",
-		success: function(data) {
-			content = "<div id=\"leftlog\" class=\"logpane\">\n";
-			content += "<h3>Stdout</h3>\n";
-			content += data.stdout + "\n";
-			content += "</div><div id=\"rightlog\" class=\"logpane\">\n";
-			content += "<h3>Stderr</h3>\n";
-			content += data.stderr + "\n";
-			content += "</div>\n";
-			content += "<div class=\"clearboth\"></div>\n";
-			showInfoDialog("Logs", content, 1000, 500);
-		}
+	var AJAXParams = "sgeid=" + jobNo + "&frame=" + taskNo;
+	
+	$.getJSON("/readLog", AJAXParams, function(data) {
+		var theHTML = Mustache.to_html(logTemplate, data);
+		showInfoDialog("Logs", theHTML, 1000, 500);
 	});
 }
 
