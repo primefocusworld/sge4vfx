@@ -280,16 +280,13 @@ function reschedule(e, jobNo) {
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
-				$.ajax({
-					url: "cgi/reschedule.cgi",
-					data: "sgeid=" + jobNo,
-					type: "POST",
-					dataType: "json",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-					}
+				$(this).dialog("close");
+				
+				var AJAXParams = "sgeid=" + jobNo;
+				
+				$.getJSON("/reschedule", AJAXParams, function(data) {
+					refreshPage();
+					toast("Success", "Rescheduled task " + jobNo);
 				});
 			},
 			"Cancel" : function() {

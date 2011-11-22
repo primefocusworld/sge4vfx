@@ -46,7 +46,9 @@ var oneJobRowTemplate = "\
 	<td>{{ rhost }}</td>\
 </tr>\
 {{/rows}}\
-"
+<tr class='hiddencountrow'>\
+	<td id='hiddencount'>{{ totalJobCount }}</td>\
+</tr>"
 
 var userQuotaRowTemplate = "\
 {{#rows}}\

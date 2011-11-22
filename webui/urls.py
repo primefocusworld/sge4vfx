@@ -8,6 +8,7 @@ from handlers.changePriority import ChangePriority
 from handlers.deleteComplete import DeleteComplete
 from handlers.deleteErrors import DeleteErrors
 from handlers.deleteJob import DeleteJob
+from handlers.reschedule import Reschedule
 
 url_patterns = [
     (r"/", IndexHandler),
@@ -19,5 +20,6 @@ url_patterns = [
     (r"/changePriority", ChangePriority),
     (r"/deleteComplete", DeleteComplete),
     (r"/deleteErrors", DeleteErrors),
-    (r"/deleteJob", DeleteJob)
+    (r"/deleteJob", DeleteJob),
+    (r"/reschedule", Reschedule),
 ]
