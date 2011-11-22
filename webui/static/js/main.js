@@ -359,18 +359,23 @@ function changePriority(e, jobNo) {
 		buttons : {
 			"Whenever" : function() {
 				changePriorityCallback(jobNo, -600);
+				$("#multiusedialog").dialog("close");
 			},
 			"Low" : function() {
 				changePriorityCallback(jobNo, -300);
+				$("#multiusedialog").dialog("close");
 			},
 			"Normal" : function() {
 				changePriorityCallback(jobNo, 0);
+				$("#multiusedialog").dialog("close");
 			},
 			"High" : function() {
 				changePriorityCallback(jobNo, 300);
+				$("#multiusedialog").dialog("close");
 			},
 			"Highest" : function() {
 				changePriorityCallback(jobNo, 600);
+				$("#multiusedialog").dialog("close");
 			},
 		},
 		open: function() {
@@ -382,15 +387,11 @@ function changePriority(e, jobNo) {
 }
 
 function changePriorityCallback(jobNo, priority) {
-	$.ajax({
-		url: "cgi/changePriority.cgi",
-		data: "sgeid=" + jobNo + "&priority=" + priority,
-		type: "POST",
-		dataType: "json",
-		success: function(data) {
-			refreshPage();
-			$("#multiusedialog").dialog("close");
-		}
+	AJAXParams = "sgeid=" + jobNo + "&priority=" + priority;
+	
+	$.getJSON("/changePriority", AJAXParams, function(data) {
+		refreshPage();
+		toast("Success", "Changed priority of job " + jobNo);
 	});
 }
 
