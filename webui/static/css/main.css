@@ -39,6 +39,8 @@ h1 {
 	font-weight:bolder;
 	text-decoration:none
 }
+h1 sup { font-size:40%; color:red; vertical-align:top; margin-left:5px; }
+}
 .clearboth { clear:both }
 
 /* Small jquery-ui correction for tab icons */
