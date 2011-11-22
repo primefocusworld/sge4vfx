@@ -11,7 +11,7 @@ var usernameVal = "";
 var refreshIcons = ["ui-icon-arrowrefresh-1-n",	"ui-icon-arrowrefresh-1-e",
 	"ui-icon-arrowrefresh-1-s", "ui-icon-arrowrefresh-1-w"];
 var whichRefreshIcon = 1;
-var removeOldOnly = 1;
+var removeOldOnly = true;
 var autoRefresh = true;
 var perPageVal = 25;
 var pageNumber = 1;
@@ -419,20 +419,13 @@ function removeErrors() {
 			title : "Confirmation Required",
 			buttons : {
 				"Confirm" : function() {
+					$(this).dialog("close");
+					
 					var AJAXparams = "user=" + usernameVal;
-					if (removeOldOnly == 1) {
-						AJAXparams = AJAXparams + "&old=1";
-					}
 
-					$.ajax({
-						url: "cgi/deleteErrors.cgi",
-						data: AJAXparams,
-						type: "POST",
-						success: function(data) {
-							refreshPage();
-							$("#multiusedialog")
-								.dialog("close");
-						}
+					$.getJSON("/deleteErrors", AJAXparams, function(data) {
+						refreshPage();
+						toast("Success", "Deleted all errored jobs");
 					});
 				},
 				"Cancel" : function() {
@@ -469,19 +462,19 @@ function removeComplete() {
 			title : "Confirmation Required",
 			buttons : {
 				"Confirm" : function() {
+					$(this).dialog("close");
+					
 					var AJAXparams = "user=" + usernameVal;
-					if (removeOldOnly == 1) {
-						AJAXparams = AJAXparams + "&old=1";
+					if (removeOldOnly) {
+						AJAXparams = AJAXparams + "&old=true";
 					}
 
-					$.ajax({
-						url: "cgi/deleteComplete.cgi",
-						data: AJAXparams,
-						type: "POST",
-						success: function(data) {
-							refreshPage();
-							$("#multiusedialog")
-								.dialog("close");
+					$.getJSON("/deleteComplete", AJAXparams, function(data) {
+						refreshPage();
+						if (removeOldOnly) {
+							toast("Success", "Removed old jobs");
+						} else {
+							toast("Success", "Removed all complete jobs");
 						}
 					});
 				},
@@ -527,13 +520,13 @@ function setupTopToolbar() {
 function setupJobsToolbar() {
 	$("#removeAllComplete").button({
 		icons: { primary: "ui-icon-closethick" }
-	}).click(function() { removeOldOnly = 0; removeComplete(); });
+	}).click(function() { removeOldOnly = false; removeComplete(); });
 	$("#removeOld").button({
 		icons: { primary: "ui-icon-closethick" }
-	}).click(function() { removeOldOnly = 1; removeComplete(); });
+	}).click(function() { removeOldOnly = true; removeComplete(); });
 	$("#removeErrors").button({
 		icons: { primary: "ui-icon-closethick" }
-	}).click(function() { removeOldOnly = 0; removeErrors(); });
+	}).click(function() { removeOldOnly = false; removeErrors(); });
 	$("#showLegend").button({
 		icons: { primary: "ui-icon-info" }
 	}).click(function() { showHelpDialog(); });

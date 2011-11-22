@@ -5,6 +5,8 @@ from handlers.queueStats import QueueStatsHandler
 from handlers.quotas import QuotaHandler
 from handlers.workers import WorkersHandler
 from handlers.changePriority import ChangePriority
+from handlers.deleteComplete import DeleteComplete
+from handlers.deleteErrors import DeleteErrors
 
 url_patterns = [
     (r"/", IndexHandler),
@@ -14,4 +16,6 @@ url_patterns = [
     (r"/workers", WorkersHandler),
     (r"/oneJob", OneJobTable),
     (r"/changePriority", ChangePriority),
+    (r"/deleteComplete", DeleteComplete),
+    (r"/deleteErrors", DeleteErrors),
 ]
