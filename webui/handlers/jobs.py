@@ -73,10 +73,13 @@ class MainJobTable(BaseHandler):
             percentdone = (float(donetasks) / 
                            (float(lasttask) - float(firsttask) + 1.0)) * 100.0
             pcdone = "%3.0f" % percentdone
+            notdone = True
             if status == 3:
                 notdone = False
-            else:
-                notdone = True
+            
+            hasErrors = False;
+            if status == 2:
+                hasErrors = True;
             
             outputPath = ""
             if donetasks > 0 and status != 2:
@@ -99,7 +102,8 @@ class MainJobTable(BaseHandler):
                 "realtimeupdate": realtimeupdate, "firsttask": firsttask,
                 "lasttask": lasttask, "chunk": chunk, "status": statusstr,
                 "submissionscript": submissionscript, "donetasks": donetasks,
-                "pcdone": pcdone, "notdone": notdone, "output_path": outputPath}
+                "pcdone": pcdone, "notdone": notdone, "output_path": outputPath,
+                "haserrors": hasErrors}
             # and append it to the current big fat object
             tableContents.append(toAppend)
         

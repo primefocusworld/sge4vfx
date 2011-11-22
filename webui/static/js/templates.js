@@ -7,6 +7,7 @@ var mainJobTableRowTemplate = "\
 {{#output_path}}<a onclick='event.stopPropagation(); toast(\"RV\",\"Opening RV.  Please wait...\");' href='rvlink://{{ output_path }}'>\
 <img class='iconbtn' src='static/images/film.png' title='Preview in RV'>\
 </a>{{/output_path}}\
+{{#haserrors}}<img class='iconbtn' onclick='retry(event, {{ sgeid }});' src='static/images/retry.png' title='Retry Errors' />{{/haserrors}}\
 	</td>\
 	<td>{{ sgeid }}</td>\
 	<td>{{ jobname }}</td>\
