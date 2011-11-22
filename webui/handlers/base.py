@@ -5,6 +5,8 @@ import momoko
 import memcache
 
 import logging
+import os
+from settings import ROOT
 logger = logging.getLogger('theq2.' + __name__)
 
 
@@ -14,7 +16,7 @@ class BaseHandler(tornado.web.RequestHandler):
     """
     
     def initialize(self):
-        self._shellCmdsLocation = "shell_cmds/"
+        self._shellCmdsLocation = os.path.join(ROOT, "shell_cmds/")
         self._cacheDuration = 5
     
     @property
