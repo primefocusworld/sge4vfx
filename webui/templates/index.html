@@ -13,7 +13,11 @@
 	<script type="text/javascript" src="{{ static_url("js/vendor/jquery.cookie.js") }}"></script>
 	<script type="text/javascript" src="{{ static_url("js/vendor/mustache.js") }}"></script>
 	<script type="text/javascript" src="{{ static_url("js/templates.js") }}"></script>
-	<script type="text/javascript" src="{{ static_url("js/main.js") }}"></script>
+	
+	<script type="text/javascript" src="{{ static_url("js/letitsnow.js") }}"></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="{{ static_url("css/letitsnow.css") }}">
+	
+	<script type="text/javascript" src="{{ static_url("js/main.js") }}"></script>	
 	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
 	<script type='text/javascript'>
 		google.load('visualization', '1', {packages:['gauge']});
@@ -24,6 +28,7 @@
 <div id="header">
 	<h1>theQ</h1>
 	<div id="topToolbar" class="ui-widget-header ui-corner-all">
+		<input type="checkbox" id="snowy" name="snowy" checked="yes"><label for="snowy">Snow</label>
 		<button id="showLegend">Help</button>
 		<button id="manualRefresh" title="Manual Refresh">Refresh</button>
 		<input type="checkbox" id="autorefresh" name="autorefresh"><label for="autorefresh">Auto Refresh</label>
