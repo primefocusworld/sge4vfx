@@ -65,7 +65,7 @@ def initialize_logging(syslog_tag, syslog_facility, loggers,
             },
             'tornado': {
                 '()': TornadoLogFormatter,
-                'color': True
+                'color': False
             },
         },
         'handlers': {
