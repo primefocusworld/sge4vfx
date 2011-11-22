@@ -23,7 +23,6 @@ class ChangePriority(BaseHandler):
         # and the command to actually mod SGE
         command = str(self.shellCmdsLocation + "qalter -p "
                       + priority + " " + sgeid)
-        logger.info(command)
         
         # ASync run the two tasks
         dbResult, shellOut = yield [
