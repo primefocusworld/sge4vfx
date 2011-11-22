@@ -4,6 +4,7 @@ import tornado.web
 from tornado import gen
 from async_process import call_subprocess
 import simplejson as json
+import os
 
 import logging
 logger = logging.getLogger('theq2.' + __name__)
@@ -48,23 +49,29 @@ class ReadLog(BaseHandler):
             seFilename = stderr + "." + batchNumber
             
             # Stdout
-            try:
-                response = yield gen.Task(call_subprocess, self,
-                                          "cat " + soFilename)
-                # When the command returns, split the lines and parse them
-                theOutput = response.read()
-                stdoutReturn = theOutput.replace("\n","<br />\n")
-            except IOError as e:
+            if os.path.isfile(soFilename):
+                try:
+                    response = yield gen.Task(call_subprocess, self,
+                                              "cat " + soFilename)
+                    # When the command returns, split the lines and parse them
+                    theOutput = response.read()
+                    stdoutReturn = theOutput.replace("\n","<br />\n")
+                except IOError as e:
+                    stdoutReturn = "No stdout"
+            else:
                 stdoutReturn = "No stdout"
             
             # Stderr
-            try:
-                response = yield gen.Task(call_subprocess, self,
-                                          "cat " + seFilename)
-                # When the command returns, split the lines and parse them
-                theOutput = response.read()
-                stderrReturn = theOutput.replace("\n","<br />\n")
-            except IOError as e:
+            if os.path.isfile(seFilename):
+                try:
+                    response = yield gen.Task(call_subprocess, self,
+                                              "cat " + seFilename)
+                    # When the command returns, split the lines and parse them
+                    theOutput = response.read()
+                    stderrReturn = theOutput.replace("\n","<br />\n")
+                except IOError as e:
+                    stderrReturn = "No stderr"
+            else:
                 stderrReturn = "No stderr"
             
         output = json.dumps({"stdout":stdoutReturn, "stderr":stderrReturn})
