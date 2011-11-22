@@ -305,6 +305,8 @@ function deleteJob(e, jobNo) {
 	// Stop the opening of the job tab
 	e.stopPropagation();
 	e.preventDefault();
+	
+	jobNo = jobNo.toString();
 
 	$("#multiusedialog")
 	.html("Are you sure?")
@@ -314,21 +316,19 @@ function deleteJob(e, jobNo) {
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
-				$.ajax({
-					url: "cgi/deleteJob.cgi",
-					data: "sgeid=" + jobNo,
-					type: "POST",
-					dataType: "json",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-
-						var tabName = "#" + data.sgeid + "tab";
-						if ($(tabName).length > 0) {
-							$("#tabs").tabs("remove", tabName);
-						}
+				$(this).dialog("close");
+				
+				var AJAXParams = "sgeid=" + jobNo;
+				
+				$.getJSON("/deleteJob", AJAXParams, function(data) {
+					refreshPage();
+					
+					var tabName = "#" + jobNo + "tab";
+					if ($(tabName).length > 0) {
+						$("#tabs").tabs("remove", tabName);
 					}
+					
+					toast("Success", "Removed job " + jobNo);
 				});
 			},
 			"Cancel" : function() {
