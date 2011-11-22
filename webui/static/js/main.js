@@ -241,21 +241,13 @@ function retry(e, jobNo) {
 		title : "Confirmation Required",
 		buttons : {
 			"Confirm" : function() {
-				$.ajax({
-					url: "cgi/retry.cgi",
-					data: "sgeid=" + jobNo,
-					type: "POST",
-					dataType: "json",
-					success: function(data) {
-						refreshPage();
-						$("#multiusedialog")
-							.dialog("close");
-
-						var tabName = "#" + data.sgeid + "tab";
-						if ($(tabName).length > 0) {
-							$("#tabs").tabs("remove", tabName);
-						}
-					}
+				$(this).dialog("close");
+				
+				var AJAXParams = "sgeid=" + jobNo;
+				
+				$.getJSON("/retry", AJAXParams, function(data) {
+					refreshPage();
+					toast("Success", "Retrying " + data.sgeid);
 				});
 			},
 			"Cancel" : function() {
