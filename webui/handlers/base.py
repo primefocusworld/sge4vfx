@@ -5,7 +5,7 @@ import momoko
 import memcache
 
 import logging
-logger = logging.getLogger('boilerplate.' + __name__)
+logger = logging.getLogger('theq2.' + __name__)
 
 
 class BaseHandler(tornado.web.RequestHandler):
