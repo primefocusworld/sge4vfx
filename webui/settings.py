@@ -55,7 +55,7 @@ SYSLOG_FACILITY = logging.handlers.SysLogHandler.LOG_LOCAL2
 # unless propagate: True is set.
 LOGGERS = {
    'loggers': {
-        'boilerplate': {},
+        'theq2': {},
     },
 }
 
