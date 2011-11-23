@@ -134,10 +134,10 @@ span.deleteicon input {	padding-right:16px; }
 /* Gotta have rounded corners :-) */
 .mainTable tr:first-child th:first-child { border-top-left-radius:5px }
 .mainTable tr:first-child th:last-child { border-top-right-radius:5px }
-.mainTable tr:nth-last-of-type(2) td:first-child {
+.mainTable tr:last-of-type td:first-child {
 	border-bottom-left-radius:5px
 }
-.mainTable tr:nth-last-of-type(2) td:last-child {
+.mainTable tr:last-of-type td:last-child {
 	border-bottom-right-radius:5px
 
 }

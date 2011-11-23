@@ -21,10 +21,7 @@ var mainJobTableRowTemplate = "\
 	<td>{{ firsttask }}-{{ lasttask }}:{{ chunk }}</td>\
 	<td class='percentdone'>{{ pcdone }}% ({{ donetasks }})</td>\
 </tr>\
-{{/rows}}\
-<tr class='hiddencountrow'>\
-	<td id='hiddencount'>{{ totalJobCount }}</td>\
-</tr>"
+{{/rows}}"
 
 var oneJobRowTemplate = "\
 {{#rows}}\
@@ -45,10 +42,7 @@ var oneJobRowTemplate = "\
 	<td>{{ attempts }}</td>\
 	<td>{{ rhost }}</td>\
 </tr>\
-{{/rows}}\
-<tr class='hiddencountrow'>\
-	<td id='hiddencount'>{{ totalJobCount }}</td>\
-</tr>"
+{{/rows}}"
 
 var userQuotaRowTemplate = "\
 {{#rows}}\
