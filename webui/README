@@ -1,4 +1,8 @@
-Very initial at the moment.  Doesn't work but is very much a work in progress and should end up *much* faster than the original.
+Fully working now.  Needs to be QA'd and then I'll merge it into master.
+Should be pretty self contained so just needs to be dropped somewhere and
+started.
+
+At the moment I'm running it with supervisord backed onto nginx.
 
 Uses the following:
 
