@@ -28,11 +28,6 @@ var queueChart;
 var jobsPageGuage;
 var queueOptions;
 
-// Happy Christmassy snow
-if (! $.browser.mozilla) {
-	var theSnow = new Snow();
-}
-
 // Allows you to call jobsTable cgi script
 function getJobs(params) {
 	var ampersand = ""
@@ -494,28 +489,10 @@ function setupTopToolbar() {
 		text: false,
 		icons: { primary: "ui-icon-locked" }
 	});
-	if ($.browser.mozilla) {
-		$("[for=snowy]").hide();
-		$("#snowy").hide();
-	} else {
-		$("#snowy").button({
-			text: true,
-			icons: { primary: "ui-icon-star" }
-		}).click(function() { toggleSnow(); });
-		theSnow.start();
-	}
 	$("#manualRefresh").button({
 		text: false,
 		icons: { primary: "ui-icon-refresh" }
 	}).click(function() { refreshPage(); });
-}
-
-function toggleSnow() {
-	if (! theSnow.snowRunning) {
-		theSnow.start();
-	} else {
-		theSnow.stop();
-	}
 }
 
 function setupJobsToolbar() {
