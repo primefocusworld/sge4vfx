@@ -4,7 +4,7 @@ An attempt to make SGE more usable for VFX houses.
 
 This is far from finished and is currently undergoing a rewrite but has been successfully used at Prime Focus Film (London) to render in excess of 100,000 array jobs and probably between 10m and 20m individual tasks.
 
-At the moment the CGI scripts use simple Apache CGI which chews too much CPU time for the number of users (I'm running it for about 200 users) and the code is far too hacky.  The rewrite will probably be Tornado backended and far more JSON/templated on the front end.
+The WebUI uses Tornado.
 
 ##Install
 
