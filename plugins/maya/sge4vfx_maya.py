@@ -3,16 +3,27 @@ import maya.cmds as mc
 from datetime import datetime
 from subprocess import Popen,PIPE
 
-class sge4vfx:
-	priorities = { "Normal" : "0",
-					"Low" : "-300",
-					"Whenever" : "-600" }
+class renderDialog:
+	priorities = { "Normal" : "0", "Low" : "-300", "Whenever" : "-600" }
 	gigPerSlot = 2
 
 	def __init__(self):
+		# Load the QT Designer UI file
 		relPath = os.path.dirname(os.path.realpath(__file__))
 		self.UIElements = {}
 		self.UIElements["window"] = mc.loadUI(uiFile = relPath + '/dialog.ui')
+		# Get the list of renderers available and fill the combo box
+		for renderer in mc.renderer(query=True, namesOfAvailableRenderers=True):
+			mc.menuItem(label=renderer, parent="rendererComboBox")
+		for camera in mc.listCameras(orthographic=True, perspective=True):
+			mc.menuItem(label=camera, parent="cameraComboBox")
+		# Fill in the start and end frames along with the batch number
+		mc.textField("startFrameLineEdit", edit=True, text=
+			str(int(mc.getAttr('defaultRenderGlobals.startFrame'))))
+		mc.textField("endFrameLineEdit", edit=True, text=
+			str(int(mc.getAttr('defaultRenderGlobals.endFrame'))))
+		mc.textField("batchSizeLineEdit", edit=True, text="1")
+		# Show the window
 		mc.showWindow(self.UIElements["window"])
 	
 	# Build a date string to save off the SGE submission stuff
@@ -59,19 +70,18 @@ class sge4vfx:
 		for param in os.environ.keys():
 			if os.environ[param].find('*') == -1:
 				ef.write("%s=%s\n" % (param,os.environ[param]))
-		
 		ef.close()
 	
 	# Get the list of cameras so we can choose which one to render
 	def getCameras():
-		# TODO
+		print "Hello"
 	
 	# If it's been set, send a mail
 	def jobExtraEMail(theJobID):
 		# Do the gridextra command to add the output_path info
-        previewCmd = ("gridextra " + theJobID + " email yes")
-        os.system(previewCmd)
+        	previewCmd = ("gridextra " + theJobID + " email yes")
+	        os.system(previewCmd)
 	
-	def ok():
-		for k in sorted( mc.__dict__.keys() ):
-			print k, mc.__dict__[k]
+	# Run this if OK is pressed
+	def ok(arg):
+		print mc.optionMenu("rendererComboBox", q=True, v=True)
