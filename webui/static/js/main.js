@@ -105,6 +105,11 @@ function getWorkers(params) {
 		$("#quotastats tbody").html("");
 		$("#quotastats tbody").append(theHTML);
 	});
+	$.getJSON("/resources", AJAXParams, function(data) {
+		var theHTML = Mustache.to_html(resourceRowTemplate, data);
+		$("#resourcestats tbody").html("");
+		$("#resourcestats tbody").append(theHTML);
+	});
 }
 
 // Allows you to call jobTable cgi script
