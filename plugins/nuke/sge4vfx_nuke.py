@@ -122,6 +122,7 @@ def Submit(fullSize, emailNotify, startFrame, endFrame, batchSize,
 
 		# Now the actual gridsub execution thingy
 		sgeCmd = (gridsub
+			+ " -l nuke_r=1"
 			+ " -N " + job_title
 			+ " -V -S /bin/bash "
 			+ " -pe pe1 " + slotsPerFrame
