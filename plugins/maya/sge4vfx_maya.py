@@ -5,7 +5,6 @@ from subprocess import Popen,PIPE
 
 class renderDialog:
 	priorities = { "Normal" : "0", "Low" : "-300", "Whenever" : "-600" }
-	gigPerSlot = 2
 	gridsub = "gridsub"		# Assumes it's in the path, otherwise put full path
 	renderCmd = "mayarender"	# The actual Maya render binary
 	whichQueue = "farm.q"
@@ -17,11 +16,6 @@ class renderDialog:
 		self.UIElements = {}
 		self.UIElements["window"] = mc.loadUI(uiFile = relPath + '/dialog.ui')
 		
-		# Get the list of renderers available and fill the combo box
-		for renderer in mc.renderer(query=True, namesOfAvailableRenderers=True):
-			mc.menuItem(label=renderer, parent="rendererComboBox")
-		for camera in mc.listCameras(orthographic=True, perspective=True):
-			mc.menuItem(label=camera, parent="cameraComboBox")
 		# Fill in the start and end frames along with the batch number
 		mc.textField("startFrameLineEdit", edit=True, text=
 			str(int(mc.getAttr('defaultRenderGlobals.startFrame'))))
@@ -89,7 +83,7 @@ class renderDialog:
 		# Check if the file's been saved yet.  If not, close and let the user know
 		if (mc.file(q=True, sceneName=True) == ""):
 			mc.confirmDialog(title='Not Saved Yet',
-				message='You have to save your scene before you can send it to the farm',
+				message='Please save your scene before sending it to the farm',
 				button=['OK'],
 				defaultButton='OK')
 			return
@@ -102,13 +96,11 @@ class renderDialog:
 			(jobTitle, extension)=os.path.splitext(fileName)
 			
 			# Read all the useful stuff off the panel
-			renderer = mc.optionMenu("rendererComboBox", q=True, v=True)
 			startFrame = mc.textField("startFrameLineEdit", q=True, text=True)
 			endFrame = mc.textField("endFrameLineEdit", q=True, text=True)
 			batchSize = mc.textField("batchSizeLineEdit", q=True, text=True)
 			priority = mc.optionMenu("priorityComboBox", q=True, v=True)
 			emailNotify = mc.checkBox("eMailNotificationCheckBox", q=True, v=True)
-			whichCamera = mc.optionMenu("cameraComboBox", q=True, v=True)
 			slotsPerFrame = mc.textField("slotsLineEdit", q=True, text=True)
 			dateStr = self.buildDateTime()
 			
@@ -127,9 +119,7 @@ class renderDialog:
 
 			# Create the command file
 			mayaCmd = (self.renderCmd
-				+ " -renderer " + renderer
 				+ " " + frameRangeBit
-				+ " -cam " + whichCamera
 				+ " " + sgePath + "/" + fileName)
 			self.writeMayaCmdFile(sgePath, mayaCmd)
 			
