@@ -60,9 +60,9 @@
       </widget>
      </item>
      <item row="6" column="1">
-      <widget class="QSpinBox" name="slotsSpinBox">
-       <property name="minimum">
-        <number>1</number>
+      <widget class="QLineEdit" name="slotsLineEdit">
+       <property name="text">
+        <string>4</string>
        </property>
       </widget>
      </item>
@@ -76,7 +76,7 @@
      <item row="2" column="1">
       <widget class="QCheckBox" name="eMailNotificationCheckBox">
        <property name="text">
-        <string>      </string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -136,7 +136,7 @@
      <property name="text">
       <string>Important Information:
 
-When you click OK, this will save your script in it's current form.  If you don't want your file overwritten now, click Cancel.</string>
+When you click OK, this will save your script in it's current form.  If you don't want your file overwritten now, click Cancel.  A copy will be kept in a folder called .theQ next to your original.  This does mean relative paths won't work.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
