@@ -1,0 +1,32 @@
+global proc shelf_theQ () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 34
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "User-defined Python command" 
+        -enableBackground 0
+        -align "center" 
+        -label "Python Command" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "theQ.png" 
+        -image1 "theQ.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import sge4vfx_maya as theQ\nreload(theQ)\ntheQDialog = theQ.renderDialog()"
+        -sourceType "python" 
+        -commandRepeatable 1
+    ;
+} 

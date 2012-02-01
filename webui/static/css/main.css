@@ -175,12 +175,12 @@ tr:nth-child(even) .usageindicator { background:#353 }
 .slotinfo { position:absolute; width:100%; height:100%; z-index:2 }
 #queueguage { width:145px }
 #queuestattext { vertical-align:middle }
-#quotastats { position:relative; left: 7%; width: 86% }
-#quotastats tr { line-height: 18px; }
-#quotastats th { font-weight: bold; line-height: 22px; }
-#quotastats td { width: 50%; }
-#quotastats tbody tr { background: #111; text-align:center }
-#quotastats tbody tr:nth-child(even) { background: #222 }
+.statTable { position:relative; left: 7%; width: 86% }
+.statTable tr { line-height: 18px; }
+.statTable th { font-weight: bold; line-height: 22px; }
+.statTable td { width: 50%; }
+.statTable tbody tr { background: #111; text-align:center }
+.statTable tbody tr:nth-child(even) { background: #222 }
 
 /* Dialog bits */
 .popupdialog h3 { font-weight:bold; font-size:11px; margin:20px 0 15px 0 }

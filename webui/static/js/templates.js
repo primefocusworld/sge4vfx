@@ -50,6 +50,12 @@ var userQuotaRowTemplate = "\
 {{/rows}}\
 "
 
+var resourceRowTemplate = "\
+{{#rows}}\
+<tr><td>{{ resource }}</td><td>{{ available }}</td></tr>\
+{{/rows}}\
+"
+
 var farmDivisionTemplate = "\
 Total Slots: {{ total }}<br /><br />\
 <span class='green'>\
