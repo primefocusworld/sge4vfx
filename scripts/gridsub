@@ -40,8 +40,7 @@ qsub -ckpt relocate_on_suspend ${FIXED_PARAMS} > /tmp/OUT.$$.tmp 2>&1
 
 # If there was an error
 if [ "$?" -ne "0" ]; then
-	echo "There was an error with qsub - here it is..."
-	cat /tmp/OUT.$$.tmp
+  echo -e "There was an error with qsub - here it is:\n\n$(cat /tmp/OUT.$$.tmp)"
 	rm /tmp/OUT.$$.tmp
 	exit 1
 # If there wasn't an error - create and submit the psql command
