@@ -99,9 +99,19 @@ PSQL_CMD="${PSQL_CMD}job_extras.sgeid=jobs.sgeid AND job_extras.key='email' "
 PSQL_CMD="${PSQL_CMD}AND job_extras.value='yes';"
 DONE_WANT_EMAIL=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
 if [[ "$DONE_WANT_EMAIL" =~ "t" ]]; then
-	PSQL_CMD="SELECT jobname FROM jobs WHERE sgeid=${SGE_ID};"
-	JOBNAME=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
-	mail -s "Job ${SGE_ID}:${JOBNAME} - All tasks have been run" $USER
+  PSQL_CMD="SELECT jobname,date_trunc('seconds',"
+  PSQL_CMD="${PSQL_CMD}avg(tasks.endtime-tasks.starttime)),date_trunc("
+  PSQL_CMD="${PSQL_CMD}'seconds',max(tasks.endtime-tasks.starttime)),date_trunc"
+  PSQL_CMD="${PSQL_CMD}('seconds',min(tasks.endtime-tasks.starttime)) FROM "
+  PSQL_CMD="${PSQL_CMD}jobs, tasks WHERE jobs.sgeid=${SGE_ID} AND tasks.sgeid "
+  PSQL_CMD="${PSQL_CMD}= jobs.sgeid GROUP BY jobname;"
+	INFO_TO_MAIL=`psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"`
+  JOBNAME=`echo $INFO_TO_MAIL | awk -F\| '{print $1}'`
+  AVG_TIME=`echo $INFO_TO_MAIL | awk -F\| '{print $2}'`
+  MAX_TIME=`echo $INFO_TO_MAIL | awk -F\| '{print $3}'`
+  MIN_TIME=`echo $INFO_TO_MAIL | awk -F\| '{print $4}'`
+  BODY="Max Time: ${MAX_TIME}\nMin Time: ${MIN_TIME}\nAverage Time: ${AVG_TIME}"
+  echo -e ${BODY} | mail -s "Job ${SGE_ID}:${JOBNAME} - All tasks run" $USER
 fi
 
 # Now remove empty logs
