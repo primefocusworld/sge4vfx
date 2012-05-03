@@ -120,9 +120,10 @@ def Submit(fullSize, emailNotify, startFrame, endFrame, batchSize,
 		if doesItNeedOcula:
 			licenseRequirement = "-l lic_ocula_r=1 "
 
+		licenseRequirement += "-l nuke_r=1 "
+
 		# Now the actual gridsub execution thingy
 		sgeCmd = (gridsub
-			+ " -l nuke_r=1"
 			+ " -N " + job_title
 			+ " -V -S /bin/bash "
 			+ " -pe pe1 " + slotsPerFrame
