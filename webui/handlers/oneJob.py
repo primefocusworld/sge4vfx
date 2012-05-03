@@ -75,7 +75,7 @@ class OneJobTable(BaseHandler):
                 for outPathRecord in outPathCursor:
                         [tempStr] = outPathRecord
                         # Replace the padding with the task number
-                        tempStr = re.sub("\.(#+)\.",
+                        tempStr = re.sub("\.(@+)\.",
                                 lambda x:".%s."%str(taskno).zfill(
                                         len(x.groups()[0])), tempStr)
                         outputPath = urllib.quote(tempStr)
