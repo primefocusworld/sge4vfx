@@ -43,7 +43,7 @@ class Reschedule(BaseHandler):
         # original task number
         sgeid = jobNo + "." + str(batchNumber)
         # and the command to actually reschedule the task in SGE
-        command = str(self.shellCmdsLocation + "qmod -r " + sgeid)
+        command = str(self.shellCmdsLocation + "qmod -rj " + sgeid)
         
         # ASync run the two tasks
         dbResult, shellOut = yield [
