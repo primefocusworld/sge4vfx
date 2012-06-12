@@ -21,6 +21,8 @@ Options:
     Which license you need.  It assumes you want 1.
   -d Where to put theQ directory (Optional)
     Defaults to \$HOME - Must be network accessible.
+  -q Which queue to run on
+    Defaults to farm.q
 
 To use range numbers in your script, put \${SGE_TASK_ID} in your command.
 For example:
@@ -44,6 +46,7 @@ while getopts ":c:t:N:l:P:s:d:" options; do
 		d) THEQ_DIR=$OPTARG;;
 		l) LICS=$OPTARG;;
 		P) PROJECT=$OPTARG;;
+    q) QUEUE=$OPTARG;;
 		\?) usage;;
 		h) usage;;
 		*) usage;;
@@ -74,6 +77,12 @@ fi
 PROJBIT=""
 if [[ "${PROJECT}" != "" ]]; then
 	PROJBIT="-P ${PROJECT}"
+fi
+
+# Check whether another queue was specified
+QUEUEBIT="-q farm.q"
+if [[ "${QUEUE}" != "" ]]; then
+  QUEUEBIT="-q ${QUEUE}"
 fi
 
 # Check that the second parameter is properly formatted
@@ -115,7 +124,7 @@ EOF
 cat <<EOF2 > ${THEQ_DIR}/.theQ/${DATEDIR}/gridSubmit.sh
 #!/bin/bash
 
-gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} ${PROJBIT} ${NEEDALIC} -wd `pwd` -q farm.q -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
+gridsub -N ${DISP_NAME} -V -S /bin/bash -pe pe1 ${SLOTS} ${PROJBIT} ${NEEDALIC} -wd `pwd` ${QUEUEBIT} -t ${FIRST}-${LAST} ${THEQ_DIR}/.theQ/${DATEDIR}/gridCommand.sh
 EOF2
 
 # Make them executable
