@@ -37,7 +37,7 @@ EOF
 TO_RUN=""; DISP_NAME=""; SLOTS_IN="1"; RANGE="1-1"; THEQ_DIR="${HOME}"; LICS=""
 
 # Get all the cmd line options
-while getopts ":c:t:N:l:P:s:d:" options; do
+while getopts ":c:t:N:l:P:q:s:d:" options; do
 	case $options in
 		s) SLOTS_IN=$OPTARG;;
 		c) TO_RUN=$OPTARG;;
