@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Tiny script to work out average duration of renders
+
+PGHOST=queue1     # Postgres database server
+PGUSER=sge        # Postgres user
+PGDB=sgedb        # Postgres database name
+
+# Check usage
+if [ -z $1 ]; then
+	echo "Usage: $0 <sgeid>"
+	exit 1
+fi
+
+# Now compose the psql command to return the average time
+PSQL_CMD="SELECT avg(endtime-starttime) AS avg_duration FROM tasks WHERE sgeid=$1 AND endtime IS NOT NULL;"
+
+echo -e -n "\nAverage duration of completed tasks in Job $1: "
+psql -t -d ${PGDB} -U ${PGUSER} -h ${PGHOST} -c "${PSQL_CMD}"
