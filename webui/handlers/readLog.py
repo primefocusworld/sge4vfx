@@ -55,6 +55,9 @@ class ReadLog(BaseHandler):
                                               "cat " + soFilename)
                     # When the command returns, split the lines and parse them
                     theOutput = response.read()
+                    theOutput = ("<span class=\"green\">Log Location: " 
+                        + soFilename 
+                        + "</span><br/><br/><br/>" + theOutput)
                     stdoutReturn = theOutput.replace("\n","<br />\n")
                 except IOError as e:
                     stdoutReturn = "No stdout"
@@ -68,6 +71,9 @@ class ReadLog(BaseHandler):
                                               "cat " + seFilename)
                     # When the command returns, split the lines and parse them
                     theOutput = response.read()
+                    theOutput = ("<span class=\"red\">Log Location: " 
+                        + seFilename 
+                        + "</span><br/><br/><br/>" + theOutput)
                     stderrReturn = theOutput.replace("\n","<br />\n")
                 except IOError as e:
                     stderrReturn = "No stderr"
