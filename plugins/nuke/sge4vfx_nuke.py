@@ -120,9 +120,10 @@ def Submit(fullSize, emailNotify, startFrame, endFrame, batchSize,
 		if doesItNeedOcula:
 			licenseRequirement = "-l lic_ocula_r=1 "
 
+		licenseRequirement += "-l nuke_r=1 "
+
 		# Now the actual gridsub execution thingy
 		sgeCmd = (gridsub
-			+ " -l nuke_r=1"
 			+ " -N " + job_title
 			+ " -V -S /bin/bash "
 			+ " -pe pe1 " + slotsPerFrame
@@ -255,14 +256,14 @@ def jobExtraPreview(theJobID, previewNode, fullSize):
 	else:
 		location = nuke.filename(theNode)
 
-	# Replace %0xd with x number of hashes
+	# Replace %0xd with x number of @s
 	num = re.search("^(.*)(%([0-9]+)d)(.*)$", location)
 	if num is not None:
-		hashReplace = "#" * int(num.group(3))
-		newLocation = (num.group(1) + hashReplace + num.group(4))
+		atReplace = "@" * int(num.group(3))
+		newLocation = (num.group(1) + atReplace + num.group(4))
 	else:
 		# Can't find %XXd so look for %d, otherwise, just return orig
-		newLocation = re.sub("%d", "#", location)
+		newLocation = re.sub("%d", "@", location)
 
 	# Do the gridextra command to add the output_path info
 	previewCmd = ("gridextra " + theJobID + " output_path "
